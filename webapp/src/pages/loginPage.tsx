@@ -2,26 +2,34 @@
 // See LICENSE.txt for license information.
 import React from 'react'
 
-import {Utils} from '../utils'
+import {
+    withRouter,
+    RouteComponentProps,
+    Link,
+} from 'react-router-dom'
+
 import Button from '../widgets/buttons/button'
+import client from '../octoClient'
 import './loginPage.scss'
 
-type Props = {
-}
+type Props = RouteComponentProps
 
 type State = {
     username: string
     password: string
 }
 
-export default class LoginPage extends React.PureComponent<Props, State> {
+class LoginPage extends React.PureComponent<Props, State> {
     state = {
         username: '',
         password: '',
     }
 
-    private handleLogin = (): void => {
-        Utils.log('Logging in')
+    private handleLogin = async (): Promise<void> => {
+        const logged = await client.login(this.state.username, this.state.password)
+        if (logged) {
+            this.props.history.push('/')
+        }
     }
 
     render(): React.ReactNode {
@@ -45,7 +53,10 @@ export default class LoginPage extends React.PureComponent<Props, State> {
                     />
                 </div>
                 <Button onClick={this.handleLogin}>{'Login'}</Button>
+                <Link to='/register'>{'or create an account if you don\'t have one'}</Link>
             </div>
         )
     }
 }
+
+export default withRouter(LoginPage)
