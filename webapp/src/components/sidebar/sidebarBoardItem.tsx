@@ -41,6 +41,8 @@ import AddIcon from '../../widgets/icons/add'
 import CloseIcon from '../../widgets/icons/close'
 import {getMe} from '../../store/users'
 import octoClient from '../../octoClient'
+import {useHasCurrentBoardPermissions} from '../../hooks/permissions'
+import {canViewView} from '../../viewPermissions'
 import {getCurrentBoardId} from '../../store/boards'
 import {UserSettings} from '../../userSettings'
 import {Archiver} from '../../archiver'
@@ -85,6 +87,9 @@ const SidebarBoardItem = (props: Props) => {
     const dispatch = useAppDispatch()
     const currentBoardID = useAppSelector(getCurrentBoardId)
     const allBoards = useAppSelector(getMySortedBoards)
+    // View-level visibility: hide views the user may not see (admins bypass).
+    const canBypassViewPermissions = useHasCurrentBoardPermissions([Permission.ManageBoardRoles])
+    const visibleBoardViews = boardViews.filter((view: BoardView) => canViewView(view, me?.id, canBypassViewPermissions))
 
     const generateMoveToCategoryOptions = (boardID: string) => {
         return props.allCategories.map((category) => (
@@ -305,7 +310,7 @@ const SidebarBoardItem = (props: Props) => {
                             </MenuWrapper>
                         </div>
                     </div>
-                    {props.isActive && !snapshot.isDragging && !props.hideViews && boardViews.map((view: BoardView) => (
+                    {props.isActive && !snapshot.isDragging && !props.hideViews && visibleBoardViews.map((view: BoardView) => (
                         <div
                             key={view.id}
                             className={`SidebarBoardItem sidebar-view-item ${view.id === currentViewId ? 'active' : ''}`}

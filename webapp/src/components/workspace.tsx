@@ -29,6 +29,9 @@ import propsRegistry from '../properties'
 import {getMe} from '../store/users'
 
 import {getHiddenBoardIDs} from '../store/sidebar'
+import {useHasCurrentBoardPermissions} from '../hooks/permissions'
+import {Permission} from '../constants'
+import {canViewView} from '../viewPermissions'
 
 import CenterPanel from './centerPanel'
 import BoardTemplateSelector from './boardTemplateSelector/boardTemplateSelector'
@@ -59,6 +62,22 @@ function CenterContent(props: Props) {
     const dispatch = useAppDispatch()
     const me = useAppSelector<IUser|null>(getMe)
     const hiddenBoardIDs = useAppSelector(getHiddenBoardIDs)
+    const canBypassViewPermissions = useHasCurrentBoardPermissions([Permission.ManageBoardRoles])
+
+    // View-level visibility: if the URL points at a view the user may not
+    // see, bounce to the first visible view of the board.
+    useEffect(() => {
+        if (!board || !activeView || isLoading) {
+            return
+        }
+        if (!canViewView(activeView, me?.id, canBypassViewPermissions)) {
+            const fallback = views.find((v) => canViewView(v, me?.id, canBypassViewPermissions))
+            if (fallback && fallback.id !== activeView.id) {
+                const params = {...match.params, viewId: fallback.id, cardId: undefined}
+                history.push(generatePath(Utils.getBoardPagePath(match.path), params))
+            }
+        }
+    }, [board, activeView, views, me, canBypassViewPermissions, isLoading, match, history])
 
     const isBoardHidden = () => {
         return hiddenBoardIDs.includes(board.id)

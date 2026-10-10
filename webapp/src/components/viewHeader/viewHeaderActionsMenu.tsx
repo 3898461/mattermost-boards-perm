@@ -14,11 +14,14 @@ import OptionsIcon from '../../widgets/icons/options'
 import Menu from '../../widgets/menu'
 import MenuWrapper from '../../widgets/menuWrapper'
 import {Utils} from '../../utils'
+import mutator from '../../mutator'
 
 import ModalWrapper from '../modalWrapper'
 import {sendFlashMessage} from '../flashMessages'
 import {useHasCurrentBoardPermissions} from '../../hooks/permissions'
 import {Permission} from '../../constants'
+import MemberVisibilityList from '../memberVisibilityList'
+import {getViewVisibleTo} from '../../viewPermissions'
 
 type Props = {
     board: Board
@@ -106,6 +109,16 @@ const ViewHeaderActionsMenu = (props: Props) => {
         return null
     }
 
+    const onViewVisibilityChange = (userIDs: string[] | undefined) => {
+        const newView = {...activeView, fields: {...activeView.fields}}
+        if (userIDs && userIDs.length > 0) {
+            newView.fields.visibleTo = userIDs
+        } else {
+            delete newView.fields.visibleTo
+        }
+        mutator.updateBlock(board.id, newView, activeView, 'change view visibility')
+    }
+
     return (
         <ModalWrapper>
             <MenuWrapper label={intl.formatMessage({id: 'ViewHeader.view-header-menu', defaultMessage: 'View header menu'})}>
@@ -120,6 +133,14 @@ const ViewHeaderActionsMenu = (props: Props) => {
                         id='exportBoardArchive'
                         name={intl.formatMessage({id: 'ViewHeader.export-board-archive', defaultMessage: 'Export board archive'})}
                         onClick={() => Archiver.exportBoardArchive(board)}
+                    />
+                    <Menu.Separator/>
+                    <Menu.Label>
+                        {intl.formatMessage({id: 'ViewHeader.view-visibility', defaultMessage: 'Who can see this view'})}
+                    </Menu.Label>
+                    <MemberVisibilityList
+                        restrictedUserIDs={getViewVisibleTo(activeView)}
+                        onChange={onViewVisibilityChange}
                     />
                     {/*
                     <Menu.Separator/>

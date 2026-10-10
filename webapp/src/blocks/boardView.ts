@@ -28,6 +28,11 @@ type BoardViewFields = {
     columnCalculations: Record<string, string>
     kanbanCalculations: Record<string, KanbanCalculationFields>
     defaultTemplateId: string
+    // Member view permission: user IDs allowed to see this view in the
+    // sidebar / open it directly. Empty/undefined = visible to everyone.
+    // Only board admins bypass. Stored in the view block fields, so it
+    // passes through the server untouched.
+    visibleTo?: string[]
 }
 
 type BoardView = Block & {
@@ -53,6 +58,7 @@ function createBoardView(block?: Block): BoardView {
             columnCalculations: {...(block?.fields.columnCalculations) || {}},
             kanbanCalculations: {...(block?.fields.kanbanCalculations) || {}},
             defaultTemplateId: block?.fields.defaultTemplateId || '',
+            visibleTo: block?.fields.visibleTo ? [...block.fields.visibleTo] : undefined,
         },
     }
 }
