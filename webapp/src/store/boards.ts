@@ -286,7 +286,7 @@ export const getCurrentBoardMembers = createSelector(
 
 export function getMyBoardMembership(boardId: string): (state: RootState) => BoardMember|null {
     return (state: RootState): BoardMember|null => {
-        return state.boards.myBoardMemberships[boardId] || null
+        return state.boards?.myBoardMemberships?.[boardId] || null
     }
 }
 

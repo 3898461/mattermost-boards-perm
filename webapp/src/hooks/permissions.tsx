@@ -9,12 +9,18 @@ import {Permission} from '../constants'
 import {MemberRole} from '../blocks/board'
 
 export const useHasPermissions = (teamId: string, boardId: string, permissions: Permission[]): boolean => {
+    // Hooks must be called unconditionally (rules of hooks): the selectors
+    // below are safe with empty IDs (they return null), so evaluate them
+    // first and apply the early-return checks afterwards. Previously the
+    // early return sat before the hooks, which crashed (React error #310)
+    // when boardId/teamId changed between renders while the component stayed
+    // mounted (e.g. sidebar board navigation).
+    const member = useAppSelector(getMyBoardMembership(boardId))
+    const board = useAppSelector(getBoard(boardId))
+
     if (!boardId || !teamId) {
         return false
     }
-
-    const member = useAppSelector(getMyBoardMembership(boardId))
-    const board = useAppSelector(getBoard(boardId))
 
     if (!board) {
         return false
