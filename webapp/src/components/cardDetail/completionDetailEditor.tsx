@@ -5,7 +5,7 @@ import React, {useEffect, useMemo, useState} from 'react'
 import {useIntl} from 'react-intl'
 
 import {Board, IPropertyTemplate} from '../../blocks/board'
-import {Card} from '../../blocks/card'
+import {Card, createCard} from '../../blocks/card'
 import {IUser} from '../../user'
 import mutator from '../../mutator'
 import {useAppSelector} from '../../store/hooks'
@@ -138,15 +138,26 @@ const CompletionDetailEditor = (props: Props): JSX.Element => {
             })
             return
         }
-        await mutator.changePropertyValue(board.id, card, propertyTemplate.id, JSON.stringify(detail), 'set completion detail')
-        const totalTemplate = findTemplateByName(board, TOTAL_PROP)
-        if (totalTemplate) {
-            await mutator.changePropertyValue(board.id, card, totalTemplate.id, String(Math.round(sum * 100) / 100), 'set completion total')
+        // Single updateBlock for both properties: avoids races between two
+        // sequential changePropertyValue calls based on the same stale card.
+        try {
+            const newCard = createCard(card)
+            newCard.fields.properties[propertyTemplate.id] = JSON.stringify(detail)
+            const totalTemplate = findTemplateByName(board, TOTAL_PROP)
+            if (totalTemplate) {
+                newCard.fields.properties[totalTemplate.id] = String(Math.round(sum * 100) / 100)
+            }
+            await mutator.updateBlock(board.id, newCard, card, 'set completion detail')
+            sendFlashMessage({
+                content: intl.formatMessage({id: 'CompletionDetail.saved', defaultMessage: '分工已保存'}),
+                severity: 'normal',
+            })
+        } catch (e) {
+            sendFlashMessage({
+                content: intl.formatMessage({id: 'CompletionDetail.save-failed', defaultMessage: '保存失败，请重试'}),
+                severity: 'high',
+            })
         }
-        sendFlashMessage({
-            content: intl.formatMessage({id: 'CompletionDetail.saved', defaultMessage: '分工已保存'}),
-            severity: 'normal',
-        })
     }
 
     if (!producersTemplate) {
