@@ -63,19 +63,4 @@
         }
     }
 
-    .visibility-list-reset {
-        display: block;
-        width: 100%;
-        padding: 8px 16px;
-        border: 0;
-        background: none;
-        color: var(--button-bg);
-        font-size: 12px;
-        text-align: left;
-        cursor: pointer;
-
-        &:hover {
-            text-decoration: underline;
-        }
-    }
 }

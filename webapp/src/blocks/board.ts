@@ -210,7 +210,10 @@ function getPropertiesDifference(propsA: IPropertyTemplate[], propsB: IPropertyT
 // isPropertyEqual checks that both the contents of the property and
 // its options are equal
 function isPropertyEqual(propA: IPropertyTemplate, propB: IPropertyTemplate): boolean {
-    for (const val of Object.keys(propA)) {
+    // Compare the union of keys so that deleted fields (e.g. removing
+    // visibleTo to restore "visible to everyone") are detected as a change.
+    const keys = new Set([...Object.keys(propA), ...Object.keys(propB)])
+    for (const val of keys) {
         if (val !== 'options' && (propA as any)[val] !== (propB as any)[val]) {
             return false
         }

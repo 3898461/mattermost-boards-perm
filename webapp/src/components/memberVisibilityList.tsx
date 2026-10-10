@@ -134,14 +134,6 @@ const MemberVisibilityList = (props: Props): JSX.Element => {
                     )
                 })}
             </div>
-            {restricted &&
-                <button
-                    type='button'
-                    className='visibility-list-reset'
-                    onClick={() => onChange(undefined)}
-                >
-                    {intl.formatMessage({id: 'MemberVisibilityList.reset', defaultMessage: 'Visible to everyone'})}
-                </button>}
         </div>
     )
 }

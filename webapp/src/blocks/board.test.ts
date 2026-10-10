@@ -177,5 +177,31 @@ describe('board tests', () => {
             expect(clone.cardProperties[0].visibleTo).toBeUndefined()
             expect(clone.cardProperties[0].columnPermissions).toBeUndefined()
         })
+
+        it('should detect removing visibleTo as a change (patch must not be empty)', () => {
+            const oldBoard = TestBlockFactory.createBoard()
+            oldBoard.cardProperties = [{
+                id: 'prop-1',
+                name: 'Effort',
+                type: 'number',
+                options: [],
+                visibleTo: ['user-1', 'user-2'],
+            }]
+            const newBoard = TestBlockFactory.createBoard()
+            newBoard.cardProperties = [{
+                id: 'prop-1',
+                name: 'Effort',
+                type: 'number',
+                options: [],
+            }]
+
+            const [updatePatch] = createPatchesFromBoards(newBoard, oldBoard)
+
+            // The property must appear in updatedCardProperties so the server
+            // actually clears visibleTo; an empty patch would silently drop it.
+            expect(updatePatch.updatedCardProperties).toHaveLength(1)
+            expect(updatePatch.updatedCardProperties![0].id).toBe('prop-1')
+            expect(updatePatch.updatedCardProperties![0].visibleTo).toBeUndefined()
+        })
     })
 })

@@ -162,7 +162,7 @@ export default function KanbanColumnHeader(props: Props): JSX.Element {
             <div className='octo-spacer'/>
             {!props.readonly &&
                 <>
-                    <BoardPermissionGate permissions={[Permission.ManageBoardProperties]}>
+                    <BoardPermissionGate permissions={[Permission.ManageBoardRoles]}>
                         <MenuWrapper>
                             <IconButton icon={<OptionsIcon/>}/>
                             <Menu>

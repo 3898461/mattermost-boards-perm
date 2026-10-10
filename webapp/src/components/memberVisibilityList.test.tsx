@@ -150,21 +150,4 @@ describe('components/memberVisibilityList', () => {
         expect(onChange).toHaveBeenCalledTimes(1)
         expect(onChange.mock.calls[0][0]).toBeUndefined()
     })
-
-    test('reset button restores visible-to-everyone', async () => {
-        const store = mockStore(state)
-        const onChange = jest.fn()
-        const component = wrapIntl(
-            <ReduxProvider store={store}>
-                <MemberVisibilityList
-                    restrictedUserIDs={['user-admin', 'user-1']}
-                    onChange={onChange}
-                />
-            </ReduxProvider>,
-        )
-        const {getByText} = render(component)
-
-        await userEvent.click(getByText('Visible to everyone'))
-        expect(onChange).toHaveBeenCalledWith(undefined)
-    })
 })
