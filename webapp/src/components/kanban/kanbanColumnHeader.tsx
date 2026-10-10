@@ -176,6 +176,7 @@ export default function KanbanColumnHeader(props: Props): JSX.Element {
                                     <Menu.SubMenu
                                         id='column-visibility'
                                         name={intl.formatMessage({id: 'BoardComponent.column-view-permissions', defaultMessage: 'View permissions'})}
+                                        sticky={true}
                                     >
                                         <MemberPermissionPicker
                                             userIDs={getColumnVisibleTo(groupByProperty, group.option.id) || []}

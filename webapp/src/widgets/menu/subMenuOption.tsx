@@ -20,6 +20,11 @@ type SubMenuOptionProps = {
     icon?: React.ReactNode
     children: React.ReactNode
     className?: string
+    // When true, the submenu stays open once opened, even if the parent menu
+    // re-renders and loses hover tracking (e.g. after a store update caused by
+    // interacting with a picker inside the submenu). It still closes when the
+    // row is clicked again or the parent menu closes.
+    sticky?: boolean
 }
 
 function SubMenuOption(props: SubMenuOptionProps): JSX.Element {
@@ -29,10 +34,15 @@ function SubMenuOption(props: SubMenuOptionProps): JSX.Element {
     const openLeftClass = props.position === 'left' || props.position === 'left-bottom' ? ' open-left' : ''
 
     useEffect(() => {
-        if (isHovering !== undefined) {
-            setIsOpen(isHovering)
+        if (isHovering) {
+            setIsOpen(true)
+        } else if (!props.sticky) {
+            setIsOpen(false)
         }
-    }, [isHovering])
+        // With sticky, a submenu that was opened stays open when hover is lost,
+        // e.g. across parent re-renders that break the Menu's element-identity
+        // hover tracking after interacting with a picker inside.
+    }, [isHovering, props.sticky])
 
     const ref = useRef<HTMLDivElement>(null)
 
@@ -59,6 +69,13 @@ function SubMenuOption(props: SubMenuOptionProps): JSX.Element {
             onClick={(e: React.MouseEvent) => {
                 e.preventDefault()
                 e.stopPropagation()
+                // Clicks inside the open submenu panel (e.g. interacting with a
+                // picker) must not toggle the submenu itself; only clicks on
+                // the row toggle it.
+                const target = e.target as HTMLElement
+                if (target.closest && target.closest('.SubMenu')) {
+                    return
+                }
                 setIsOpen((open) => !open)
             }}
             ref={ref}

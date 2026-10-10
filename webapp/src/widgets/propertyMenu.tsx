@@ -90,6 +90,7 @@ const PropertyMenu = (props: Props) => {
                 <Menu.SubMenu
                     id='visibility'
                     name={intl.formatMessage({id: 'PropertyMenu.view-permissions', defaultMessage: 'View permissions'})}
+                    sticky={true}
                 >
                     <MemberPermissionPicker
                         userIDs={getPropertyVisibleTo(props.template) || []}

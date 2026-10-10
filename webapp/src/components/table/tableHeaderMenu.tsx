@@ -69,6 +69,7 @@ const TableHeaderMenu: FC<Props> = (props: Props): JSX.Element => {
                         <Menu.SubMenu
                             id='visibility'
                             name={intl.formatMessage({id: 'PropertyMenu.view-permissions', defaultMessage: 'View permissions'})}
+                            sticky={true}
                         >
                             <MemberPermissionPicker
                                 userIDs={getPropertyVisibleTo(board.cardProperties.find((t: IPropertyTemplate) => t.id === templateId)!) || []}
