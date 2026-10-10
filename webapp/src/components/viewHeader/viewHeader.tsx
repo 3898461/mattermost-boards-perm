@@ -65,6 +65,9 @@ const ViewHeader = (props: Props) => {
     const [lockFilterOnClose, setLockFilterOnClose] = useState(false)
     const intl = useIntl()
     const canEditBoardProperties = useHasCurrentBoardPermissions([Permission.ManageBoardProperties])
+    // View-configuration toolbar (Properties / Group by / Filter / Sort) is
+    // admin-only: editors keep card editing but must use the admin's view setup.
+    const canConfigureView = useHasCurrentBoardPermissions([Permission.ManageBoardRoles])
 
     const {board, activeView, views, groupByProperty, cards, dateDisplayProperty} = props
 
@@ -149,7 +152,7 @@ const ViewHeader = (props: Props) => {
 
             <div className='octo-spacer'/>
 
-            {!props.readonly && canEditBoardProperties &&
+            {!props.readonly && canConfigureView &&
             <>
                 {/* Card properties */}
 

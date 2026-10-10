@@ -140,14 +140,30 @@ function createBoard(board?: Board): Board {
     }
 
     if (board?.cardProperties) {
-        // Deep clone of card properties and their options
+        // Deep clone of card properties and their options, preserving the
+        // member view-permission fields (visibleTo, columnPermissions).
+        // Dropping them here breaks realtime updates: every board change
+        // broadcast goes through fixBoard -> createBoard, and losing these
+        // fields makes all permissions fall back to "visible to everyone"
+        // until the next full reload.
         cardProperties = board?.cardProperties.map((o: IPropertyTemplate) => {
-            return {
+            const clone: IPropertyTemplate = {
                 id: o.id,
                 name: o.name,
                 type: o.type,
                 options: o.options ? o.options.map((option) => ({...option})) : [],
             }
+            if (o.visibleTo) {
+                clone.visibleTo = [...o.visibleTo]
+            }
+            if (o.columnPermissions) {
+                const permissions: {[optionId: string]: string[]} = {}
+                Object.keys(o.columnPermissions).forEach((key) => {
+                    permissions[key] = [...o.columnPermissions![key]]
+                })
+                clone.columnPermissions = permissions
+            }
+            return clone
         })
     }
 

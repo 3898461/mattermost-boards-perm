@@ -134,4 +134,48 @@ describe('board tests', () => {
             expect(safePropertyValue(undefined)).toBe('')
         })
     })
+
+    describe('createBoard preserves member view permissions', () => {
+        it('should keep visibleTo and columnPermissions when cloning card properties', () => {
+            const board = TestBlockFactory.createBoard()
+            board.cardProperties = [{
+                id: 'prop-1',
+                name: 'Effort',
+                type: 'number',
+                options: [],
+                visibleTo: ['user-1', 'user-2'],
+                columnPermissions: {
+                    'col-1': ['user-1'],
+                    'col-2': ['user-2', 'user-3'],
+                },
+            }]
+
+            const clone = createBoard(board)
+
+            expect(clone.cardProperties[0].visibleTo).toEqual(['user-1', 'user-2'])
+            expect(clone.cardProperties[0].columnPermissions).toEqual({
+                'col-1': ['user-1'],
+                'col-2': ['user-2', 'user-3'],
+            })
+            // Must be deep copies, not shared references
+            expect(clone.cardProperties[0].visibleTo).not.toBe(board.cardProperties[0].visibleTo)
+            expect(clone.cardProperties[0].columnPermissions).not.toBe(board.cardProperties[0].columnPermissions)
+            expect(clone.cardProperties[0].columnPermissions!['col-1']).not.toBe(board.cardProperties[0].columnPermissions!['col-1'])
+        })
+
+        it('should leave permissions undefined when the source has none', () => {
+            const board = TestBlockFactory.createBoard()
+            board.cardProperties = [{
+                id: 'prop-1',
+                name: 'Effort',
+                type: 'number',
+                options: [],
+            }]
+
+            const clone = createBoard(board)
+
+            expect(clone.cardProperties[0].visibleTo).toBeUndefined()
+            expect(clone.cardProperties[0].columnPermissions).toBeUndefined()
+        })
+    })
 })
