@@ -24,6 +24,9 @@ import ViewHeaderActionsMenu from './viewHeaderActionsMenu'
 jest.mock('../../archiver')
 jest.mock('../../csvExporter')
 jest.mock('../../mutator')
+jest.mock('../../hooks/permissions', () => ({
+    useHasCurrentBoardPermissions: jest.fn(() => true),
+}))
 const mockedArchiver = mocked(Archiver, true)
 const mockedCsvExporter = mocked(CsvExporter, true)
 

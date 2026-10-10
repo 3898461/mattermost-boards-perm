@@ -17,6 +17,8 @@ import {Utils} from '../../utils'
 
 import ModalWrapper from '../modalWrapper'
 import {sendFlashMessage} from '../flashMessages'
+import {useHasCurrentBoardPermissions} from '../../hooks/permissions'
+import {Permission} from '../../constants'
 
 type Props = {
     board: Board
@@ -98,6 +100,11 @@ function onExportCsvTrigger(board: Board, activeView: BoardView, cards: Card[], 
 const ViewHeaderActionsMenu = (props: Props) => {
     const {board, activeView, cards} = props
     const intl = useIntl()
+    // Export actions are admin-only.
+    const canExport = useHasCurrentBoardPermissions([Permission.ManageBoardRoles])
+    if (!canExport) {
+        return null
+    }
 
     return (
         <ModalWrapper>

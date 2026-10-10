@@ -234,24 +234,6 @@ exports[`components/viewHeader/viewHeader return viewHeader without permissions 
         value=""
       />
     </div>
-    <div
-      class="ModalWrapper"
-    >
-      <div
-        aria-label="View header menu"
-        class="MenuWrapper"
-        role="button"
-      >
-        <button
-          class="IconButton"
-          type="button"
-        >
-          <i
-            class="CompassIcon icon-dots-horizontal OptionsIcon"
-          />
-        </button>
-      </div>
-    </div>
   </div>
 </div>
 `;
