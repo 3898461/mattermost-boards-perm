@@ -76,7 +76,10 @@ const filterValue = (props: Props): JSX.Element|null => {
         )
     }
     if (propertyType.filterValueType === 'date') {
-        if (filter.condition === 'isSet' || filter.condition === 'isNotSet') {
+        if (filter.condition === 'isSet' || filter.condition === 'isNotSet' ||
+            filter.condition === 'thisMonth' || filter.condition === 'thisQuarter' ||
+            filter.condition === 'thisHalfYear' || filter.condition === 'thisYear') {
+            // No value picker needed for these conditions.
             return null
         }
 

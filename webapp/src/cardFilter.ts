@@ -14,6 +14,43 @@ import {Utils} from './utils'
 const halfDay = 12 * 60 * 60 * 1000
 
 class CardFilter {
+    // [start, end) timestamps (local timezone) for a relative date condition.
+    // Quarters are calendar quarters (Jan-Mar, Apr-Jun, Jul-Sep, Oct-Dec);
+    // half years are Jan-Jun / Jul-Dec.
+    static relativeDateRange(condition: string): [number, number] {
+        const now = new Date()
+        const year = now.getFullYear()
+        const month = now.getMonth()
+        let start: Date
+        let end: Date
+        switch (condition) {
+        case 'thisQuarter': {
+            const qStartMonth = Math.floor(month / 3) * 3
+            start = new Date(year, qStartMonth, 1)
+            end = new Date(year, qStartMonth + 3, 1)
+            break
+        }
+        case 'thisHalfYear': {
+            const hStartMonth = month < 6 ? 0 : 6
+            start = new Date(year, hStartMonth, 1)
+            end = new Date(year, hStartMonth + 6, 1)
+            break
+        }
+        case 'thisYear': {
+            start = new Date(year, 0, 1)
+            end = new Date(year + 1, 0, 1)
+            break
+        }
+        case 'thisMonth':
+        default: {
+            start = new Date(year, month, 1)
+            end = new Date(year, month + 1, 1)
+            break
+        }
+        }
+        return [start.getTime(), end.getTime()]
+    }
+
     static createDatePropertyFromString(initialValue: string): DateProperty {
         let dateProperty: DateProperty = {}
         if (initialValue) {
@@ -215,6 +252,18 @@ class CardFilter {
                     return dateValue.to > numericFilter
                 }
                 return dateValue.from ? dateValue.from > numericFilter : false
+            }
+            return false
+        }
+
+        case 'thisMonth':
+        case 'thisQuarter':
+        case 'thisHalfYear':
+        case 'thisYear': {
+            // Relative date range, evaluated in the viewer's local timezone.
+            if (dateValue?.from) {
+                const [start, end] = CardFilter.relativeDateRange(filter.condition)
+                return dateValue.from >= start && dateValue.from < end
             }
             return false
         }

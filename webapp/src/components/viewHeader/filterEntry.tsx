@@ -205,6 +205,27 @@ const FilterEntry = (props: Props): JSX.Element => {
                                 name={intl.formatMessage({id: 'Filter.isafter', defaultMessage: 'is after'})}
                                 onClick={(id) => props.conditionClicked(id, filter)}
                             />
+                            <Menu.Separator/>
+                            <Menu.Text
+                                id='thisMonth'
+                                name={intl.formatMessage({id: 'Filter.this-month', defaultMessage: 'is this month'})}
+                                onClick={(id) => props.conditionClicked(id, filter)}
+                            />
+                            <Menu.Text
+                                id='thisQuarter'
+                                name={intl.formatMessage({id: 'Filter.this-quarter', defaultMessage: 'is this quarter'})}
+                                onClick={(id) => props.conditionClicked(id, filter)}
+                            />
+                            <Menu.Text
+                                id='thisHalfYear'
+                                name={intl.formatMessage({id: 'Filter.this-half-year', defaultMessage: 'is this half year'})}
+                                onClick={(id) => props.conditionClicked(id, filter)}
+                            />
+                            <Menu.Text
+                                id='thisYear'
+                                name={intl.formatMessage({id: 'Filter.this-year', defaultMessage: 'is this year'})}
+                                onClick={(id) => props.conditionClicked(id, filter)}
+                            />
                         </>}
                     {propertyType.type === 'date' &&
                         <>

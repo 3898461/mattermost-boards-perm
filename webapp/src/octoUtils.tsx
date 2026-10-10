@@ -145,6 +145,10 @@ class OctoUtils {
             case 'isAfter': return intl.formatMessage({id: 'Filter.is-after', defaultMessage: 'is after'})
             case 'isSet': return intl.formatMessage({id: 'Filter.is-set', defaultMessage: 'is set'})
             case 'isNotSet': return intl.formatMessage({id: 'Filter.is-not-set', defaultMessage: 'is not set'})
+            case 'thisMonth': return intl.formatMessage({id: 'Filter.this-month', defaultMessage: 'is this month'})
+            case 'thisQuarter': return intl.formatMessage({id: 'Filter.this-quarter', defaultMessage: 'is this quarter'})
+            case 'thisHalfYear': return intl.formatMessage({id: 'Filter.this-half-year', defaultMessage: 'is this half year'})
+            case 'thisYear': return intl.formatMessage({id: 'Filter.this-year', defaultMessage: 'is this year'})
             default: {
                 return intl.formatMessage({id: 'Filter.is', defaultMessage: 'is'})
             }
@@ -197,6 +201,10 @@ class OctoUtils {
             case 'isAfter':
             case 'isSet':
             case 'isNotSet':
+            case 'thisMonth':
+            case 'thisQuarter':
+            case 'thisHalfYear':
+            case 'thisYear':
                 return currentFilterCondition
             default: {
                 return 'is'

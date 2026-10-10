@@ -11,7 +11,10 @@ type FilterCondition =
     'contains' | 'notContains' |
     'startsWith' | 'notStartsWith' |
     'endsWith' | 'notEndsWith' |
-    'isBefore' | 'isAfter'
+    'isBefore' | 'isAfter' |
+    // Relative date ranges (evaluated in the viewer's local timezone at
+    // render time; no values needed on the clause).
+    'thisMonth' | 'thisQuarter' | 'thisHalfYear' | 'thisYear'
 
 type FilterClause = {
     propertyId: string
