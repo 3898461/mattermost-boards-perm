@@ -25,6 +25,7 @@ import {Category} from './store/sidebar'
 /* eslint-disable max-lines */
 import {UserConfigPatch, UserPreference} from './user'
 import store from './store'
+import {afterPropertyChange} from './settleAutomation'
 import {updateBoards} from './store/boards'
 import {updateViews} from './store/views'
 import {updateCards} from './store/cards'
@@ -674,6 +675,18 @@ class Mutator {
         }
         await this.updateBlock(boardId, newCard, card, description)
         TelemetryClient.trackEvent(TelemetryCategory, TelemetryActions.EditCardProperty, {board: card.boardId, card: card.id})
+        // Settlement automation (unit price -> amount, date stamps). Covers
+        // card dialog, table cells and kanban drags. Never throws.
+        try {
+            await afterPropertyChange({
+                boardId,
+                card: newCard,
+                changedPropertyId: propertyId,
+                setProperty: (pid, val) => this.changePropertyValue(boardId, newCard, pid, val, 'settle automation'),
+            })
+        } catch (e) {
+            Utils.logError(`settle automation failed: ${e}`)
+        }
     }
 
     async changePropertyTypeAndName(board: Board, cards: Card[], propertyTemplate: IPropertyTemplate, newType: PropertyTypeEnum, newName: string) {
