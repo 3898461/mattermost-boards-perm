@@ -6,7 +6,11 @@ import {FormattedMessage, useIntl} from 'react-intl'
 
 import {Card} from '../../blocks/card'
 import {Board, IPropertyTemplate} from '../../blocks/board'
-import {Constants} from '../../constants'
+import {Constants, Permission} from '../../constants'
+import {useAppSelector} from '../../store/hooks'
+import {getMe} from '../../store/users'
+import {useHasCurrentBoardPermissions} from '../../hooks/permissions'
+import {canViewProperty} from '../../propertyPermissions'
 import mutator from '../../mutator'
 import Button from '../../widgets/buttons/button'
 import Editable from '../../widgets/editable'
@@ -86,9 +90,12 @@ const TableRow = (props: Props) => {
         setTitle(newTitle)
     }, [title, setTitle])
 
+    const me = useAppSelector(getMe)
+    const canManageBoardProperties = useHasCurrentBoardPermissions([Permission.ManageBoardProperties])
+
     const visiblePropertyTemplates = useMemo(() => (
-        visiblePropertyIds.map((id) => board.cardProperties.find((t) => t.id === id)).filter((i) => i) as IPropertyTemplate[]
-    ), [board.cardProperties, visiblePropertyIds])
+        visiblePropertyIds.map((id) => board.cardProperties.find((t) => t.id === id)).filter((i) => i && canViewProperty(i, me?.id, canManageBoardProperties)) as IPropertyTemplate[]
+    ), [board.cardProperties, visiblePropertyIds, me?.id, canManageBoardProperties])
 
     let className = props.isSelected ? 'TableRow octo-table-row selected' : 'TableRow octo-table-row'
     if (isOver) {

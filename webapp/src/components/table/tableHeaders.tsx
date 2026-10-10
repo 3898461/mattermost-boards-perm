@@ -8,7 +8,11 @@ import {FormattedMessage, useIntl} from 'react-intl'
 import {IPropertyTemplate, Board, safePropertyString} from '../../blocks/board'
 import {createBoardView, BoardView, ISortOption} from '../../blocks/boardView'
 import {Card} from '../../blocks/card'
-import {Constants} from '../../constants'
+import {Constants, Permission} from '../../constants'
+import {useAppSelector} from '../../store/hooks'
+import {getMe} from '../../store/users'
+import {useHasCurrentBoardPermissions} from '../../hooks/permissions'
+import {canViewProperty} from '../../propertyPermissions'
 import mutator from '../../mutator'
 import {Utils} from '../../utils'
 import propsRegistry from '../../properties'
@@ -89,9 +93,12 @@ const TableHeaders = (props: Props): JSX.Element => {
         mutator.updateBlock(board.id, newView, activeView, 'autosize column')
     }, [activeView, board, cards])
 
+    const me = useAppSelector(getMe)
+    const canManageBoardProperties = useHasCurrentBoardPermissions([Permission.ManageBoardProperties])
+
     const visiblePropertyTemplates = useMemo(() => (
-        activeView.fields.visiblePropertyIds.map((id) => board.cardProperties.find((t) => t.id === id)).filter((i) => i) as IPropertyTemplate[]
-    ), [board.cardProperties, activeView.fields.visiblePropertyIds])
+        activeView.fields.visiblePropertyIds.map((id) => board.cardProperties.find((t) => t.id === id)).filter((i) => i && canViewProperty(i, me?.id, canManageBoardProperties)) as IPropertyTemplate[]
+    ), [board.cardProperties, activeView.fields.visiblePropertyIds, me?.id, canManageBoardProperties])
 
     const onDropToColumn = useCallback(async (template: IPropertyTemplate, container: IPropertyTemplate) => {
         Utils.log(`ondrop. Source column: ${template.name}, dest column: ${container.name}`)

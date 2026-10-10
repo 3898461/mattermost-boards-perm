@@ -6,6 +6,8 @@ import React from 'react'
 import {fireEvent, render} from '@testing-library/react'
 
 import '@testing-library/jest-dom'
+import {Provider as ReduxProvider} from 'react-redux'
+import configureStore from 'redux-mock-store'
 import {wrapIntl} from '../../testUtils'
 
 import 'isomorphic-fetch'
@@ -28,6 +30,7 @@ jest.mock('../../mutator', () => ({
     changeViewVisibleProperties: jest.fn(),
     duplicatePropertyTemplate: jest.fn(),
     deleteProperty: jest.fn(),
+    changePropertyVisibility: jest.fn(),
 }))
 
 beforeEach(() => {
@@ -42,16 +45,46 @@ describe('components/table/TableHeaderMenu', () => {
     const view2 = TestBlockFactory.createBoardView(board)
     view2.fields.sortOptions = []
 
-    test('should match snapshot, title column', async () => {
-        const component = wrapIntl(
-            <TableHeaderMenu
-                templateId={Constants.titleColumnId}
-                board={board}
-                activeView={view}
-                views={[view, view2]}
-                cards={[]}
-            />,
+    const state = {
+        users: {
+            me: {
+                id: 'user_id_1',
+            },
+            boardUsers: {},
+        },
+        teams: {
+            current: {id: 'team-id'},
+        },
+        boards: {
+            boards: {
+                [board.id]: board,
+            },
+            current: board.id,
+            myBoardMemberships: {
+                [board.id]: {userId: 'user_id_1', schemeAdmin: true},
+            },
+        },
+    }
+
+    const mockStore = configureStore([])
+
+    const renderWithStore = (templateId: string) => {
+        const store = mockStore(state)
+        return wrapIntl(
+            <ReduxProvider store={store}>
+                <TableHeaderMenu
+                    templateId={templateId}
+                    board={board}
+                    activeView={view}
+                    views={[view, view2]}
+                    cards={[]}
+                />
+            </ReduxProvider>,
         )
+    }
+
+    test('should match snapshot, title column', async () => {
+        const component = renderWithStore(Constants.titleColumnId)
         const {container, getByText} = render(component)
 
         let sort = getByText(/Sort ascending/i)
@@ -70,15 +103,7 @@ describe('components/table/TableHeaderMenu', () => {
     })
 
     test('should match snapshot, other column', async () => {
-        const component = wrapIntl(
-            <TableHeaderMenu
-                templateId={'property 1'}
-                board={board}
-                activeView={view}
-                views={[view, view2]}
-                cards={[]}
-            />,
-        )
+        const component = renderWithStore('property 1')
         const {container, getByText} = render(component)
 
         let sort = getByText(/Sort ascending/i)

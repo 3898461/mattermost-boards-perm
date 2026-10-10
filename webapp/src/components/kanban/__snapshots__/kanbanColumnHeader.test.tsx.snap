@@ -93,6 +93,7 @@ exports[`src/components/kanban/kanbanColumnHeader return kanbanColumnHeader and 
                 />
               </div>
             </div>
+            <div />
             <div>
               <div
                 aria-label="Delete"

@@ -4,12 +4,15 @@
 import React, {FC} from 'react'
 import {useIntl} from 'react-intl'
 
-import {Constants} from '../../constants'
+import {Constants, Permission} from '../../constants'
 import {Board, IPropertyTemplate} from '../../blocks/board'
 import {BoardView} from '../../blocks/boardView'
 import {Card} from '../../blocks/card'
 import mutator from '../../mutator'
 import Menu from '../../widgets/menu'
+import BoardPermissionGate from '../permissions/boardPermissionGate'
+import MemberPermissionPicker from '../memberPermissionPicker'
+import {getPropertyVisibleTo} from '../../propertyPermissions'
 
 type Props = {
     templateId: string
@@ -62,6 +65,28 @@ const TableHeaderMenu: FC<Props> = (props: Props): JSX.Element => {
             />
             {props.templateId !== Constants.titleColumnId &&
                 <>
+                    <BoardPermissionGate permissions={[Permission.ManageBoardProperties]}>
+                        <Menu.SubMenu
+                            id='visibility'
+                            name={intl.formatMessage({id: 'PropertyMenu.view-permissions', defaultMessage: 'View permissions'})}
+                        >
+                            <MemberPermissionPicker
+                                userIDs={getPropertyVisibleTo(board.cardProperties.find((t: IPropertyTemplate) => t.id === templateId)!) || []}
+                                onChange={(userIDs) => {
+                                    const template = board.cardProperties.find((t: IPropertyTemplate) => t.id === templateId)!
+                                    mutator.changePropertyVisibility(board.id, board.cardProperties, template, userIDs.length > 0 ? userIDs : undefined)
+                                }}
+                            />
+                            <Menu.Text
+                                id='visible-to-everyone'
+                                name={intl.formatMessage({id: 'PropertyMenu.visible-to-everyone', defaultMessage: 'Visible to everyone'})}
+                                onClick={() => {
+                                    const template = board.cardProperties.find((t: IPropertyTemplate) => t.id === templateId)!
+                                    mutator.changePropertyVisibility(board.id, board.cardProperties, template, undefined)
+                                }}
+                            />
+                        </Menu.SubMenu>
+                    </BoardPermissionGate>
                     <Menu.Text
                         id='hide'
                         name={intl.formatMessage({id: 'TableHeaderMenu.hide', defaultMessage: 'Hide'})}

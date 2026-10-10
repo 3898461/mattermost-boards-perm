@@ -98,6 +98,16 @@ interface IPropertyTemplate {
     name: string
     type: PropertyTypeEnum
     options: IPropertyOption[]
+
+    // Optional member view permission for the property itself.
+    // Undefined or empty means visible to everyone. Otherwise only the listed
+    // user IDs (plus members with ManageBoardProperties permission) can see it.
+    visibleTo?: string[]
+
+    // Optional per-column (kanban swimlane) member view permissions, stored
+    // per board: option ID (or user ID for person-grouped columns) -> user IDs
+    // allowed to view the column. Missing/empty entry means visible to everyone.
+    columnPermissions?: {[optionId: string]: string[]}
 }
 
 // A malformed record must not break the rendering of the board or card using it.

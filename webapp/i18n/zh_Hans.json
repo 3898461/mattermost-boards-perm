@@ -447,5 +447,9 @@
   "tutorial_tip.got_it": "了解",
   "tutorial_tip.ok": "下一个",
   "tutorial_tip.out": "选择不使用这些提示。",
-  "tutorial_tip.seen": "之前有见到过吗？"
+  "tutorial_tip.seen": "之前有见到过吗？",
+  "PropertyMenu.view-permissions": "查看权限",
+  "PropertyMenu.visible-to-everyone": "所有人可见",
+  "BoardComponent.column-view-permissions": "查看权限",
+  "MemberPermissionPicker.empty": "选择成员..."
 }

@@ -23,6 +23,9 @@ import Tooltip from '../../widgets/tooltip'
 import PropertyValueElement from '../propertyValueElement'
 import {Constants, Permission} from '../../constants'
 import {useHasCurrentBoardPermissions} from '../../hooks/permissions'
+import {useAppSelector} from '../../store/hooks'
+import {getMe} from '../../store/users'
+import {canViewProperty} from '../../propertyPermissions'
 import CardBadges from '../cardBadges'
 import ConfirmationDialogBox, {ConfirmationDialogBoxProps} from '../confirmationDialogBox'
 
@@ -80,9 +83,12 @@ const CalendarFullView = (props: Props): JSX.Element|null => {
     const [showConfirmationDialogBox, setShowConfirmationDialogBox] = useState<boolean>(false)
     const [cardItem, setCardItem] = useState<Card>()
 
+    const me = useAppSelector(getMe)
+    const canManageBoardProperties = useHasCurrentBoardPermissions([Permission.ManageBoardProperties])
+
     const visiblePropertyTemplates = useMemo(() => (
-        board.cardProperties.filter((template: IPropertyTemplate) => activeView.fields.visiblePropertyIds.includes(template.id))
-    ), [board.cardProperties, activeView.fields.visiblePropertyIds])
+        board.cardProperties.filter((template: IPropertyTemplate) => activeView.fields.visiblePropertyIds.includes(template.id) && canViewProperty(template, me?.id, canManageBoardProperties))
+    ), [board.cardProperties, activeView.fields.visiblePropertyIds, me?.id, canManageBoardProperties])
 
     let {initialDate} = props
     if (!initialDate) {

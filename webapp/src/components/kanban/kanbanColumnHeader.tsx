@@ -22,6 +22,8 @@ import Label from '../../widgets/label'
 import {useHasCurrentBoardPermissions} from '../../hooks/permissions'
 
 import BoardPermissionGate from '../permissions/boardPermissionGate'
+import MemberPermissionPicker from '../memberPermissionPicker'
+import {getColumnVisibleTo} from '../../propertyPermissions'
 
 import {KanbanCalculation} from './calculation/calculation'
 
@@ -170,6 +172,21 @@ export default function KanbanColumnHeader(props: Props): JSX.Element {
                                     name={intl.formatMessage({id: 'BoardComponent.hide', defaultMessage: 'Hide'})}
                                     onClick={() => mutator.hideViewColumn(board.id, activeView, group.option.id || '')}
                                 />
+                                {groupByProperty && group.option.id !== '' &&
+                                    <Menu.SubMenu
+                                        id='column-visibility'
+                                        name={intl.formatMessage({id: 'BoardComponent.column-view-permissions', defaultMessage: 'View permissions'})}
+                                    >
+                                        <MemberPermissionPicker
+                                            userIDs={getColumnVisibleTo(groupByProperty, group.option.id) || []}
+                                            onChange={(userIDs) => mutator.changeColumnVisibility(board.id, board.cardProperties, groupByProperty, group.option.id, userIDs.length > 0 ? userIDs : undefined)}
+                                        />
+                                        <Menu.Text
+                                            id='column-visible-to-everyone'
+                                            name={intl.formatMessage({id: 'PropertyMenu.visible-to-everyone', defaultMessage: 'Visible to everyone'})}
+                                            onClick={() => mutator.changeColumnVisibility(board.id, board.cardProperties, groupByProperty, group.option.id, undefined)}
+                                        />
+                                    </Menu.SubMenu>}
                                 {canEditOption &&
                                     <>
                                         <Menu.Text

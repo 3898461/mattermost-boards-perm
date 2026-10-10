@@ -630,6 +630,34 @@ class Mutator {
         await this.updateBoardCardProperties(boardId, oldCardProperties, newCardProperties, 'rename option')
     }
 
+    async changePropertyVisibility(boardId: string, oldCardProperties: IPropertyTemplate[], template: IPropertyTemplate, visibleTo: string[] | undefined) {
+        const newCardProperties: IPropertyTemplate[] = cloneDeep(oldCardProperties)
+        const newTemplate = newCardProperties.find((o: IPropertyTemplate) => o.id === template.id)!
+        if (visibleTo && visibleTo.length > 0) {
+            newTemplate.visibleTo = [...visibleTo]
+        } else {
+            delete newTemplate.visibleTo
+        }
+        await this.updateBoardCardProperties(boardId, oldCardProperties, newCardProperties, 'change property visibility')
+    }
+
+    async changeColumnVisibility(boardId: string, oldCardProperties: IPropertyTemplate[], template: IPropertyTemplate, columnKey: string, visibleTo: string[] | undefined) {
+        const newCardProperties: IPropertyTemplate[] = cloneDeep(oldCardProperties)
+        const newTemplate = newCardProperties.find((o: IPropertyTemplate) => o.id === template.id)!
+        const permissions = {...(newTemplate.columnPermissions || {})}
+        if (visibleTo && visibleTo.length > 0) {
+            permissions[columnKey] = [...visibleTo]
+        } else {
+            delete permissions[columnKey]
+        }
+        if (Object.keys(permissions).length > 0) {
+            newTemplate.columnPermissions = permissions
+        } else {
+            delete newTemplate.columnPermissions
+        }
+        await this.updateBoardCardProperties(boardId, oldCardProperties, newCardProperties, 'change column visibility')
+    }
+
     async changePropertyValue(boardId: string, card: Card, propertyId: string, value?: string | string[], description = 'change property') {
         const oldValue = card.fields.properties[propertyId]
 

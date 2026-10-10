@@ -34,6 +34,12 @@ describe('components/calendar/toolbar', () => {
     const rObject = {from: twentieth}
 
     const state = {
+        users: {
+            me: {
+                id: 'user_id_1',
+            },
+            boardUsers: {},
+        },
         teams: {
             current: {id: 'team-id'},
         },

@@ -21,6 +21,9 @@ import {Constants, Permission} from '../../constants'
 import {dragAndDropRearrange} from '../cardDetail/cardDetailContentsUtility'
 
 import {getCurrentBoardTemplates} from '../../store/cards'
+import {getMe} from '../../store/users'
+import {useHasCurrentBoardPermissions} from '../../hooks/permissions'
+import {canViewProperty} from '../../propertyPermissions'
 import BoardPermissionGate from '../permissions/boardPermissionGate'
 import HiddenCardCount from '../../components/hiddenCardCount/hiddenCardCount'
 
@@ -69,11 +72,14 @@ const Kanban = (props: Props) => {
     const propertyValues = groupByProperty?.options || []
     Utils.log(`${propertyValues.length} propertyValues`)
 
+    const me = useAppSelector(getMe)
+    const canManageBoardProperties = useHasCurrentBoardPermissions([Permission.ManageBoardProperties])
+
     const visiblePropertyTemplates = useMemo(() => {
         return board.cardProperties.filter(
-            (template: IPropertyTemplate) => activeView.fields.visiblePropertyIds.includes(template.id),
+            (template: IPropertyTemplate) => activeView.fields.visiblePropertyIds.includes(template.id) && canViewProperty(template, me?.id, canManageBoardProperties),
         )
-    }, [board.cardProperties, activeView.fields.visiblePropertyIds])
+    }, [board.cardProperties, activeView.fields.visiblePropertyIds, me?.id, canManageBoardProperties])
     const isManualSort = activeView.fields.sortOptions.length === 0
     const visibleBadges = activeView.fields.visiblePropertyIds.includes(Constants.badgesColumnId)
 

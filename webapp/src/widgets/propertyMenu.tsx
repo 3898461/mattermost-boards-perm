@@ -7,12 +7,18 @@ import {useIntl, IntlShape} from 'react-intl'
 import Menu from '../widgets/menu'
 import propsRegistry from '../properties'
 import {PropertyType} from '../properties/types'
+import {Board, IPropertyTemplate} from '../blocks/board'
+import mutator from '../mutator'
+import MemberPermissionPicker from '../components/memberPermissionPicker'
+import {getPropertyVisibleTo} from '../propertyPermissions'
 import './propertyMenu.scss'
 
 type Props = {
     propertyId: string
     propertyName: string
     propertyType: PropertyType
+    board?: Board
+    template?: IPropertyTemplate
     onTypeAndNameChanged: (newType: PropertyType, newName: string) => void
     onDelete: (id: string) => void
 }
@@ -80,6 +86,21 @@ const PropertyMenu = (props: Props) => {
                     onTypeSelected={(type: PropertyType) => props.onTypeAndNameChanged(type, currentPropertyName)}
                 />
             </Menu.SubMenu>
+            {props.board && props.template &&
+                <Menu.SubMenu
+                    id='visibility'
+                    name={intl.formatMessage({id: 'PropertyMenu.view-permissions', defaultMessage: 'View permissions'})}
+                >
+                    <MemberPermissionPicker
+                        userIDs={getPropertyVisibleTo(props.template) || []}
+                        onChange={(userIDs) => mutator.changePropertyVisibility(props.board!.id, props.board!.cardProperties, props.template!, userIDs.length > 0 ? userIDs : undefined)}
+                    />
+                    <Menu.Text
+                        id='visible-to-everyone'
+                        name={intl.formatMessage({id: 'PropertyMenu.visible-to-everyone', defaultMessage: 'Visible to everyone'})}
+                        onClick={() => mutator.changePropertyVisibility(props.board!.id, props.board!.cardProperties, props.template!, undefined)}
+                    />
+                </Menu.SubMenu>}
             <Menu.Text
                 id='delete'
                 name={deleteText}

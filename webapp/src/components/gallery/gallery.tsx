@@ -10,6 +10,10 @@ import HiddenCardCount from '../../components/hiddenCardCount/hiddenCardCount'
 import {Card} from '../../blocks/card'
 import {Board, IPropertyTemplate} from '../../blocks/board'
 import {BoardView} from '../../blocks/boardView'
+import {useAppSelector} from '../../store/hooks'
+import {getMe} from '../../store/users'
+import {useHasCurrentBoardPermissions} from '../../hooks/permissions'
+import {canViewProperty} from '../../propertyPermissions'
 import mutator from '../../mutator'
 import {Utils} from '../../utils'
 
@@ -32,11 +36,13 @@ type Props = {
 
 const Gallery = (props: Props): JSX.Element => {
     const {activeView, board, cards, hiddenCardsCount} = props
+    const me = useAppSelector(getMe)
+    const canManageBoardProperties = useHasCurrentBoardPermissions([Permission.ManageBoardProperties])
     const visiblePropertyTemplates = useMemo(() => {
         return board.cardProperties.filter(
-            (template: IPropertyTemplate) => activeView.fields.visiblePropertyIds.includes(template.id),
+            (template: IPropertyTemplate) => activeView.fields.visiblePropertyIds.includes(template.id) && canViewProperty(template, me?.id, canManageBoardProperties),
         )
-    }, [board.cardProperties, activeView.fields.visiblePropertyIds])
+    }, [board.cardProperties, activeView.fields.visiblePropertyIds, me?.id, canManageBoardProperties])
 
     const isManualSort = activeView.fields.sortOptions.length === 0
 

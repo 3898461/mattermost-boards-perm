@@ -36,7 +36,24 @@ describe('components/table/TableRows', () => {
 
     const mockStore = configureStore([])
     const state = {
-        users: {},
+        users: {
+            me: {
+                id: 'user_id_1',
+            },
+            boardUsers: {},
+        },
+        teams: {
+            current: {id: 'team-id'},
+        },
+        boards: {
+            boards: {
+                [board.id]: board,
+            },
+            current: board.id,
+            myBoardMemberships: {
+                [board.id]: {userId: 'user_id_1', schemeAdmin: true},
+            },
+        },
         comments: {
             comments: {},
         },

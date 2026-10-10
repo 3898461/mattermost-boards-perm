@@ -20,6 +20,9 @@ import {getCurrentCard, addCard as addCardAction, addTemplate as addTemplateActi
 import {getCardLimitTimestamp} from '../store/limits'
 import {updateView} from '../store/views'
 import {getVisibleAndHiddenGroups} from '../boardUtils'
+import {canViewColumn} from '../propertyPermissions'
+import {useHasCurrentBoardPermissions} from '../hooks/permissions'
+import {Permission} from '../constants'
 import TelemetryClient, {TelemetryCategory, TelemetryActions} from '../../../webapp/src/telemetry/telemetryClient'
 
 import {getClientConfig} from '../store/clientConfig'
@@ -381,6 +384,8 @@ const CenterPanel = (props: Props) => {
         return intl.formatMessage({id: 'centerPanel.unknown-user', defaultMessage: 'Unknown user'})
     }
 
+    const canManageBoardProperties = useHasCurrentBoardPermissions([Permission.ManageBoardProperties])
+
     const {visible: visibleGroups, hidden: hiddenGroups} = useMemo(() => {
         const {visible: vg, hidden: hg} = getVisibleAndHiddenGroups(cards, activeView.fields.visibleOptionIds, activeView.fields.hiddenOptionIds, groupByProperty)
         if (groupByProperty?.type === 'createdBy' || groupByProperty?.type === 'updatedBy' || groupByProperty?.type === 'person') {
@@ -393,8 +398,9 @@ const CenterPanel = (props: Props) => {
                 })
             }
         }
-        return {visible: vg, hidden: hg}
-    }, [cards, activeView.fields.visibleOptionIds, activeView.fields.hiddenOptionIds, groupByProperty, boardUsers])
+        const canSeeColumn = (group: BoardGroup) => canViewColumn(groupByProperty, group.option.id, me?.id, canManageBoardProperties)
+        return {visible: vg.filter(canSeeColumn), hidden: hg.filter(canSeeColumn)}
+    }, [cards, activeView.fields.visibleOptionIds, activeView.fields.hiddenOptionIds, groupByProperty, boardUsers, me?.id, canManageBoardProperties])
 
     return (
         <div

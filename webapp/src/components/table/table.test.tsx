@@ -53,6 +53,9 @@ describe('components/table/Table', () => {
 
     const state = {
         users: {
+            me: {
+                id: 'user_id_1',
+            },
             boardUsers: {
                 'user-id-1': {username: 'username_1'} as IUser,
                 'user-id-2': {username: 'username_2'} as IUser,
@@ -223,6 +226,12 @@ describe('components/table/Table', () => {
         const mockStore = configureStore([])
 
         const stateTest = {
+            users: {
+                me: {
+                    id: 'user_id_1',
+                },
+                boardUsers: {},
+            },
             comments: {
                 comments: {},
             },
@@ -280,6 +289,9 @@ describe('components/table/Table', () => {
 describe('components/table/Table extended', () => {
     const state = {
         users: {
+            me: {
+                id: 'user_id_1',
+            },
             boardUsers: {
                 'user-id-1': {username: 'username_1'} as IUser,
                 'user-id-2': {username: 'username_2'} as IUser,

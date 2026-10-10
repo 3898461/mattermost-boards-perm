@@ -24,6 +24,9 @@ import {Permission} from '../../constants'
 import {useHasCurrentBoardPermissions} from '../../hooks/permissions'
 import propRegistry from '../../properties'
 import {PropertyType} from '../../properties/types'
+import {useAppSelector} from '../../store/hooks'
+import {getMe} from '../../store/users'
+import {canViewProperty} from '../../propertyPermissions'
 
 type Props = {
     board: Board
@@ -39,6 +42,7 @@ const CardDetailProperties = (props: Props) => {
     const [newTemplateId, setNewTemplateId] = useState('')
     const canEditBoardProperties = useHasCurrentBoardPermissions([Permission.ManageBoardProperties])
     const canEditBoardCards = useHasCurrentBoardPermissions([Permission.ManageBoardCards])
+    const me = useAppSelector(getMe)
     const intl = useIntl()
 
     useEffect(() => {
@@ -131,7 +135,7 @@ const CardDetailProperties = (props: Props) => {
 
     return (
         <div className='octo-propertylist CardDetailProperties'>
-            {board.cardProperties.map((propertyTemplate: IPropertyTemplate) => {
+            {board.cardProperties.filter((propertyTemplate: IPropertyTemplate) => canViewProperty(propertyTemplate, me?.id, canEditBoardProperties)).map((propertyTemplate: IPropertyTemplate) => {
                 const propertyName = safePropertyString(propertyTemplate.name)
                 return (
                     <div
@@ -146,6 +150,8 @@ const CardDetailProperties = (props: Props) => {
                                     propertyId={propertyTemplate.id}
                                     propertyName={propertyName}
                                     propertyType={propRegistry.get(propertyTemplate.type)}
+                                    board={board}
+                                    template={propertyTemplate}
                                     onTypeAndNameChanged={(newType: PropertyType, newName: string) => onPropertyChangeSetAndOpenConfirmationDialog(newType, newName, propertyTemplate)}
                                     onDelete={() => onPropertyDeleteSetAndOpenConfirmationDialog(propertyTemplate)}
                                 />
