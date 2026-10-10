@@ -2386,6 +2386,109 @@ exports[`components/viewHeader/filterEntry return filterEntry for date field 2`]
                   class="noicon"
                 />
               </div>
+              <div
+                class="MenuOption MenuSeparator menu-separator"
+              />
+              <div
+                aria-label="is this month"
+                class="MenuOption TextOption menu-option"
+                role="button"
+              >
+                <div
+                  class="d-flex"
+                >
+                  <div
+                    class="noicon"
+                  />
+                </div>
+                <div
+                  class="menu-option__content"
+                >
+                  <div
+                    class="menu-name"
+                  >
+                    is this month
+                  </div>
+                </div>
+                <div
+                  class="noicon"
+                />
+              </div>
+              <div
+                aria-label="is this quarter"
+                class="MenuOption TextOption menu-option"
+                role="button"
+              >
+                <div
+                  class="d-flex"
+                >
+                  <div
+                    class="noicon"
+                  />
+                </div>
+                <div
+                  class="menu-option__content"
+                >
+                  <div
+                    class="menu-name"
+                  >
+                    is this quarter
+                  </div>
+                </div>
+                <div
+                  class="noicon"
+                />
+              </div>
+              <div
+                aria-label="is this half year"
+                class="MenuOption TextOption menu-option"
+                role="button"
+              >
+                <div
+                  class="d-flex"
+                >
+                  <div
+                    class="noicon"
+                  />
+                </div>
+                <div
+                  class="menu-option__content"
+                >
+                  <div
+                    class="menu-name"
+                  >
+                    is this half year
+                  </div>
+                </div>
+                <div
+                  class="noicon"
+                />
+              </div>
+              <div
+                aria-label="is this year"
+                class="MenuOption TextOption menu-option"
+                role="button"
+              >
+                <div
+                  class="d-flex"
+                >
+                  <div
+                    class="noicon"
+                  />
+                </div>
+                <div
+                  class="menu-option__content"
+                >
+                  <div
+                    class="menu-name"
+                  >
+                    is this year
+                  </div>
+                </div>
+                <div
+                  class="noicon"
+                />
+              </div>
             </div>
             <div>
               <div

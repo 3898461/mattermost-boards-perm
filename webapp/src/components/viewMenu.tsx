@@ -23,6 +23,10 @@ import Menu from '../widgets/menu'
 
 import BoardPermissionGate from './permissions/boardPermissionGate'
 import './viewMenu.scss'
+import {useAppSelector} from '../store/hooks'
+import {getMe} from '../store/users'
+import {useHasCurrentBoardPermissions} from '../hooks/permissions'
+import {canViewView} from '../viewPermissions'
 
 type Props = {
     board: Board
@@ -35,6 +39,8 @@ type Props = {
 const ViewMenu = (props: Props) => {
     const history = useHistory()
     const match = useRouteMatch()
+    const me = useAppSelector(getMe)
+    const canBypassViewPermissions = useHasCurrentBoardPermissions([Permission.ManageBoardRoles])
 
     const showView = useCallback((viewId) => {
         let newPath = generatePath(Utils.getBoardPagePath(match.path), {...match.params, viewId: viewId || ''})
@@ -212,6 +218,7 @@ const ViewMenu = (props: Props) => {
     }, [props.board, props.activeView, props.intl, showView])
 
     const {views, intl} = props
+    const visibleViews = views.filter((view: BoardView) => canViewView(view, me?.id, canBypassViewPermissions))
 
     const duplicateViewText = intl.formatMessage({
         id: 'View.DuplicateView',
@@ -252,7 +259,7 @@ const ViewMenu = (props: Props) => {
         <div className='ViewMenu'>
             <Menu>
                 <div className='view-list'>
-                    {views.map((view: BoardView) => (
+                    {visibleViews.map((view: BoardView) => (
                         <Menu.Text
                             key={view.id}
                             id={view.id}

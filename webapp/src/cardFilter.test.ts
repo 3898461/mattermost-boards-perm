@@ -263,6 +263,64 @@ describe('src/cardFilter', () => {
         })
     })
 
+    describe('verify isClauseMet method - relative date conditions', () => {
+        const now = new Date()
+        const todayNoon = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 12)
+
+        const recentCard = TestBlockFactory.createCard(board)
+        recentCard.id = 'recent'
+        recentCard.title = 'recent'
+        recentCard.fields.properties.datePropertyID = '{ "from": ' + todayNoon.toString() + ' }'
+
+        const oldCard = TestBlockFactory.createCard(board)
+        oldCard.id = 'old'
+        oldCard.title = 'old'
+        const twoYearsAgo = Date.UTC(now.getFullYear() - 2, now.getMonth(), now.getDate(), 12)
+        oldCard.fields.properties.datePropertyID = '{ "from": ' + twoYearsAgo.toString() + ' }'
+
+        const noDateCard = TestBlockFactory.createCard(board)
+        noDateCard.id = 'nodate'
+        noDateCard.title = 'nodate'
+
+        const template: IPropertyTemplate = {
+            id: 'datePropertyID',
+            name: 'myDate',
+            type: 'date',
+            options: [],
+        }
+
+        const conditions = ['thisMonth', 'thisQuarter', 'thisHalfYear', 'thisYear'] as const
+        test.each(conditions)('recent card matches %s, old card does not', (condition) => {
+            const clause = createFilterClause({propertyId: 'datePropertyID', condition, values: []})
+            expect(CardFilter.isClauseMet(clause, [template], recentCard)).toBe(true)
+            expect(CardFilter.isClauseMet(clause, [template], oldCard)).toBe(false)
+        })
+
+        test.each(conditions)('card without date never matches %s', (condition) => {
+            const clause = createFilterClause({propertyId: 'datePropertyID', condition, values: []})
+            expect(CardFilter.isClauseMet(clause, [template], noDateCard)).toBe(false)
+        })
+
+        test('relativeDateRange buckets are calendar-aligned', () => {
+            const [mStart, mEnd] = CardFilter.relativeDateRange('thisMonth')
+            expect(new Date(mStart).getDate()).toBe(1)
+            expect(mEnd - mStart).toBeLessThanOrEqual(31 * dayMillis)
+
+            const [qStart, qEnd] = CardFilter.relativeDateRange('thisQuarter')
+            expect(new Date(qStart).getMonth() % 3).toBe(0)
+            expect(qEnd - qStart).toBeLessThanOrEqual(93 * dayMillis)
+
+            const [hStart] = CardFilter.relativeDateRange('thisHalfYear')
+            expect([0, 6]).toContain(new Date(hStart).getMonth())
+
+            const [yStart, yEnd] = CardFilter.relativeDateRange('thisYear')
+            const yStartDate = new Date(yStart)
+            expect(yStartDate.getMonth()).toBe(0)
+            expect(yStartDate.getDate()).toBe(1)
+            expect(new Date(yEnd).getFullYear()).toBe(yStartDate.getFullYear() + 1)
+        })
+    })
+
     describe('verify isClauseMet method - date range property', () => {
         // Date Properties are stored as 12PM UTC.
         const now = new Date(Date.now())
