@@ -22,6 +22,7 @@ type Props = {
     card: Card
     propertyTemplate: IPropertyTemplate
     showEmptyPlaceholder: boolean
+    detailed?: boolean
 }
 
 const PropertyValueElement = (props: Props): JSX.Element => {
@@ -39,7 +40,7 @@ const PropertyValueElement = (props: Props): JSX.Element => {
                 board={board}
                 card={card}
                 propertyTemplate={propertyTemplate}
-                readOnly={effectiveReadOnly}
+                readOnly={effectiveReadOnly || !props.detailed}
             />
         )
     }

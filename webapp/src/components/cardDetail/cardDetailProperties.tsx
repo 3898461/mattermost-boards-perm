@@ -165,6 +165,7 @@ const CardDetailProperties = (props: Props) => {
                             board={board}
                             propertyTemplate={propertyTemplate}
                             showEmptyPlaceholder={true}
+                            detailed={true}
                         />
                     </div>
                 )
