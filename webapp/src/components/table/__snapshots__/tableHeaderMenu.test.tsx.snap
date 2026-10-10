@@ -121,21 +121,28 @@ exports[`components/table/TableHeaderMenu should match snapshot, other column 1`
         </div>
         <div>
           <div
-            class="MenuOption SubMenuOption menu-option"
-            id="visibility"
+            class="MenuOption MenuSeparator menu-separator"
+          />
+          <div
+            class="MemberVisibilityList"
           >
             <div
-              class="noicon"
-            />
-            <div
-              class="menu-name"
+              class="visibility-list-header"
             >
               View permissions
+              <span
+                class="visibility-list-status"
+              >
+                Everyone
+              </span>
             </div>
-            <i
-              class="CompassIcon icon-chevron-right"
+            <div
+              class="visibility-list-members"
             />
           </div>
+          <div
+            class="MenuOption MenuSeparator menu-separator"
+          />
           <div
             aria-label="Hide"
             class="MenuOption TextOption menu-option"
