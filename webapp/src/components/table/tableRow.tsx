@@ -91,11 +91,11 @@ const TableRow = (props: Props) => {
     }, [title, setTitle])
 
     const me = useAppSelector(getMe)
-    const canManageBoardProperties = useHasCurrentBoardPermissions([Permission.ManageBoardProperties])
+    const canBypassViewPermissions = useHasCurrentBoardPermissions([Permission.ManageBoardRoles])
 
     const visiblePropertyTemplates = useMemo(() => (
-        visiblePropertyIds.map((id) => board.cardProperties.find((t) => t.id === id)).filter((i) => i && canViewProperty(i, me?.id, canManageBoardProperties)) as IPropertyTemplate[]
-    ), [board.cardProperties, visiblePropertyIds, me?.id, canManageBoardProperties])
+        visiblePropertyIds.map((id) => board.cardProperties.find((t) => t.id === id)).filter((i) => i && canViewProperty(i, me?.id, canBypassViewPermissions)) as IPropertyTemplate[]
+    ), [board.cardProperties, visiblePropertyIds, me?.id, canBypassViewPermissions])
 
     let className = props.isSelected ? 'TableRow octo-table-row selected' : 'TableRow octo-table-row'
     if (isOver) {

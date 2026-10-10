@@ -151,7 +151,9 @@ func (s *Service) HasPermissionToBoard(userID, boardID string, permission *mmMod
 	switch permission {
 	case model.PermissionManageBoardType, model.PermissionDeleteBoard, model.PermissionManageBoardRoles, model.PermissionShareBoard, model.PermissionDeleteOthersComments:
 		return member.SchemeAdmin
-	case model.PermissionManageBoardCards, model.PermissionManageBoardProperties:
+	case model.PermissionManageBoardCards:
+		return member.SchemeAdmin || member.SchemeEditor || member.SchemeCommenter
+	case model.PermissionManageBoardProperties:
 		return member.SchemeAdmin || member.SchemeEditor
 	case model.PermissionCommentBoardCards:
 		return member.SchemeAdmin || member.SchemeEditor || member.SchemeCommenter

@@ -384,7 +384,7 @@ const CenterPanel = (props: Props) => {
         return intl.formatMessage({id: 'centerPanel.unknown-user', defaultMessage: 'Unknown user'})
     }
 
-    const canManageBoardProperties = useHasCurrentBoardPermissions([Permission.ManageBoardProperties])
+    const canBypassViewPermissions = useHasCurrentBoardPermissions([Permission.ManageBoardRoles])
 
     const {visible: visibleGroups, hidden: hiddenGroups} = useMemo(() => {
         const {visible: vg, hidden: hg} = getVisibleAndHiddenGroups(cards, activeView.fields.visibleOptionIds, activeView.fields.hiddenOptionIds, groupByProperty)
@@ -398,9 +398,9 @@ const CenterPanel = (props: Props) => {
                 })
             }
         }
-        const canSeeColumn = (group: BoardGroup) => canViewColumn(groupByProperty, group.option.id, me?.id, canManageBoardProperties)
+        const canSeeColumn = (group: BoardGroup) => canViewColumn(groupByProperty, group.option.id, me?.id, canBypassViewPermissions)
         return {visible: vg.filter(canSeeColumn), hidden: hg.filter(canSeeColumn)}
-    }, [cards, activeView.fields.visibleOptionIds, activeView.fields.hiddenOptionIds, groupByProperty, boardUsers, me?.id, canManageBoardProperties])
+    }, [cards, activeView.fields.visibleOptionIds, activeView.fields.hiddenOptionIds, groupByProperty, boardUsers, me?.id, canBypassViewPermissions])
 
     return (
         <div

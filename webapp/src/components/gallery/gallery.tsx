@@ -37,12 +37,12 @@ type Props = {
 const Gallery = (props: Props): JSX.Element => {
     const {activeView, board, cards, hiddenCardsCount} = props
     const me = useAppSelector(getMe)
-    const canManageBoardProperties = useHasCurrentBoardPermissions([Permission.ManageBoardProperties])
+    const canBypassViewPermissions = useHasCurrentBoardPermissions([Permission.ManageBoardRoles])
     const visiblePropertyTemplates = useMemo(() => {
         return board.cardProperties.filter(
-            (template: IPropertyTemplate) => activeView.fields.visiblePropertyIds.includes(template.id) && canViewProperty(template, me?.id, canManageBoardProperties),
+            (template: IPropertyTemplate) => activeView.fields.visiblePropertyIds.includes(template.id) && canViewProperty(template, me?.id, canBypassViewPermissions),
         )
-    }, [board.cardProperties, activeView.fields.visiblePropertyIds, me?.id, canManageBoardProperties])
+    }, [board.cardProperties, activeView.fields.visiblePropertyIds, me?.id, canBypassViewPermissions])
 
     const isManualSort = activeView.fields.sortOptions.length === 0
 

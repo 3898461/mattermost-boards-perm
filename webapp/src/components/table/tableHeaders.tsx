@@ -94,11 +94,11 @@ const TableHeaders = (props: Props): JSX.Element => {
     }, [activeView, board, cards])
 
     const me = useAppSelector(getMe)
-    const canManageBoardProperties = useHasCurrentBoardPermissions([Permission.ManageBoardProperties])
+    const canBypassViewPermissions = useHasCurrentBoardPermissions([Permission.ManageBoardRoles])
 
     const visiblePropertyTemplates = useMemo(() => (
-        activeView.fields.visiblePropertyIds.map((id) => board.cardProperties.find((t) => t.id === id)).filter((i) => i && canViewProperty(i, me?.id, canManageBoardProperties)) as IPropertyTemplate[]
-    ), [board.cardProperties, activeView.fields.visiblePropertyIds, me?.id, canManageBoardProperties])
+        activeView.fields.visiblePropertyIds.map((id) => board.cardProperties.find((t) => t.id === id)).filter((i) => i && canViewProperty(i, me?.id, canBypassViewPermissions)) as IPropertyTemplate[]
+    ), [board.cardProperties, activeView.fields.visiblePropertyIds, me?.id, canBypassViewPermissions])
 
     const onDropToColumn = useCallback(async (template: IPropertyTemplate, container: IPropertyTemplate) => {
         Utils.log(`ondrop. Source column: ${template.name}, dest column: ${container.name}`)

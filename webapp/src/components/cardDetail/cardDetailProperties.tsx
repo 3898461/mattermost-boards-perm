@@ -42,6 +42,8 @@ const CardDetailProperties = (props: Props) => {
     const [newTemplateId, setNewTemplateId] = useState('')
     const canEditBoardProperties = useHasCurrentBoardPermissions([Permission.ManageBoardProperties])
     const canEditBoardCards = useHasCurrentBoardPermissions([Permission.ManageBoardCards])
+    // Admin-only bypass: editors are subject to member view permissions.
+    const canBypassViewPermissions = useHasCurrentBoardPermissions([Permission.ManageBoardRoles])
     const me = useAppSelector(getMe)
     const intl = useIntl()
 
@@ -135,7 +137,7 @@ const CardDetailProperties = (props: Props) => {
 
     return (
         <div className='octo-propertylist CardDetailProperties'>
-            {board.cardProperties.filter((propertyTemplate: IPropertyTemplate) => canViewProperty(propertyTemplate, me?.id, canEditBoardProperties)).map((propertyTemplate: IPropertyTemplate) => {
+            {board.cardProperties.filter((propertyTemplate: IPropertyTemplate) => canViewProperty(propertyTemplate, me?.id, canBypassViewPermissions)).map((propertyTemplate: IPropertyTemplate) => {
                 const propertyName = safePropertyString(propertyTemplate.name)
                 return (
                     <div

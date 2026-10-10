@@ -8,16 +8,16 @@ import {IPropertyTemplate} from './blocks/board'
 // Both are stored on the board's property templates (per board, applies to all
 // views) and pass through the server untouched because CardProperties is a
 // JSON passthrough field. An empty/undefined list means "visible to everyone".
-// Members holding the ManageBoardProperties permission always pass so that a
-// manager can never lock themselves out of a setting they created.
+// Only board admins bypass the lists; editors and commenters are subject to
+// them like everyone else.
 
 export function getPropertyVisibleTo(template: IPropertyTemplate | undefined): string[] | undefined {
     const list = template?.visibleTo
     return list && list.length > 0 ? list : undefined
 }
 
-export function canViewProperty(template: IPropertyTemplate | undefined, userId: string | undefined, isManager: boolean): boolean {
-    if (isManager) {
+export function canViewProperty(template: IPropertyTemplate | undefined, userId: string | undefined, isAdmin: boolean): boolean {
+    if (isAdmin) {
         return true
     }
     const allowed = getPropertyVisibleTo(template)
@@ -32,8 +32,8 @@ export function getColumnVisibleTo(template: IPropertyTemplate | undefined, colu
     return allowed && allowed.length > 0 ? allowed : undefined
 }
 
-export function canViewColumn(template: IPropertyTemplate | undefined, columnKey: string, userId: string | undefined, isManager: boolean): boolean {
-    if (isManager) {
+export function canViewColumn(template: IPropertyTemplate | undefined, columnKey: string, userId: string | undefined, isAdmin: boolean): boolean {
+    if (isAdmin) {
         return true
     }
     const allowed = getColumnVisibleTo(template, columnKey)

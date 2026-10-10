@@ -84,11 +84,11 @@ const CalendarFullView = (props: Props): JSX.Element|null => {
     const [cardItem, setCardItem] = useState<Card>()
 
     const me = useAppSelector(getMe)
-    const canManageBoardProperties = useHasCurrentBoardPermissions([Permission.ManageBoardProperties])
+    const canBypassViewPermissions = useHasCurrentBoardPermissions([Permission.ManageBoardRoles])
 
     const visiblePropertyTemplates = useMemo(() => (
-        board.cardProperties.filter((template: IPropertyTemplate) => activeView.fields.visiblePropertyIds.includes(template.id) && canViewProperty(template, me?.id, canManageBoardProperties))
-    ), [board.cardProperties, activeView.fields.visiblePropertyIds, me?.id, canManageBoardProperties])
+        board.cardProperties.filter((template: IPropertyTemplate) => activeView.fields.visiblePropertyIds.includes(template.id) && canViewProperty(template, me?.id, canBypassViewPermissions))
+    ), [board.cardProperties, activeView.fields.visiblePropertyIds, me?.id, canBypassViewPermissions])
 
     let {initialDate} = props
     if (!initialDate) {
