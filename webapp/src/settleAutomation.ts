@@ -153,14 +153,14 @@ async function applyAmountAutomation(board: Board, card: Card, changedPropertyId
         }
     }
 
-    // Lock rule: a price change on a settling/settled card is ignored.
-    if (changedPropertyId === tSelect.id) {
-        const tSettle = findTemplateByName(board, SETTLE_PROP_NAMES.settleStatus)
-        if (tSettle) {
-            const statusLabel = optionById(tSettle, stringProp(card, tSettle) || '')?.value
-            if (statusLabel && LOCKED_STATUSES.has(statusLabel)) {
-                return
-            }
+    // Lock rule: settling/settled cards keep their existing amount (any change
+    // is ignored), unless the card never got an amount -- then calculate it.
+    const tSettle = findTemplateByName(board, SETTLE_PROP_NAMES.settleStatus)
+    if (tSettle) {
+        const statusLabel = optionById(tSettle, stringProp(card, tSettle) || '')?.value
+        const existingAmount = parseFloat(stringProp(card, tAmount) || '')
+        if (statusLabel && LOCKED_STATUSES.has(statusLabel) && !isNaN(existingAmount)) {
+            return
         }
     }
 
