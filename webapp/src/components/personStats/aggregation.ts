@@ -83,8 +83,11 @@ function categorizeCard(
     board: Board,
     range: DateRange,
 ): 'scheduled' | 'completed' | 'settled' | null {
-    const statusPropId = getPropertyId(board, PROP_STATUS)
-    const status = getStringProp(card, statusPropId)
+    const statusProp = board.cardProperties.find((p) => p.name === PROP_STATUS)
+    const statusPropId = statusProp?.id
+    const rawStatus = getStringProp(card, statusPropId)
+    // Select properties store the option ID; resolve to the option name.
+    const status = statusProp?.options?.find((o) => o.id === rawStatus)?.value || rawStatus
 
     if (STATUS_SCHEDULED.includes(status)) {
         // Use creation date for scheduled cards
