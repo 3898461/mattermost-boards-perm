@@ -31,8 +31,16 @@
 }
 
 .completion-detail-editor__input {
-    width: 72px;
+    width: 36px;
     text-align: right;
+    border: 1px solid rgba(var(--center-channel-color-rgb), 0.3);
+    box-shadow: none;
+    outline: none;
+}
+
+.completion-detail-editor__input:focus {
+    border-color: var(--button-bg);
+    box-shadow: none;
 }
 
 .completion-detail-editor__pct {
@@ -58,4 +66,15 @@
 
 .completion-detail-editor__total--bad {
     color: var(--error-text);
+}
+
+.completion-detail-editor__save {
+    background-color: #75FF75;
+    color: #fff;
+    border: none;
+}
+
+.completion-detail-editor__save:hover {
+    background-color: #5ce65c;
+    color: #fff;
 }

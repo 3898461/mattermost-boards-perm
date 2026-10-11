@@ -130,8 +130,20 @@ async function applyAmountAutomation(board: Board, card: Card, changedPropertyId
     if (!tSelect || !tDays || !tPrice || !tAmount) {
         return
     }
-    if (changedPropertyId !== tSelect.id && changedPropertyId !== tDays.id) {
+    const tMakeStatus = findTemplateByName(board, SETTLE_PROP_NAMES.makeStatus)
+    const tSettleStatus = findTemplateByName(board, SETTLE_PROP_NAMES.settleStatus)
+    const isPriceOrDaysChange = changedPropertyId === tSelect.id || changedPropertyId === tDays.id
+    const isStatusChange = (tMakeStatus && changedPropertyId === tMakeStatus.id) || (tSettleStatus && changedPropertyId === tSettleStatus.id)
+    if (!isPriceOrDaysChange && !isStatusChange) {
         return
+    }
+    // Status changes only backfill when the amount is empty (cards that
+    // missed the initial calculation). Price/days changes always recalculate.
+    if (isStatusChange && !isPriceOrDaysChange) {
+        const existingAmount = parseFloat(stringProp(card, tAmount) || '')
+        if (!isNaN(existingAmount)) {
+            return
+        }
     }
 
     // Parse the unit price from the selected option label.

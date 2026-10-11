@@ -209,7 +209,10 @@ const CompletionDetailEditor = (props: Props): JSX.Element => {
                 <span className={`completion-detail-editor__total ${totalOk ? 'completion-detail-editor__total--ok' : 'completion-detail-editor__total--bad'}`}>
                     {intl.formatMessage({id: 'CompletionDetail.total', defaultMessage: '合计：{total}%'}, {total: String(total)})}
                 </span>
-                <Button onClick={onSave}>
+                <Button
+                    onClick={onSave}
+                    className='completion-detail-editor__save'
+                >
                     {intl.formatMessage({id: 'CompletionDetail.save', defaultMessage: '保存分工'})}
                 </Button>
             </div>
