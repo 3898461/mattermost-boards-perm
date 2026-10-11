@@ -73,7 +73,9 @@ const ViewHeader = (props: Props) => {
 
     const withGroupBy = activeView.fields.viewType === 'board' || activeView.fields.viewType === 'table'
     const withDisplayBy = activeView.fields.viewType === 'calendar'
-    const withSortBy = activeView.fields.viewType !== 'calendar'
+    const withSortBy = activeView.fields.viewType !== 'calendar' && activeView.fields.viewType !== 'personStats'
+    const withFilter = activeView.fields.viewType !== 'personStats'
+    const withProperties = activeView.fields.viewType !== 'personStats'
 
     const [viewTitle, setViewTitle] = useState(activeView.title)
 
@@ -156,10 +158,11 @@ const ViewHeader = (props: Props) => {
             <>
                 {/* Card properties */}
 
+                {withProperties &&
                 <ViewHeaderPropertiesMenu
                     properties={board.cardProperties}
                     activeView={activeView}
-                />
+                />}
 
                 {/* Group by */}
 
@@ -181,6 +184,7 @@ const ViewHeader = (props: Props) => {
 
                 {/* Filter */}
 
+                {withFilter &&
                 <ModalWrapper>
                     <Button
                         active={hasFilter}
@@ -203,7 +207,7 @@ const ViewHeader = (props: Props) => {
                             }
                         }}
                     />}
-                </ModalWrapper>
+                </ModalWrapper>}
 
                 {/* Sort */}
 

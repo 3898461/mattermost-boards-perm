@@ -1,0 +1,95 @@
+// Copyright (c) 2020-present Mattermost, Inc. All Rights Reserved.
+// See LICENSE.txt for license information.
+
+.PersonStats {
+    padding: 16px;
+    overflow: auto;
+    height: 100%;
+
+    &__controls {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+
+    &__presets {
+        display: flex;
+        gap: 8px;
+
+        button {
+            padding: 6px 16px;
+            border: 1px solid rgba(var(--center-channel-color-rgb), 0.2);
+            border-radius: 4px;
+            background: var(--center-channel-bg);
+            cursor: pointer;
+            font-size: 13px;
+
+            &:hover {
+                background: rgba(var(--button-bg-rgb), 0.08);
+            }
+
+            &.active {
+                background: var(--button-bg);
+                color: var(--button-color);
+                border-color: var(--button-bg);
+            }
+        }
+    }
+
+    &__custom {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        input[type='date'] {
+            padding: 4px 8px;
+            border: 1px solid rgba(var(--center-channel-color-rgb), 0.2);
+            border-radius: 4px;
+            font-size: 13px;
+        }
+    }
+
+    &__table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+
+        th, td {
+            padding: 8px 12px;
+            text-align: right;
+            border-bottom: 1px solid rgba(var(--center-channel-color-rgb), 0.1);
+        }
+
+        th:first-child, td:first-child {
+            text-align: left;
+        }
+
+        th {
+            font-weight: 600;
+            background: rgba(var(--center-channel-color-rgb), 0.05);
+            position: sticky;
+            top: 0;
+        }
+
+        tbody tr:hover {
+            background: rgba(var(--button-bg-rgb), 0.04);
+        }
+    }
+
+    &__total {
+        font-weight: 600;
+        background: rgba(var(--center-channel-color-rgb), 0.05);
+
+        td {
+            border-top: 2px solid rgba(var(--center-channel-color-rgb), 0.2);
+            border-bottom: none;
+        }
+    }
+
+    &__empty {
+        text-align: center !important;
+        color: rgba(var(--center-channel-color-rgb), 0.5);
+        padding: 32px !important;
+    }
+}

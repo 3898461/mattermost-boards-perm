@@ -217,6 +217,35 @@ const ViewMenu = (props: Props) => {
             })
     }, [props.board, props.activeView, props.intl, showView])
 
+    const handleAddViewPersonStats = useCallback(() => {
+        const {board, activeView, intl} = props
+
+        Utils.log('addview-personStats')
+
+        const view = createBoardView()
+        view.title = '人员统计'
+        view.fields.viewType = 'personStats'
+        view.parentId = board.id
+        view.boardId = board.id
+        view.fields.visiblePropertyIds = [Constants.titleColumnId]
+
+        const oldViewId = activeView.id
+
+        mutator.insertBlock(
+            view.boardId,
+            view,
+            'add view',
+            async (block: Block) => {
+                setTimeout(() => {
+                    Utils.log(`showView: ${block.id}`)
+                    showView(block.id)
+                }, 120)
+            },
+            async () => {
+                showView(oldViewId)
+            })
+    }, [props.board, props.activeView, props.intl, showView])
+
     const {views, intl} = props
     const visibleViews = views.filter((view: BoardView) => canViewView(view, me?.id, canBypassViewPermissions))
 
@@ -251,6 +280,7 @@ const ViewMenu = (props: Props) => {
         case 'table': return <TableIcon/>
         case 'gallery': return <GalleryIcon/>
         case 'calendar': return <CalendarIcon/>
+        case 'personStats': return <TableIcon/>
         default: return <div/>
         }
     }
@@ -322,6 +352,12 @@ const ViewMenu = (props: Props) => {
                                 name='Calendar'
                                 icon={<CalendarIcon/>}
                                 onClick={handleAddViewCalendar}
+                            />
+                            <Menu.Text
+                                id='personStats'
+                                name='人员统计'
+                                icon={<TableIcon/>}
+                                onClick={handleAddViewPersonStats}
                             />
                         </div>
                     </Menu.SubMenu>
