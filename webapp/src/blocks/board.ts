@@ -260,6 +260,28 @@ function createCardPropertiesPatches(newCardProperties: IPropertyTemplate[], old
         }
     })
 
+    // Detect pure reorder: same IDs, same content, different order.
+    // The patch must include all properties in the new order, otherwise
+    // the server has no way to know the order changed.
+    const newIds = newCardProperties.map((p) => p.id).join(',')
+    const oldIds = oldCardProperties.map((p) => p.id).join(',')
+    const isReorder = newIds !== oldIds &&
+        newDeletedCardProperties.length === 0 &&
+        oldDeletedCardProperties.length === 0
+    if (isReorder) {
+        // Include all in new order for update, all in old order for undo.
+        return [
+            {
+                updatedCardProperties: [...newCardProperties],
+                deletedCardProperties: [],
+            },
+            {
+                updatedCardProperties: [...oldCardProperties],
+                deletedCardProperties: [],
+            },
+        ]
+    }
+
     return [
         {
             updatedCardProperties: newUpdatedCardProperties,
