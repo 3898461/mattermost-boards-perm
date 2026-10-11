@@ -16,6 +16,7 @@ import PropertyMenu, {PropertyTypes} from '../../widgets/propertyMenu'
 import Calculations from '../calculations/calculations'
 import PropertyValueElement from '../propertyValueElement'
 import ConfirmationDialogBox, {ConfirmationDialogBoxProps} from '../confirmationDialogBox'
+import DraggablePropertyRow from './draggablePropertyRow'
 import {sendFlashMessage} from '../flashMessages'
 import Menu from '../../widgets/menu'
 import {IDType, Utils} from '../../utils'
@@ -137,12 +138,15 @@ const CardDetailProperties = (props: Props) => {
 
     return (
         <div className='octo-propertylist CardDetailProperties'>
-            {board.cardProperties.filter((propertyTemplate: IPropertyTemplate) => canViewProperty(propertyTemplate, me?.id, canBypassViewPermissions)).map((propertyTemplate: IPropertyTemplate) => {
+            {board.cardProperties.filter((propertyTemplate: IPropertyTemplate) => canViewProperty(propertyTemplate, me?.id, canBypassViewPermissions)).map((propertyTemplate: IPropertyTemplate, index: number) => {
                 const propertyName = safePropertyString(propertyTemplate.name)
                 return (
-                    <div
+                    <DraggablePropertyRow
                         key={propertyTemplate.id + '-' + propertyTemplate.type}
-                        className='octo-propertyrow'
+                        board={board}
+                        propertyTemplate={propertyTemplate}
+                        index={index}
+                        canReorder={!props.readonly && canEditBoardProperties}
                     >
                         {(props.readonly || !canEditBoardProperties) && <div className='octo-propertyname octo-propertyname--readonly'>{propertyName}</div>}
                         {!props.readonly && canEditBoardProperties &&
@@ -167,7 +171,7 @@ const CardDetailProperties = (props: Props) => {
                             showEmptyPlaceholder={true}
                             detailed={true}
                         />
-                    </div>
+                    </DraggablePropertyRow>
                 )
             })}
 
