@@ -203,10 +203,7 @@ async function applyDateStamps(board: Board, card: Card, changedPropertyId: stri
         if (!tDate) {
             continue
         }
-        // First entry wins: never overwrite an existing stamp.
-        if (stringProp(card, tDate)) {
-            continue
-        }
+        // Always stamp on entry, overwriting any existing value (manual or auto).
         await setProperty(tDate.id, startOfToday())
     }
 }
