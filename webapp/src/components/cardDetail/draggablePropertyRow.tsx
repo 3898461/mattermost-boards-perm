@@ -9,40 +9,54 @@ import {useAppSelector} from '../../store/hooks'
 import {getBoard} from '../../store/boards'
 import {RootState} from '../../store'
 
+// Storage key for the UI-only property order (in board.properties).
+export const PROPERTY_ORDER_KEY = 'cardPropertyOrder'
+
 type Props = {
     board: Board
     propertyTemplate: IPropertyTemplate
-    index: number
     children: React.ReactNode
     canReorder: boolean
 }
 
 // Property row with up/down reorder buttons (hover-visible).
-// Reordering only changes display order in board.cardProperties;
-// card data is keyed by property ID and unaffected.
+// Order is stored UI-only in board.properties[PROPERTY_ORDER_KEY] as an
+// array of property IDs. This avoids the broken cardProperties patch
+// path (createCardPropertiesPatches ignores pure reorders).
+// Card data is keyed by property ID and unaffected by order.
 const DraggablePropertyRow = (props: Props): JSX.Element => {
     // Always use the freshest board from the store to avoid stale references.
     const freshBoard = useAppSelector((state: RootState) => getBoard(props.board.id)(state)) || props.board
 
+    const getOrderedIds = (board: Board): string[] => {
+        const stored = (board.properties || {})[PROPERTY_ORDER_KEY]
+        if (Array.isArray(stored) && stored.every((id) => typeof id === 'string')) {
+            return stored as string[]
+        }
+        return board.cardProperties.map((t) => t.id)
+    }
+
     const move = async (delta: -1 | 1) => {
         try {
-            const templates = freshBoard.cardProperties
-            const srcIndex = templates.findIndex((t) => t.id === props.propertyTemplate.id)
+            const orderedIds = getOrderedIds(freshBoard)
+            const srcIndex = orderedIds.indexOf(props.propertyTemplate.id)
             if (srcIndex < 0) {
                 console.error('[reorder] template not found:', props.propertyTemplate.id)
                 return
             }
             const destIndex = srcIndex + delta
-            if (destIndex < 0 || destIndex >= templates.length) {
+            if (destIndex < 0 || destIndex >= orderedIds.length) {
                 return
             }
-            // Do the reorder directly via updateBoard (well-tested path)
-            // instead of the never-used changePropertyTemplateOrder.
-            const newTemplates = templates.slice()
-            const [moved] = newTemplates.splice(srcIndex, 1)
-            newTemplates.splice(destIndex, 0, moved)
+            const newOrderedIds = [...orderedIds]
+            const [moved] = newOrderedIds.splice(srcIndex, 1)
+            newOrderedIds.splice(destIndex, 0, moved)
+
             const newBoard = createBoard(freshBoard)
-            newBoard.cardProperties = newTemplates
+            newBoard.properties = {
+                ...(newBoard.properties || {}),
+                [PROPERTY_ORDER_KEY]: newOrderedIds,
+            }
             console.log(`[reorder] moving ${props.propertyTemplate.name} from ${srcIndex} to ${destIndex}`)
             await mutator.updateBoard(newBoard, freshBoard, 'reorder properties')
             console.log('[reorder] done')

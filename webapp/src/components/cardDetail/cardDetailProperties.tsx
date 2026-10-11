@@ -16,7 +16,7 @@ import PropertyMenu, {PropertyTypes} from '../../widgets/propertyMenu'
 import Calculations from '../calculations/calculations'
 import PropertyValueElement from '../propertyValueElement'
 import ConfirmationDialogBox, {ConfirmationDialogBoxProps} from '../confirmationDialogBox'
-import DraggablePropertyRow from './draggablePropertyRow'
+import DraggablePropertyRow, {PROPERTY_ORDER_KEY} from './draggablePropertyRow'
 import {sendFlashMessage} from '../flashMessages'
 import Menu from '../../widgets/menu'
 import {IDType, Utils} from '../../utils'
@@ -136,19 +136,32 @@ const CardDetailProperties = (props: Props) => {
         setShowConfirmationDialog(true)
     }
 
+    // Sort properties by the UI-only order stored in board.properties,
+    // falling back to the natural cardProperties order.
+    const orderedProperties = (() => {
+        const stored = (board.properties || {})[PROPERTY_ORDER_KEY]
+        const orderIds: string[] | null = Array.isArray(stored) && stored.every((id) => typeof id === 'string') ? stored as string[] : null
+        const filtered = board.cardProperties.filter((propertyTemplate: IPropertyTemplate) => canViewProperty(propertyTemplate, me?.id, canBypassViewPermissions))
+        if (!orderIds) {
+            return filtered
+        }
+        const orderIndex = new Map(orderIds.map((id, i) => [id, i]))
+        return [...filtered].sort((a, b) => {
+            const ai = orderIndex.has(a.id) ? orderIndex.get(a.id)! : Number.MAX_SAFE_INTEGER
+            const bi = orderIndex.has(b.id) ? orderIndex.get(b.id)! : Number.MAX_SAFE_INTEGER
+            return ai - bi
+        })
+    })()
+
     return (
         <div className='octo-propertylist CardDetailProperties'>
-            {board.cardProperties.filter((propertyTemplate: IPropertyTemplate) => canViewProperty(propertyTemplate, me?.id, canBypassViewPermissions)).map((propertyTemplate: IPropertyTemplate) => {
+            {orderedProperties.map((propertyTemplate: IPropertyTemplate) => {
                 const propertyName = safePropertyString(propertyTemplate.name)
-                // Use the real index in board.cardProperties (not the filtered
-                // index) so drag-reorder targets the correct position.
-                const realIndex = board.cardProperties.findIndex((t) => t.id === propertyTemplate.id)
                 return (
                     <DraggablePropertyRow
                         key={propertyTemplate.id + '-' + propertyTemplate.type}
                         board={board}
                         propertyTemplate={propertyTemplate}
-                        index={realIndex}
                         canReorder={!props.readonly && canEditBoardProperties}
                     >
                         {(props.readonly || !canEditBoardProperties) && <div className='octo-propertyname octo-propertyname--readonly'>{propertyName}</div>}
