@@ -69,12 +69,15 @@
 }
 
 .completion-detail-editor__save {
-    background-color: #75FF75;
+    background-color: rgb(55, 165, 121);
     color: #fff;
     border: none;
+    width: 60px;
+    padding: 4px 0;
+    font-size: 12px;
 }
 
 .completion-detail-editor__save:hover {
-    background-color: #5ce65c;
+    background-color: rgb(45, 145, 105);
     color: #fff;
 }
