@@ -59,6 +59,22 @@ function parseDetail(json: string | undefined): Record<string, number> {
     return {}
 }
 
+function getDateTimestamp(card: Card, propId: string | undefined): number {
+    if (!propId) {
+        return 0
+    }
+    const val = card.fields.properties[propId]
+    if (typeof val === 'number') {
+        // Already a timestamp (ms). Heuristic: if < 1e12, it's seconds.
+        return val < 1e12 ? val * 1000 : val
+    }
+    if (typeof val === 'string' && val) {
+        const ts = new Date(val).getTime()
+        return isNaN(ts) ? 0 : ts
+    }
+    return 0
+}
+
 function getNumericProp(card: Card, propId: string | undefined): number {
     if (!propId) {
         return 0
@@ -99,8 +115,7 @@ function categorizeCard(
 
     if (STATUS_COMPLETED_UNSETTLED.includes(status)) {
         const datePropId = getPropertyId(board, PROP_COMPLETE_DATE)
-        const dateVal = getStringProp(card, datePropId)
-        const ts = dateVal ? new Date(dateVal).getTime() : 0
+        const ts = getDateTimestamp(card, datePropId)
         if (ts >= range.start && ts <= range.end) {
             return 'completed'
         }
@@ -109,8 +124,7 @@ function categorizeCard(
 
     if (STATUS_SETTLED.includes(status)) {
         const datePropId = getPropertyId(board, PROP_COMPLETE_DATE)
-        const dateVal = getStringProp(card, datePropId)
-        const ts = dateVal ? new Date(dateVal).getTime() : 0
+        const ts = getDateTimestamp(card, datePropId)
         if (ts >= range.start && ts <= range.end) {
             return 'settled'
         }
