@@ -138,14 +138,17 @@ const CardDetailProperties = (props: Props) => {
 
     return (
         <div className='octo-propertylist CardDetailProperties'>
-            {board.cardProperties.filter((propertyTemplate: IPropertyTemplate) => canViewProperty(propertyTemplate, me?.id, canBypassViewPermissions)).map((propertyTemplate: IPropertyTemplate, index: number) => {
+            {board.cardProperties.filter((propertyTemplate: IPropertyTemplate) => canViewProperty(propertyTemplate, me?.id, canBypassViewPermissions)).map((propertyTemplate: IPropertyTemplate) => {
                 const propertyName = safePropertyString(propertyTemplate.name)
+                // Use the real index in board.cardProperties (not the filtered
+                // index) so drag-reorder targets the correct position.
+                const realIndex = board.cardProperties.findIndex((t) => t.id === propertyTemplate.id)
                 return (
                     <DraggablePropertyRow
                         key={propertyTemplate.id + '-' + propertyTemplate.type}
                         board={board}
                         propertyTemplate={propertyTemplate}
-                        index={index}
+                        index={realIndex}
                         canReorder={!props.readonly && canEditBoardProperties}
                     >
                         {(props.readonly || !canEditBoardProperties) && <div className='octo-propertyname octo-propertyname--readonly'>{propertyName}</div>}
