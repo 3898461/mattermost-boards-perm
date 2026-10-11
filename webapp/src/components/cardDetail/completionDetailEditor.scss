@@ -55,6 +55,19 @@
     margin-top: 4px;
 }
 
+.completion-detail-editor__save-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Invisible spacer matching the % sign width, so the button aligns
+   with the input boxes above. */
+.completion-detail-editor__save-spacer {
+    visibility: hidden;
+    font-size: 12px;
+}
+
 .completion-detail-editor__total {
     font-size: 12px;
     font-weight: 600;
