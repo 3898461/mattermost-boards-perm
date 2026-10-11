@@ -29,7 +29,11 @@ const PersonSummary = ({card, propertyTemplate}: {card: Card, propertyTemplate: 
     const me = useAppSelector(getMe)
 
     const value = card.fields.properties[propertyTemplate.id]
-    const userIds: string[] = Array.isArray(value) ? value.filter((v) => typeof v === 'string') : (typeof value === 'string' && value ? [value] : [])
+    const userIds: string[] = Array.isArray(value) ? value.filter((v) => typeof v === 'string' && v) : (typeof value === 'string' && value ? [value] : [])
+
+    if (userIds.length === 0) {
+        return <span>未指定</span>
+    }
 
     const displayName = (userId: string): string => {
         const user: IUser | undefined = boardUsersById[userId]

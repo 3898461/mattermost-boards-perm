@@ -67,7 +67,7 @@ const CompletionDetailEditor = (props: Props): JSX.Element => {
             return []
         }
         const v = card.fields.properties[producersTemplate.id]
-        return Array.isArray(v) ? (v as string[]) : []
+        return Array.isArray(v) ? (v as string[]).filter((id) => typeof id === 'string' && id) : []
     }, [card, producersTemplate])
 
     const savedDetail = useMemo(
