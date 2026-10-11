@@ -15,7 +15,7 @@ import {sendFlashMessage} from './components/flashMessages'
 //   ("客户A图标1000" -> 1000). The "remote control" for pricing.
 // - "人天": number property.
 // - "单价" / "实际金额": number properties, auto-written, read-only.
-// - "制作状态" / "结算状态": select properties driving date stamps.
+// - "项目状态": select property driving date stamps (unified workflow).
 // - "完成日期" / "申请日期" / "结算日期" / "付款日期": date properties.
 //
 // All automation runs after a property change settles, through
@@ -27,8 +27,7 @@ export const SETTLE_PROP_NAMES = {
     personDays: '人天',
     unitPrice: '单价',
     amount: '实际金额',
-    makeStatus: '制作状态',
-    settleStatus: '结算状态',
+    projectStatus: '项目状态',
     client: '甲方',
     dateDone: '完成日期',
     dateApply: '申请日期',
@@ -54,10 +53,10 @@ const LOCKED_STATUSES = new Set<string>(['待付款', '已付款'])
 
 // status option label -> date property name (first entry wins, never overwritten)
 const STATUS_DATE_MAP: Array<{statusProp: string, optionLabel: string, dateProp: string}> = [
-    {statusProp: SETTLE_PROP_NAMES.makeStatus, optionLabel: '制作完成', dateProp: SETTLE_PROP_NAMES.dateDone},
-    {statusProp: SETTLE_PROP_NAMES.settleStatus, optionLabel: '申请结算', dateProp: SETTLE_PROP_NAMES.dateApply},
-    {statusProp: SETTLE_PROP_NAMES.settleStatus, optionLabel: '待付款', dateProp: SETTLE_PROP_NAMES.dateSettle},
-    {statusProp: SETTLE_PROP_NAMES.settleStatus, optionLabel: '已付款', dateProp: SETTLE_PROP_NAMES.datePaid},
+    {statusProp: SETTLE_PROP_NAMES.projectStatus, optionLabel: '完成', dateProp: SETTLE_PROP_NAMES.dateDone},
+    {statusProp: SETTLE_PROP_NAMES.projectStatus, optionLabel: '申请结算', dateProp: SETTLE_PROP_NAMES.dateApply},
+    {statusProp: SETTLE_PROP_NAMES.projectStatus, optionLabel: '待付款', dateProp: SETTLE_PROP_NAMES.dateSettle},
+    {statusProp: SETTLE_PROP_NAMES.projectStatus, optionLabel: '已付款', dateProp: SETTLE_PROP_NAMES.datePaid},
 ]
 
 export function findTemplateByName(board: Board, name: string): IPropertyTemplate | undefined {
@@ -164,9 +163,9 @@ async function applyAmountAutomation(board: Board, card: Card, changedPropertyId
 
     // Lock rule: settling/settled cards keep their existing amount (any change
     // is ignored), unless the card never got an amount -- then calculate it.
-    const tSettle = findTemplateByName(board, SETTLE_PROP_NAMES.settleStatus)
-    if (tSettle) {
-        const statusLabel = optionById(tSettle, stringProp(card, tSettle) || '')?.value
+    const tStatus = findTemplateByName(board, SETTLE_PROP_NAMES.projectStatus)
+    if (tStatus) {
+        const statusLabel = optionById(tStatus, stringProp(card, tStatus) || '')?.value
         const existingAmount = parseFloat(stringProp(card, tAmount) || '')
         if (statusLabel && LOCKED_STATUSES.has(statusLabel) && !isNaN(existingAmount)) {
             return
