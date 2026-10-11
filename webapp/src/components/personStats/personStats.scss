@@ -92,4 +92,14 @@
         color: rgba(var(--center-channel-color-rgb), 0.5);
         padding: 32px !important;
     }
+
+    &__warning {
+        padding: 16px;
+        background: rgba(255, 200, 0, 0.1);
+        border: 1px solid rgba(255, 200, 0, 0.3);
+        border-radius: 4px;
+        color: rgba(var(--center-channel-color-rgb), 0.8);
+        font-size: 13px;
+        margin-bottom: 16px;
+    }
 }

@@ -56,10 +56,19 @@ const PersonStats = (props: Props): JSX.Element => {
         return {start, end}
     }, [preset, customStart, customEnd])
 
+    // Check for required properties
+    const hasRequiredProps = useMemo(() => {
+        const names = board.cardProperties.map((p) => p.name)
+        return names.includes('人天') && names.includes('完成度明细') && names.includes('项目状态')
+    }, [board])
+
     // Aggregate
     const allRows = useMemo(() => {
+        if (!hasRequiredProps) {
+            return []
+        }
         return aggregatePersonStats(board, props.cards, range)
-    }, [board, props.cards, range])
+    }, [board, props.cards, range, hasRequiredProps])
 
     // Row-level permission: non-admins only see their own row
     const rows = useMemo(() => {
@@ -145,6 +154,13 @@ const PersonStats = (props: Props): JSX.Element => {
                 )}
             </div>
 
+            {!hasRequiredProps && (
+                <div className='PersonStats__warning'>
+                    此 board 缺少结算属性（需要：人天、完成度明细、项目状态）。请在结算 board（如 1ALL）中使用人员统计。
+                </div>
+            )}
+
+            {hasRequiredProps && (
             <table className='PersonStats__table'>
                 <thead>
                     <tr>
@@ -203,6 +219,7 @@ const PersonStats = (props: Props): JSX.Element => {
                     </tfoot>
                 )}
             </table>
+            )}
         </div>
     )
 }
