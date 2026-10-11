@@ -57,9 +57,7 @@ const DraggablePropertyRow = (props: Props): JSX.Element => {
                 ...(newBoard.properties || {}),
                 [PROPERTY_ORDER_KEY]: newOrderedIds,
             }
-            console.log(`[reorder] moving ${props.propertyTemplate.name} from ${srcIndex} to ${destIndex}`)
             await mutator.updateBoard(newBoard, freshBoard, 'reorder properties')
-            console.log('[reorder] done')
         } catch (e) {
             console.error('[reorder] failed:', e)
         }

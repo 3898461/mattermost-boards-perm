@@ -122,13 +122,6 @@ function categorizeCard(
     // Select properties store the option ID; resolve to the option name.
     const status = statusProp?.options?.find((o) => o.id === rawStatus)?.value || rawStatus
 
-    // Debug: log for cards with man-days to diagnose filtering
-    const manDaysPropId = getPropertyId(board, PROP_MAN_DAYS)
-    const manDays = getNumericProp(card, manDaysPropId)
-    if (manDays > 100) {
-        console.log(`[personStats] card ${card.title}: rawStatus=${rawStatus}, resolvedStatus=${status}, manDays=${manDays}`)
-    }
-
     if (STATUS_SCHEDULED.includes(status)) {
         // Use creation date for scheduled cards
         if (card.createAt >= range.start && card.createAt <= range.end) {
@@ -149,10 +142,6 @@ function categorizeCard(
     if (STATUS_SETTLED.includes(status)) {
         const datePropId = getPropertyId(board, PROP_COMPLETE_DATE)
         const ts = getDateTimestamp(card, datePropId)
-        const rawDateVal = datePropId ? card.fields.properties[datePropId] : undefined
-        if (manDays > 100) {
-            console.log(`[personStats] settled check: rawDate=${JSON.stringify(rawDateVal)}, ts=${ts}, range=${range.start}-${range.end}, inRange=${ts >= range.start && ts <= range.end}`)
-        }
         if (ts >= range.start && ts <= range.end) {
             return 'settled'
         }
