@@ -69,8 +69,25 @@ function getDateTimestamp(card: Card, propId: string | undefined): number {
         return val < 1e12 ? val * 1000 : val
     }
     if (typeof val === 'string' && val) {
+        // Might be a JSON-encoded date object like {"from":123...}
+        try {
+            const parsed = JSON.parse(val)
+            if (parsed && typeof parsed === 'object' && typeof parsed.from === 'number') {
+                const from = parsed.from
+                return from < 1e12 ? from * 1000 : from
+            }
+        } catch {
+            // Not JSON, try as date string
+        }
         const ts = new Date(val).getTime()
         return isNaN(ts) ? 0 : ts
+    }
+    if (val && typeof val === 'object') {
+        // Date range object: {from: timestamp, to: timestamp}
+        const from = (val as {from?: unknown}).from
+        if (typeof from === 'number') {
+            return from < 1e12 ? from * 1000 : from
+        }
     }
     return 0
 }
