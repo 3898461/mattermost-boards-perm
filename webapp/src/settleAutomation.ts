@@ -127,7 +127,9 @@ async function applyAmountAutomation(board: Board, card: Card, changedPropertyId
     const tDays = findTemplateByName(board, SETTLE_PROP_NAMES.personDays)
     const tPrice = findTemplateByName(board, SETTLE_PROP_NAMES.unitPrice)
     const tAmount = findTemplateByName(board, SETTLE_PROP_NAMES.amount)
-    if (!tSelect || !tDays || !tPrice || !tAmount) {
+    // tPrice (单价) is optional: if the board doesn't have it, skip writing it
+    // but still calculate the amount.
+    if (!tSelect || !tDays || !tAmount) {
         return
     }
     const existingAmount = parseFloat(stringProp(card, tAmount) || '')
@@ -171,9 +173,11 @@ async function applyAmountAutomation(board: Board, card: Card, changedPropertyId
         }
     }
 
-    const currentPrice = parseFloat(stringProp(card, tPrice) || '')
-    if (!(currentPrice === price)) {
-        await setProperty(tPrice.id, String(price))
+    if (tPrice) {
+        const currentPrice = parseFloat(stringProp(card, tPrice) || '')
+        if (!(currentPrice === price)) {
+            await setProperty(tPrice.id, String(price))
+        }
     }
 
     const days = parseFloat(stringProp(card, tDays) || '')
