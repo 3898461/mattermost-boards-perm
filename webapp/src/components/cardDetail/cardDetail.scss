@@ -112,6 +112,34 @@
             cursor: grabbing;
         }
 
+        .octo-propertyrow__reorder {
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity 0.15s;
+            margin-right: 4px;
+        }
+
+        &:hover .octo-propertyrow__reorder {
+            opacity: 1;
+        }
+
+        .octo-propertyrow__reorder-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: rgba(var(--center-channel-color-rgb), 0.5);
+            font-size: 12px;
+            line-height: 1.2;
+            padding: 1px 4px;
+        }
+
+        .octo-propertyrow__reorder-btn:hover {
+            color: var(--button-bg);
+            background: rgba(var(--button-bg-rgb), 0.1);
+            border-radius: 3px;
+        }
+
         .octo-propertyrow__content {
             flex: 1;
             display: flex;

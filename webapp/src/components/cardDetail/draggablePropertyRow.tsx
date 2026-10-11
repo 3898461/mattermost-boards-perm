@@ -1,8 +1,7 @@
 // Copyright (c) 2020-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import React, {useRef} from 'react'
-import {useDrag, useDrop} from 'react-dnd'
+import React from 'react'
 
 import {Board, IPropertyTemplate} from '../../blocks/board'
 import mutator from '../../mutator'
@@ -15,65 +14,41 @@ type Props = {
     canReorder: boolean
 }
 
-const DRAG_TYPE = 'property-row'
-
-type DragItem = {
-    id: string
-}
-
+// Property row with up/down reorder buttons (hover-visible).
+// Reordering only changes display order in board.cardProperties;
+// card data is keyed by property ID and unaffected.
 const DraggablePropertyRow = (props: Props): JSX.Element => {
-    const rowRef = useRef<HTMLDivElement>(null)
-    const handleRef = useRef<HTMLDivElement>(null)
-
-    const [{isDragging}, drag] = useDrag({
-        type: DRAG_TYPE,
-        item: {id: props.propertyTemplate.id} as DragItem,
-        canDrag: props.canReorder,
-        collect: (monitor) => ({
-            isDragging: monitor.isDragging(),
-        }),
-    })
-
-    const [{isOver}, drop] = useDrop({
-        accept: DRAG_TYPE,
-        canDrop: () => props.canReorder,
-        collect: (monitor) => ({
-            isOver: monitor.isOver(),
-        }),
-        drop: (item: DragItem) => {
-            if (!props.canReorder || item.id === props.propertyTemplate.id) {
-                return
-            }
-            const templates = props.board.cardProperties
-            const srcTemplate = templates.find((t) => t.id === item.id)
-            if (!srcTemplate) {
-                return
-            }
-            // Move to this row's position.
-            mutator.changePropertyTemplateOrder(props.board, srcTemplate, props.index)
-        },
-    })
-
-    // Handle is the drag source, row is the drop target.
-    drag(handleRef)
-    drop(rowRef)
+    const move = (delta: -1 | 1) => {
+        const templates = props.board.cardProperties
+        const srcIndex = templates.findIndex((t) => t.id === props.propertyTemplate.id)
+        if (srcIndex < 0) {
+            return
+        }
+        const destIndex = srcIndex + delta
+        if (destIndex < 0 || destIndex >= templates.length) {
+            return
+        }
+        mutator.changePropertyTemplateOrder(props.board, props.propertyTemplate, destIndex)
+    }
 
     return (
-        <div
-            ref={rowRef}
-            className='octo-propertyrow'
-            style={{
-                opacity: isDragging ? 0.5 : 1,
-                backgroundColor: isOver ? 'rgba(var(--button-bg-rgb), 0.1)' : undefined,
-            }}
-        >
+        <div className='octo-propertyrow'>
             {props.canReorder && (
-                <div
-                    ref={handleRef}
-                    className='octo-propertyrow__drag-handle'
-                    title='拖动排序'
-                >
-                    ⋮⋮
+                <div className='octo-propertyrow__reorder'>
+                    <button
+                        className='octo-propertyrow__reorder-btn'
+                        title='上移'
+                        onClick={() => move(-1)}
+                    >
+                        ↑
+                    </button>
+                    <button
+                        className='octo-propertyrow__reorder-btn'
+                        title='下移'
+                        onClick={() => move(1)}
+                    >
+                        ↓
+                    </button>
                 </div>
             )}
             <div className='octo-propertyrow__content'>
