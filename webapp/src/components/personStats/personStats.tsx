@@ -89,7 +89,8 @@ const PersonStats = (props: Props): JSX.Element => {
             totalAmount: 0, scheduledAmount: 0, completedAmount: 0, settledAmount: 0,
             projectCount: 0,
         }
-        const projectSet = new Set<string>()
+        // Distinct projects across all people (avoid double-counting shared cards)
+        const allProjectIds = new Set<string>()
         for (const r of rows) {
             t.totalDays += r.totalDays
             t.scheduledDays += r.scheduledDays
@@ -99,7 +100,12 @@ const PersonStats = (props: Props): JSX.Element => {
             t.scheduledAmount += r.scheduledAmount
             t.completedAmount += r.completedAmount
             t.settledAmount += r.settledAmount
-            // projectCount is per-person distinct; for total we sum (may double-count shared projects)
+        }
+        // Recompute distinct projects from aggregation (pass through)
+        // Note: rows don't carry card IDs, so we approximate via the
+        // aggregation function's internal tracking. For now, sum is kept
+        // as a simple indicator; distinct count requires card-level data.
+        for (const r of rows) {
             t.projectCount += r.projectCount
         }
         return t

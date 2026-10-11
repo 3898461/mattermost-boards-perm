@@ -184,8 +184,12 @@ export function aggregatePersonStats(
         }
 
         for (const userId of userIds) {
-            const pct = detail[userId]
-            if (typeof pct !== 'number' || pct <= 0) {
+            let pct = detail[userId]
+            // Be tolerant: percentage might be stored as string.
+            if (typeof pct === 'string') {
+                pct = parseFloat(pct)
+            }
+            if (typeof pct !== 'number' || isNaN(pct) || pct <= 0) {
                 continue
             }
             const row = getRow(userId)
