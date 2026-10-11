@@ -39,7 +39,9 @@ const PersonSummary = ({card, propertyTemplate}: {card: Card, propertyTemplate: 
         if (me && me.id === userId) {
             return Utils.getUserDisplayName(me, teammateNameDisplay)
         }
-        return userId
+        // User not in board members (e.g. removed, or card copied from another
+        // board): don't leak the raw 26-char ID, show a placeholder.
+        return '未知用户'
     }
 
     return <span>{userIds.map(displayName).join('、')}</span>

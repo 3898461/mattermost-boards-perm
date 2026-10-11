@@ -83,7 +83,7 @@ const CompletionDetailEditor = (props: Props): JSX.Element => {
         if (me && me.id === userId) {
             return Utils.getUserDisplayName(me, teammateNameDisplay)
         }
-        return userId
+        return '未知用户'
     }
 
     // Draft values as strings so partially-typed input is preserved.
