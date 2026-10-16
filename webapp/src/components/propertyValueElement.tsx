@@ -2,7 +2,7 @@
 // See LICENSE.txt for license information.
 
 
-import React from 'react'
+import React, {useState} from 'react'
 
 import {Board, IPropertyTemplate, safePropertyValue} from '../blocks/board'
 import {Card} from '../blocks/card'
@@ -16,13 +16,42 @@ import {RootState} from '../store'
 import {IUser} from '../user'
 import {Utils} from '../utils'
 
+import './propertyValueElement.scss'
+
 // Properties rendered by dedicated settle editors instead of the registry.
 const SETTLE_CUSTOM_EDITORS: Record<string, boolean> = {
     '完成度明细': true,
 }
 
-// Compact read-only summary for person properties in non-detailed views
-// (table/kanban/gallery/calendar): plain text names instead of interactive badges.
+// One avatar in the person stack. Falls back to an initial letter when
+// the image fails to load (e.g. unknown user id).
+const PersonAvatar = ({userId, name}: {userId: string, name: string}): JSX.Element => {
+    const [imgError, setImgError] = useState(false)
+    if (imgError) {
+        const initial = name ? name.charAt(0).toUpperCase() : '?'
+        return (
+            <span
+                className='PersonAvatarStack-fallback'
+                title={name}
+            >
+                {initial}
+            </span>
+        )
+    }
+    return (
+        <img
+            className='PersonAvatarStack-img'
+            src={Utils.getProfilePicture(userId)}
+            alt={name}
+            title={name}
+            onError={() => setImgError(true)}
+        />
+    )
+}
+
+// Overlapping avatar stack for person properties in non-detailed views
+// (table/kanban/gallery/calendar): avatars only, no names. Hover shows
+// the name via the title attribute.
 const PersonSummary = ({card, propertyTemplate}: {card: Card, propertyTemplate: IPropertyTemplate}): JSX.Element => {
     const boardUsersById = useAppSelector((state: RootState) => state.users?.boardUsers || {})
     const teammateNameDisplay = useAppSelector((state: RootState) => state.clientConfig?.value?.teammateNameDisplay) || 'username'
@@ -48,7 +77,22 @@ const PersonSummary = ({card, propertyTemplate}: {card: Card, propertyTemplate: 
         return '未知用户'
     }
 
-    return <span>{userIds.map(displayName).join('、')}</span>
+    return (
+        <span className='PersonAvatarStack'>
+            {userIds.map((userId, index) => (
+                <span
+                    key={userId}
+                    className='PersonAvatarStack-avatar'
+                    style={{zIndex: index}}
+                >
+                    <PersonAvatar
+                        userId={userId}
+                        name={displayName(userId)}
+                    />
+                </span>
+            ))}
+        </span>
+    )
 }
 
 type Props = {
@@ -79,7 +123,7 @@ const PropertyValueElement = (props: Props): JSX.Element => {
             />
         )
     }
-    // Person properties in non-detailed views: compact text summary.
+    // Person properties in non-detailed views: overlapping avatar stack.
     if (!props.detailed && (propertyTemplate.type === 'person' || propertyTemplate.type === 'multiPerson')) {
         return <PersonSummary card={card} propertyTemplate={propertyTemplate} />
     }
