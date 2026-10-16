@@ -1,10 +1,10 @@
 .octo-board-column {
-    // Framed lane: 3px shadow ring groups header + cards into one column unit.
-    border-radius: 12px;
+    // Thin-line frame (no shadow): header + cards read as one column unit.
+    // Line color lightened 20% from the previous 3px ring (0.06 -> 0.048).
+    border-radius: 0 0 8px 8px;
+    border: 1px solid rgba(var(--center-channel-color-rgb), 0.048);
+    border-top: none;
     background: color-mix(in srgb, var(--column-color, transparent) 6%, rgb(var(--center-channel-bg-rgb)));
-    box-shadow:
-        0 0 0 3px rgba(var(--center-channel-color-rgb), 0.06),
-        0 4px 16px rgba(var(--center-channel-color-rgb), 0.08);
     padding: 8px 8px 12px;
 
     &.dragover {
