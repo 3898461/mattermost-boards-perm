@@ -14,7 +14,7 @@
         color: #909090;
         position: sticky;
         top: 0;
-        background: #F2F7FA;
+        background: rgb(var(--center-channel-bg-rgb));
     }
 
     .octo-board-header-cell {

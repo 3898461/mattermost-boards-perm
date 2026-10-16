@@ -4,7 +4,6 @@
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
-    background: #F2F7FA;
 
     .octo-board {
         flex: 0 1 auto;
@@ -46,7 +45,7 @@
         position: sticky;
         top: 0;
         left: 0;
-        background: #F2F7FA;
+        background: rgb(var(--center-channel-bg-rgb));
 
         > .mid-head {
             margin-top: 24px;
