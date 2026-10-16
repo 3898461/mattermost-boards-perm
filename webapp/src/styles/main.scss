@@ -1,7 +1,6 @@
 @import 'typography';
 @import 'modifiers';
 @import 'z-index';
-@import 'glass';
 
 html {
     height: 100%;
@@ -244,3 +243,6 @@ html {
         flex-wrap: wrap;
     }
 }
+
+// Glass theme overrides (must be last so it wins over defaults)
+@import 'glass';
