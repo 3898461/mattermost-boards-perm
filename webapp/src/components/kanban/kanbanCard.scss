@@ -61,7 +61,7 @@
 
     .octo-icontitle {
         flex: 1 1 auto;
-        font-weight: 600;
+        font-weight: normal;
         line-height: 20px;
         margin-bottom: 8px;
 
@@ -82,11 +82,9 @@
             max-height: 100px;
             -webkit-line-clamp: 5;
             -webkit-box-orient: vertical; // stylelint-disable-line
-            // Card main title: one size step down (14px -> 13px),
-            // 20% lighter color, italic.
-            font-size: 13px;
+            // Card main title: 11px, 20% lighter color, no bold, no italic.
+            font-size: 11px;
             color: rgba(var(--center-channel-color-rgb), 0.8);
-            font-style: italic;
         }
     }
 }
