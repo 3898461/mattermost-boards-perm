@@ -447,14 +447,17 @@ const CenterPanel = (props: Props) => {
 
             <div className={`top-head ${headerCollapsed ? 'is-collapsed' : ''}`}>
                 <TopBar/>
+                {/* Single drawer toggle, centered at the very top. */}
+                <div className='headerDrawerToggle'>
+                    <IconButton
+                        icon={headerCollapsed ? <ChevronDown/> : <ChevronUp/>}
+                        onClick={toggleHeaderCollapsed}
+                        title={headerCollapsed ? intl.formatMessage({id: 'CenterPanel.expand-header', defaultMessage: '展开标题栏'}) : intl.formatMessage({id: 'CenterPanel.collapse-header', defaultMessage: '收起标题栏'})}
+                    />
+                </div>
                 {/* Slim bar: visible only when the header drawer is collapsed. */}
                 <div className='headerCollapsedBar'>
                     <span className='headerCollapsedTitle'>{board.title}</span>
-                    <IconButton
-                        icon={<ChevronDown/>}
-                        onClick={toggleHeaderCollapsed}
-                        title={intl.formatMessage({id: 'CenterPanel.expand-header', defaultMessage: '展开标题栏'})}
-                    />
                 </div>
                 {/* Full header: slides up / down as a drawer. Kept mounted
                     (CSS hides it) so ViewHeader state (e.g. search) survives. */}
@@ -475,11 +478,6 @@ const CenterPanel = (props: Props) => {
                                 <ShareBoardLoginButton/>
                             }
                             <ShareBoardTourStep/>
-                            <IconButton
-                                icon={<ChevronUp/>}
-                                onClick={toggleHeaderCollapsed}
-                                title={intl.formatMessage({id: 'CenterPanel.collapse-header', defaultMessage: '收起标题栏'})}
-                            />
                         </div>
                     </div>
                     <ViewHeader

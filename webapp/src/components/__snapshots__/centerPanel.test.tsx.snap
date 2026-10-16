@@ -30,13 +30,8 @@ exports[`components/centerPanel Clicking on the Hidden card count should open a 
         </a>
       </div>
       <div
-        class="headerCollapsedBar"
+        class="headerDrawerToggle"
       >
-        <span
-          class="headerCollapsedTitle"
-        >
-          board title
-        </span>
         <button
           aria-label="展开标题栏"
           class="IconButton"
@@ -47,6 +42,15 @@ exports[`components/centerPanel Clicking on the Hidden card count should open a 
             class="CompassIcon icon-chevron-down ChevronDownIcon"
           />
         </button>
+      </div>
+      <div
+        class="headerCollapsedBar"
+      >
+        <span
+          class="headerCollapsedTitle"
+        >
+          board title
+        </span>
       </div>
       <div
         class="headerDrawerBody"
@@ -138,16 +142,6 @@ exports[`components/centerPanel Clicking on the Hidden card count should open a 
                 </span>
               </button>
             </div>
-            <button
-              aria-label="收起标题栏"
-              class="IconButton"
-              title="收起标题栏"
-              type="button"
-            >
-              <i
-                class="CompassIcon icon-chevron-up ChevronUpIcon"
-              />
-            </button>
           </div>
         </div>
         <div
@@ -777,13 +771,8 @@ exports[`components/centerPanel return centerPanel and click on card to show car
         </a>
       </div>
       <div
-        class="headerCollapsedBar"
+        class="headerDrawerToggle"
       >
-        <span
-          class="headerCollapsedTitle"
-        >
-          board title
-        </span>
         <button
           aria-label="展开标题栏"
           class="IconButton"
@@ -794,6 +783,15 @@ exports[`components/centerPanel return centerPanel and click on card to show car
             class="CompassIcon icon-chevron-down ChevronDownIcon"
           />
         </button>
+      </div>
+      <div
+        class="headerCollapsedBar"
+      >
+        <span
+          class="headerCollapsedTitle"
+        >
+          board title
+        </span>
       </div>
       <div
         class="headerDrawerBody"
@@ -885,16 +883,6 @@ exports[`components/centerPanel return centerPanel and click on card to show car
                 </span>
               </button>
             </div>
-            <button
-              aria-label="收起标题栏"
-              class="IconButton"
-              title="收起标题栏"
-              type="button"
-            >
-              <i
-                class="CompassIcon icon-chevron-up ChevronUpIcon"
-              />
-            </button>
           </div>
         </div>
         <div
@@ -1371,13 +1359,8 @@ exports[`components/centerPanel return centerPanel and click on new card to edit
         </a>
       </div>
       <div
-        class="headerCollapsedBar"
+        class="headerDrawerToggle"
       >
-        <span
-          class="headerCollapsedTitle"
-        >
-          board title
-        </span>
         <button
           aria-label="展开标题栏"
           class="IconButton"
@@ -1388,6 +1371,15 @@ exports[`components/centerPanel return centerPanel and click on new card to edit
             class="CompassIcon icon-chevron-down ChevronDownIcon"
           />
         </button>
+      </div>
+      <div
+        class="headerCollapsedBar"
+      >
+        <span
+          class="headerCollapsedTitle"
+        >
+          board title
+        </span>
       </div>
       <div
         class="headerDrawerBody"
@@ -1479,16 +1471,6 @@ exports[`components/centerPanel return centerPanel and click on new card to edit
                 </span>
               </button>
             </div>
-            <button
-              aria-label="收起标题栏"
-              class="IconButton"
-              title="收起标题栏"
-              type="button"
-            >
-              <i
-                class="CompassIcon icon-chevron-up ChevronUpIcon"
-              />
-            </button>
           </div>
         </div>
         <div
@@ -2068,13 +2050,8 @@ exports[`components/centerPanel return centerPanel and press touch 1 with readon
         </a>
       </div>
       <div
-        class="headerCollapsedBar"
+        class="headerDrawerToggle"
       >
-        <span
-          class="headerCollapsedTitle"
-        >
-          board title
-        </span>
         <button
           aria-label="展开标题栏"
           class="IconButton"
@@ -2085,6 +2062,15 @@ exports[`components/centerPanel return centerPanel and press touch 1 with readon
             class="CompassIcon icon-chevron-down ChevronDownIcon"
           />
         </button>
+      </div>
+      <div
+        class="headerCollapsedBar"
+      >
+        <span
+          class="headerCollapsedTitle"
+        >
+          board title
+        </span>
       </div>
       <div
         class="headerDrawerBody"
@@ -2156,16 +2142,6 @@ exports[`components/centerPanel return centerPanel and press touch 1 with readon
                 </span>
               </button>
             </div>
-            <button
-              aria-label="收起标题栏"
-              class="IconButton"
-              title="收起标题栏"
-              type="button"
-            >
-              <i
-                class="CompassIcon icon-chevron-up ChevronUpIcon"
-              />
-            </button>
           </div>
         </div>
         <div
@@ -2506,13 +2482,8 @@ exports[`components/centerPanel return centerPanel and press touch ctrl+d for on
         </a>
       </div>
       <div
-        class="headerCollapsedBar"
+        class="headerDrawerToggle"
       >
-        <span
-          class="headerCollapsedTitle"
-        >
-          board title
-        </span>
         <button
           aria-label="展开标题栏"
           class="IconButton"
@@ -2523,6 +2494,15 @@ exports[`components/centerPanel return centerPanel and press touch ctrl+d for on
             class="CompassIcon icon-chevron-down ChevronDownIcon"
           />
         </button>
+      </div>
+      <div
+        class="headerCollapsedBar"
+      >
+        <span
+          class="headerCollapsedTitle"
+        >
+          board title
+        </span>
       </div>
       <div
         class="headerDrawerBody"
@@ -2614,16 +2594,6 @@ exports[`components/centerPanel return centerPanel and press touch ctrl+d for on
                 </span>
               </button>
             </div>
-            <button
-              aria-label="收起标题栏"
-              class="IconButton"
-              title="收起标题栏"
-              type="button"
-            >
-              <i
-                class="CompassIcon icon-chevron-up ChevronUpIcon"
-              />
-            </button>
           </div>
         </div>
         <div
@@ -3203,13 +3173,8 @@ exports[`components/centerPanel return centerPanel and press touch del for one c
         </a>
       </div>
       <div
-        class="headerCollapsedBar"
+        class="headerDrawerToggle"
       >
-        <span
-          class="headerCollapsedTitle"
-        >
-          board title
-        </span>
         <button
           aria-label="展开标题栏"
           class="IconButton"
@@ -3220,6 +3185,15 @@ exports[`components/centerPanel return centerPanel and press touch del for one c
             class="CompassIcon icon-chevron-down ChevronDownIcon"
           />
         </button>
+      </div>
+      <div
+        class="headerCollapsedBar"
+      >
+        <span
+          class="headerCollapsedTitle"
+        >
+          board title
+        </span>
       </div>
       <div
         class="headerDrawerBody"
@@ -3311,16 +3285,6 @@ exports[`components/centerPanel return centerPanel and press touch del for one c
                 </span>
               </button>
             </div>
-            <button
-              aria-label="收起标题栏"
-              class="IconButton"
-              title="收起标题栏"
-              type="button"
-            >
-              <i
-                class="CompassIcon icon-chevron-up ChevronUpIcon"
-              />
-            </button>
           </div>
         </div>
         <div
@@ -3900,13 +3864,8 @@ exports[`components/centerPanel return centerPanel and press touch esc for one c
         </a>
       </div>
       <div
-        class="headerCollapsedBar"
+        class="headerDrawerToggle"
       >
-        <span
-          class="headerCollapsedTitle"
-        >
-          board title
-        </span>
         <button
           aria-label="展开标题栏"
           class="IconButton"
@@ -3917,6 +3876,15 @@ exports[`components/centerPanel return centerPanel and press touch esc for one c
             class="CompassIcon icon-chevron-down ChevronDownIcon"
           />
         </button>
+      </div>
+      <div
+        class="headerCollapsedBar"
+      >
+        <span
+          class="headerCollapsedTitle"
+        >
+          board title
+        </span>
       </div>
       <div
         class="headerDrawerBody"
@@ -4008,16 +3976,6 @@ exports[`components/centerPanel return centerPanel and press touch esc for one c
                 </span>
               </button>
             </div>
-            <button
-              aria-label="收起标题栏"
-              class="IconButton"
-              title="收起标题栏"
-              type="button"
-            >
-              <i
-                class="CompassIcon icon-chevron-up ChevronUpIcon"
-              />
-            </button>
           </div>
         </div>
         <div
@@ -4597,13 +4555,8 @@ exports[`components/centerPanel return centerPanel and press touch esc for one c
         </a>
       </div>
       <div
-        class="headerCollapsedBar"
+        class="headerDrawerToggle"
       >
-        <span
-          class="headerCollapsedTitle"
-        >
-          board title
-        </span>
         <button
           aria-label="展开标题栏"
           class="IconButton"
@@ -4614,6 +4567,15 @@ exports[`components/centerPanel return centerPanel and press touch esc for one c
             class="CompassIcon icon-chevron-down ChevronDownIcon"
           />
         </button>
+      </div>
+      <div
+        class="headerCollapsedBar"
+      >
+        <span
+          class="headerCollapsedTitle"
+        >
+          board title
+        </span>
       </div>
       <div
         class="headerDrawerBody"
@@ -4705,16 +4667,6 @@ exports[`components/centerPanel return centerPanel and press touch esc for one c
                 </span>
               </button>
             </div>
-            <button
-              aria-label="收起标题栏"
-              class="IconButton"
-              title="收起标题栏"
-              type="button"
-            >
-              <i
-                class="CompassIcon icon-chevron-up ChevronUpIcon"
-              />
-            </button>
           </div>
         </div>
         <div
@@ -5294,13 +5246,8 @@ exports[`components/centerPanel return centerPanel and press touch esc for two c
         </a>
       </div>
       <div
-        class="headerCollapsedBar"
+        class="headerDrawerToggle"
       >
-        <span
-          class="headerCollapsedTitle"
-        >
-          board title
-        </span>
         <button
           aria-label="展开标题栏"
           class="IconButton"
@@ -5311,6 +5258,15 @@ exports[`components/centerPanel return centerPanel and press touch esc for two c
             class="CompassIcon icon-chevron-down ChevronDownIcon"
           />
         </button>
+      </div>
+      <div
+        class="headerCollapsedBar"
+      >
+        <span
+          class="headerCollapsedTitle"
+        >
+          board title
+        </span>
       </div>
       <div
         class="headerDrawerBody"
@@ -5402,16 +5358,6 @@ exports[`components/centerPanel return centerPanel and press touch esc for two c
                 </span>
               </button>
             </div>
-            <button
-              aria-label="收起标题栏"
-              class="IconButton"
-              title="收起标题栏"
-              type="button"
-            >
-              <i
-                class="CompassIcon icon-chevron-up ChevronUpIcon"
-              />
-            </button>
           </div>
         </div>
         <div
@@ -5991,13 +5937,8 @@ exports[`components/centerPanel return centerPanel and press touch esc for two c
         </a>
       </div>
       <div
-        class="headerCollapsedBar"
+        class="headerDrawerToggle"
       >
-        <span
-          class="headerCollapsedTitle"
-        >
-          board title
-        </span>
         <button
           aria-label="展开标题栏"
           class="IconButton"
@@ -6008,6 +5949,15 @@ exports[`components/centerPanel return centerPanel and press touch esc for two c
             class="CompassIcon icon-chevron-down ChevronDownIcon"
           />
         </button>
+      </div>
+      <div
+        class="headerCollapsedBar"
+      >
+        <span
+          class="headerCollapsedTitle"
+        >
+          board title
+        </span>
       </div>
       <div
         class="headerDrawerBody"
@@ -6099,16 +6049,6 @@ exports[`components/centerPanel return centerPanel and press touch esc for two c
                 </span>
               </button>
             </div>
-            <button
-              aria-label="收起标题栏"
-              class="IconButton"
-              title="收起标题栏"
-              type="button"
-            >
-              <i
-                class="CompassIcon icon-chevron-up ChevronUpIcon"
-              />
-            </button>
           </div>
         </div>
         <div
@@ -6688,13 +6628,8 @@ exports[`components/centerPanel return centerPanel and press touch esc for two c
         </a>
       </div>
       <div
-        class="headerCollapsedBar"
+        class="headerDrawerToggle"
       >
-        <span
-          class="headerCollapsedTitle"
-        >
-          board title
-        </span>
         <button
           aria-label="展开标题栏"
           class="IconButton"
@@ -6705,6 +6640,15 @@ exports[`components/centerPanel return centerPanel and press touch esc for two c
             class="CompassIcon icon-chevron-down ChevronDownIcon"
           />
         </button>
+      </div>
+      <div
+        class="headerCollapsedBar"
+      >
+        <span
+          class="headerCollapsedTitle"
+        >
+          board title
+        </span>
       </div>
       <div
         class="headerDrawerBody"
@@ -6796,16 +6740,6 @@ exports[`components/centerPanel return centerPanel and press touch esc for two c
                 </span>
               </button>
             </div>
-            <button
-              aria-label="收起标题栏"
-              class="IconButton"
-              title="收起标题栏"
-              type="button"
-            >
-              <i
-                class="CompassIcon icon-chevron-up ChevronUpIcon"
-              />
-            </button>
           </div>
         </div>
         <div
@@ -7385,13 +7319,8 @@ exports[`components/centerPanel return centerPanel and select one card and click
         </a>
       </div>
       <div
-        class="headerCollapsedBar"
+        class="headerDrawerToggle"
       >
-        <span
-          class="headerCollapsedTitle"
-        >
-          board title
-        </span>
         <button
           aria-label="展开标题栏"
           class="IconButton"
@@ -7402,6 +7331,15 @@ exports[`components/centerPanel return centerPanel and select one card and click
             class="CompassIcon icon-chevron-down ChevronDownIcon"
           />
         </button>
+      </div>
+      <div
+        class="headerCollapsedBar"
+      >
+        <span
+          class="headerCollapsedTitle"
+        >
+          board title
+        </span>
       </div>
       <div
         class="headerDrawerBody"
@@ -7493,16 +7431,6 @@ exports[`components/centerPanel return centerPanel and select one card and click
                 </span>
               </button>
             </div>
-            <button
-              aria-label="收起标题栏"
-              class="IconButton"
-              title="收起标题栏"
-              type="button"
-            >
-              <i
-                class="CompassIcon icon-chevron-up ChevronUpIcon"
-              />
-            </button>
           </div>
         </div>
         <div
@@ -8082,13 +8010,8 @@ exports[`components/centerPanel return centerPanel and select one card and click
         </a>
       </div>
       <div
-        class="headerCollapsedBar"
+        class="headerDrawerToggle"
       >
-        <span
-          class="headerCollapsedTitle"
-        >
-          board title
-        </span>
         <button
           aria-label="展开标题栏"
           class="IconButton"
@@ -8099,6 +8022,15 @@ exports[`components/centerPanel return centerPanel and select one card and click
             class="CompassIcon icon-chevron-down ChevronDownIcon"
           />
         </button>
+      </div>
+      <div
+        class="headerCollapsedBar"
+      >
+        <span
+          class="headerCollapsedTitle"
+        >
+          board title
+        </span>
       </div>
       <div
         class="headerDrawerBody"
@@ -8190,16 +8122,6 @@ exports[`components/centerPanel return centerPanel and select one card and click
                 </span>
               </button>
             </div>
-            <button
-              aria-label="收起标题栏"
-              class="IconButton"
-              title="收起标题栏"
-              type="button"
-            >
-              <i
-                class="CompassIcon icon-chevron-up ChevronUpIcon"
-              />
-            </button>
           </div>
         </div>
         <div
@@ -8779,13 +8701,8 @@ exports[`components/centerPanel should match snapshot for Gallery 1`] = `
         </a>
       </div>
       <div
-        class="headerCollapsedBar"
+        class="headerDrawerToggle"
       >
-        <span
-          class="headerCollapsedTitle"
-        >
-          board title
-        </span>
         <button
           aria-label="展开标题栏"
           class="IconButton"
@@ -8796,6 +8713,15 @@ exports[`components/centerPanel should match snapshot for Gallery 1`] = `
             class="CompassIcon icon-chevron-down ChevronDownIcon"
           />
         </button>
+      </div>
+      <div
+        class="headerCollapsedBar"
+      >
+        <span
+          class="headerCollapsedTitle"
+        >
+          board title
+        </span>
       </div>
       <div
         class="headerDrawerBody"
@@ -8887,16 +8813,6 @@ exports[`components/centerPanel should match snapshot for Gallery 1`] = `
                 </span>
               </button>
             </div>
-            <button
-              aria-label="收起标题栏"
-              class="IconButton"
-              title="收起标题栏"
-              type="button"
-            >
-              <i
-                class="CompassIcon icon-chevron-up ChevronUpIcon"
-              />
-            </button>
           </div>
         </div>
         <div
@@ -9093,13 +9009,8 @@ exports[`components/centerPanel should match snapshot for Kanban 1`] = `
         </a>
       </div>
       <div
-        class="headerCollapsedBar"
+        class="headerDrawerToggle"
       >
-        <span
-          class="headerCollapsedTitle"
-        >
-          board title
-        </span>
         <button
           aria-label="展开标题栏"
           class="IconButton"
@@ -9110,6 +9021,15 @@ exports[`components/centerPanel should match snapshot for Kanban 1`] = `
             class="CompassIcon icon-chevron-down ChevronDownIcon"
           />
         </button>
+      </div>
+      <div
+        class="headerCollapsedBar"
+      >
+        <span
+          class="headerCollapsedTitle"
+        >
+          board title
+        </span>
       </div>
       <div
         class="headerDrawerBody"
@@ -9201,16 +9121,6 @@ exports[`components/centerPanel should match snapshot for Kanban 1`] = `
                 </span>
               </button>
             </div>
-            <button
-              aria-label="收起标题栏"
-              class="IconButton"
-              title="收起标题栏"
-              type="button"
-            >
-              <i
-                class="CompassIcon icon-chevron-up ChevronUpIcon"
-              />
-            </button>
           </div>
         </div>
         <div
@@ -9653,13 +9563,8 @@ exports[`components/centerPanel should match snapshot for Kanban, not shared 1`]
         </a>
       </div>
       <div
-        class="headerCollapsedBar"
+        class="headerDrawerToggle"
       >
-        <span
-          class="headerCollapsedTitle"
-        >
-          board title
-        </span>
         <button
           aria-label="展开标题栏"
           class="IconButton"
@@ -9670,6 +9575,15 @@ exports[`components/centerPanel should match snapshot for Kanban, not shared 1`]
             class="CompassIcon icon-chevron-down ChevronDownIcon"
           />
         </button>
+      </div>
+      <div
+        class="headerCollapsedBar"
+      >
+        <span
+          class="headerCollapsedTitle"
+        >
+          board title
+        </span>
       </div>
       <div
         class="headerDrawerBody"
@@ -9761,16 +9675,6 @@ exports[`components/centerPanel should match snapshot for Kanban, not shared 1`]
                 </span>
               </button>
             </div>
-            <button
-              aria-label="收起标题栏"
-              class="IconButton"
-              title="收起标题栏"
-              type="button"
-            >
-              <i
-                class="CompassIcon icon-chevron-up ChevronUpIcon"
-              />
-            </button>
           </div>
         </div>
         <div
@@ -10213,13 +10117,8 @@ exports[`components/centerPanel should match snapshot for Table 1`] = `
         </a>
       </div>
       <div
-        class="headerCollapsedBar"
+        class="headerDrawerToggle"
       >
-        <span
-          class="headerCollapsedTitle"
-        >
-          board title
-        </span>
         <button
           aria-label="展开标题栏"
           class="IconButton"
@@ -10230,6 +10129,15 @@ exports[`components/centerPanel should match snapshot for Table 1`] = `
             class="CompassIcon icon-chevron-down ChevronDownIcon"
           />
         </button>
+      </div>
+      <div
+        class="headerCollapsedBar"
+      >
+        <span
+          class="headerCollapsedTitle"
+        >
+          board title
+        </span>
       </div>
       <div
         class="headerDrawerBody"
@@ -10321,16 +10229,6 @@ exports[`components/centerPanel should match snapshot for Table 1`] = `
                 </span>
               </button>
             </div>
-            <button
-              aria-label="收起标题栏"
-              class="IconButton"
-              title="收起标题栏"
-              type="button"
-            >
-              <i
-                class="CompassIcon icon-chevron-up ChevronUpIcon"
-              />
-            </button>
           </div>
         </div>
         <div

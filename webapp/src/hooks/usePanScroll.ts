@@ -21,6 +21,7 @@ type PanState = {
     isDragging: boolean
     startX: number
     startScrollLeft: number
+    zoom: number
 }
 
 function freshState(): PanState {
@@ -29,6 +30,7 @@ function freshState(): PanState {
         isDragging: false,
         startX: 0,
         startScrollLeft: 0,
+        zoom: 1,
     }
 }
 
@@ -44,11 +46,15 @@ export function usePanScroll() {
             return
         }
         const el = e.currentTarget
+        // Read the panel zoom once (CenterPanel is zoomed to 0.8) so the
+        // drag tracks the pointer 1:1 in screen pixels.
+        const zoom = parseFloat(getComputedStyle(el).getPropertyValue('zoom') || '1') || 1
         panRef.current = {
             ...freshState(),
             isDown: true,
             startX: e.clientX,
             startScrollLeft: el.scrollLeft,
+            zoom,
         }
     }, [])
 
@@ -67,7 +73,8 @@ export function usePanScroll() {
             el.classList.add('is-panning')
         }
         // Horizontal only: vertical is handled by the native wheel.
-        el.scrollLeft = pan.startScrollLeft - dx
+        // Divide by zoom so the content follows the pointer 1:1.
+        el.scrollLeft = pan.startScrollLeft - dx / pan.zoom
         e.preventDefault()
     }, [])
 
