@@ -23,6 +23,7 @@ import {dragAndDropRearrange} from '../cardDetail/cardDetailContentsUtility'
 import {getCurrentBoardTemplates} from '../../store/cards'
 import {getMe} from '../../store/users'
 import {useHasCurrentBoardPermissions} from '../../hooks/permissions'
+import {usePanScroll} from '../../hooks/usePanScroll'
 import {canViewProperty} from '../../propertyPermissions'
 import BoardPermissionGate from '../permissions/boardPermissionGate'
 import HiddenCardCount from '../../components/hiddenCardCount/hiddenCardCount'
@@ -60,6 +61,7 @@ const Kanban = (props: Props) => {
     const cardTemplates: Card[] = useAppSelector(getCurrentBoardTemplates)
     const {board, activeView, cards, groupByProperty, visibleGroups, hiddenGroups, hiddenCardsCount} = props
     const [defaultTemplateID, setDefaultTemplateID] = useState<string>()
+    const panScroll = usePanScroll()
 
     useEffect(() => {
         if (activeView.fields.defaultTemplateId) {
@@ -228,6 +230,10 @@ const Kanban = (props: Props) => {
             className='Kanban'
             horizontalStrength={hStrength}
             verticalStrength={vStrength}
+            onMouseDown={panScroll.onMouseDown}
+            onMouseMove={panScroll.onMouseMove}
+            onMouseUp={panScroll.onMouseUp}
+            onMouseLeave={panScroll.onMouseLeave}
         >
             <div
                 className='octo-board-header'

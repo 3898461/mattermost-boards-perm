@@ -3,6 +3,26 @@
 .Kanban {
     overflow: auto;
     flex: 1;
+    // Empty space shows a grab hand: drag there to pan the board.
+    cursor: grab;
+
+    &.is-panning {
+        cursor: grabbing;
+        user-select: none;
+
+        * {
+            user-select: none;
+        }
+    }
+
+    // Cards and interactive elements keep their own cursors.
+    .KanbanCard {
+        cursor: pointer;
+    }
+
+    .octo-board-header-cell {
+        cursor: default;
+    }
 
     .octo-board-header {
         @include z-index(kanban-board-header);
