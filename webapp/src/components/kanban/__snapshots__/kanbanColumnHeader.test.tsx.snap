@@ -5,7 +5,7 @@ exports[`src/components/kanban/kanbanColumnHeader return kanbanColumnHeader and 
   <div
     class="octo-board-header-cell KanbanColumnHeader"
     draggable="true"
-    style="opacity: 1;"
+    style="opacity: 1; --column-color: var(--prop-default);"
   >
     <span
       class="Label propColorDefault "
@@ -351,7 +351,7 @@ exports[`src/components/kanban/kanbanColumnHeader return kanbanColumnHeader and 
   <div
     class="octo-board-header-cell KanbanColumnHeader"
     draggable="true"
-    style="opacity: 1;"
+    style="opacity: 1; --column-color: var(--prop-default);"
   >
     <span
       class="Label propColorDefault "
@@ -411,7 +411,7 @@ exports[`src/components/kanban/kanbanColumnHeader should match snapshot 1`] = `
   <div
     class="octo-board-header-cell KanbanColumnHeader"
     draggable="true"
-    style="opacity: 1;"
+    style="opacity: 1; --column-color: var(--prop-default);"
   >
     <span
       class="Label propColorDefault "
@@ -471,7 +471,7 @@ exports[`src/components/kanban/kanbanColumnHeader should match snapshot readonly
   <div
     class="octo-board-header-cell KanbanColumnHeader"
     draggable="true"
-    style="opacity: 1;"
+    style="opacity: 1; --column-color: var(--prop-default);"
   >
     <span
       class="Label propColorDefault "

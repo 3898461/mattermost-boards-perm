@@ -10,6 +10,17 @@ import './kanbanColumn.scss'
 type Props = {
     onDrop: (card: Card) => void
     children: React.ReactNode
+    /** Group-by option color key (e.g. 'propColorBlue') — drives the card tint. */
+    color?: string
+}
+
+// Map 'propColorBlue' -> 'var(--prop-blue)' so cards can tint from the lane color.
+function columnColorVar(color?: string): string | undefined {
+    if (!color || !color.startsWith('propColor')) {
+        return undefined
+    }
+    const name = color.slice('propColor'.length).toLowerCase()
+    return name ? `var(--prop-${name})` : undefined
 }
 
 const KanbanColumn = (props: Props) => {
@@ -29,10 +40,12 @@ const KanbanColumn = (props: Props) => {
     if (isOver) {
         className += ' dragover'
     }
+    const colorVar = columnColorVar(props.color)
     return (
         <div
             ref={drop}
             className={className}
+            style={colorVar ? {'--column-color': colorVar} as React.CSSProperties : undefined}
         >
             {props.children}
         </div>

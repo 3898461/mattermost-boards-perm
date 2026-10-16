@@ -292,6 +292,7 @@ const Kanban = (props: Props) => {
                     <KanbanColumn
                         key={group.option.id || 'empty'}
                         onDrop={(card: Card) => onDropToColumn(group.option, card)}
+                        color={group.option.color}
                     >
                         {group.cards.map((card) => (
                             <KanbanCard

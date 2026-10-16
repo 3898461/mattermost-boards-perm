@@ -85,6 +85,12 @@ export default function KanbanColumnHeader(props: Props): JSX.Element {
         className += ' dragover'
     }
 
+    // Same lane-color var as the column body, so header + cards read as one framed unit.
+    const colorKey = group.option.color
+    const headerColorVar = colorKey && colorKey.startsWith('propColor')
+        ? `var(--prop-${colorKey.slice('propColor'.length).toLowerCase()})`
+        : undefined
+
     const groupCalculation = props.activeView.fields.kanbanCalculations[props.group.option.id]
     const calculationValue = groupCalculation ? groupCalculation.calculation : defaultCalculation
     const calculationProperty = groupCalculation ? props.board.cardProperties.find((property) => property.id === groupCalculation.propertyId) || defaultProperty : defaultProperty
@@ -92,7 +98,7 @@ export default function KanbanColumnHeader(props: Props): JSX.Element {
         <div
             key={group.option.id || 'empty'}
             ref={headerRef}
-            style={{opacity: isDragging ? 0.5 : 1}}
+            style={{opacity: isDragging ? 0.5 : 1, ...(headerColorVar ? {'--column-color': headerColorVar} as React.CSSProperties : {})}}
             className={className}
             draggable={!props.readonly && canEditBoardProperties}
         >

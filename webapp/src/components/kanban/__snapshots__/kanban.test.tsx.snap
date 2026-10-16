@@ -18,7 +18,7 @@ exports[`src/component/kanban/kanban return kanban and change title on KanbanCol
       <div
         class="octo-board-header-cell KanbanColumnHeader"
         draggable="true"
-        style="opacity: 1;"
+        style="opacity: 1; --column-color: var(--prop-orange);"
       >
         <span
           class="Label propColorOrange "
@@ -70,7 +70,7 @@ exports[`src/component/kanban/kanban return kanban and change title on KanbanCol
       <div
         class="octo-board-header-cell KanbanColumnHeader"
         draggable="true"
-        style="opacity: 1;"
+        style="opacity: 1; --column-color: var(--prop-blue);"
       >
         <span
           class="Label propColorBlue "
@@ -142,6 +142,7 @@ exports[`src/component/kanban/kanban return kanban and change title on KanbanCol
     >
       <div
         class="octo-board-column"
+        style="--column-color: var(--prop-orange);"
       >
         <div
           class="KanbanCard false"
@@ -219,6 +220,7 @@ exports[`src/component/kanban/kanban return kanban and change title on KanbanCol
       </div>
       <div
         class="octo-board-column"
+        style="--column-color: var(--prop-blue);"
       >
         <div
           class="KanbanCard false"
@@ -304,7 +306,7 @@ exports[`src/component/kanban/kanban return kanban and click on KanbanCalculatio
       <div
         class="octo-board-header-cell KanbanColumnHeader"
         draggable="true"
-        style="opacity: 1;"
+        style="opacity: 1; --column-color: var(--prop-orange);"
       >
         <span
           class="Label propColorOrange "
@@ -517,7 +519,7 @@ exports[`src/component/kanban/kanban return kanban and click on KanbanCalculatio
       <div
         class="octo-board-header-cell KanbanColumnHeader"
         draggable="true"
-        style="opacity: 1;"
+        style="opacity: 1; --column-color: var(--prop-blue);"
       >
         <span
           class="Label propColorBlue "
@@ -589,6 +591,7 @@ exports[`src/component/kanban/kanban return kanban and click on KanbanCalculatio
     >
       <div
         class="octo-board-column"
+        style="--column-color: var(--prop-orange);"
       >
         <div
           class="KanbanCard false"
@@ -666,6 +669,7 @@ exports[`src/component/kanban/kanban return kanban and click on KanbanCalculatio
       </div>
       <div
         class="octo-board-column"
+        style="--column-color: var(--prop-blue);"
       >
         <div
           class="KanbanCard false"
@@ -751,7 +755,7 @@ exports[`src/component/kanban/kanban should match snapshot 1`] = `
       <div
         class="octo-board-header-cell KanbanColumnHeader"
         draggable="true"
-        style="opacity: 1;"
+        style="opacity: 1; --column-color: var(--prop-orange);"
       >
         <span
           class="Label propColorOrange "
@@ -803,7 +807,7 @@ exports[`src/component/kanban/kanban should match snapshot 1`] = `
       <div
         class="octo-board-header-cell KanbanColumnHeader"
         draggable="true"
-        style="opacity: 1;"
+        style="opacity: 1; --column-color: var(--prop-blue);"
       >
         <span
           class="Label propColorBlue "
@@ -875,6 +879,7 @@ exports[`src/component/kanban/kanban should match snapshot 1`] = `
     >
       <div
         class="octo-board-column"
+        style="--column-color: var(--prop-orange);"
       >
         <div
           class="KanbanCard false"
@@ -952,6 +957,7 @@ exports[`src/component/kanban/kanban should match snapshot 1`] = `
       </div>
       <div
         class="octo-board-column"
+        style="--column-color: var(--prop-blue);"
       >
         <div
           class="KanbanCard false"
@@ -1037,7 +1043,7 @@ exports[`src/component/kanban/kanban should match snapshot without permissions 1
       <div
         class="octo-board-header-cell KanbanColumnHeader"
         draggable="false"
-        style="opacity: 1;"
+        style="opacity: 1; --column-color: var(--prop-orange);"
       >
         <span
           class="Label propColorOrange "
@@ -1070,7 +1076,7 @@ exports[`src/component/kanban/kanban should match snapshot without permissions 1
       <div
         class="octo-board-header-cell KanbanColumnHeader"
         draggable="false"
-        style="opacity: 1;"
+        style="opacity: 1; --column-color: var(--prop-blue);"
       >
         <span
           class="Label propColorBlue "
@@ -1112,6 +1118,7 @@ exports[`src/component/kanban/kanban should match snapshot without permissions 1
     >
       <div
         class="octo-board-column"
+        style="--column-color: var(--prop-orange);"
       >
         <div
           class="KanbanCard false"
@@ -1182,6 +1189,7 @@ exports[`src/component/kanban/kanban should match snapshot without permissions 1
       </div>
       <div
         class="octo-board-column"
+        style="--column-color: var(--prop-blue);"
       >
         <div
           class="KanbanCard false"
