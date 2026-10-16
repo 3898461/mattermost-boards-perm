@@ -64,6 +64,9 @@ import Gallery from './gallery/gallery'
 import PersonStats from './personStats/personStats'
 import {BoardTourSteps, FINISHED, TOUR_BOARD, TOUR_CARD} from './onboardingTour'
 import ShareBoardTourStep from './onboardingTour/shareBoard/shareBoard'
+import IconButton from '../widgets/buttons/iconButton'
+import ChevronUp from '../widgets/icons/chevronUp'
+import ChevronDown from '../widgets/icons/chevronDown'
 
 type Props = {
     clientConfig?: ClientConfig
@@ -84,6 +87,25 @@ const CenterPanel = (props: Props) => {
     const [selectedCardIds, setSelectedCardIds] = useState<string[]>([])
     const [cardIdToFocusOnRender, setCardIdToFocusOnRender] = useState('')
     const [showHiddenCardCountNotification, setShowHiddenCardCountNotification] = useState(false)
+    // Header drawer: collapsed by default, persisted per browser.
+    const [headerCollapsed, setHeaderCollapsed] = useState<boolean>(() => {
+        try {
+            return localStorage.getItem('boards-header-collapsed') !== '0'
+        } catch {
+            return true
+        }
+    })
+    const toggleHeaderCollapsed = useCallback(() => {
+        setHeaderCollapsed((prev) => {
+            const next = !prev
+            try {
+                localStorage.setItem('boards-header-collapsed', next ? '1' : '0')
+            } catch {
+                // ignore storage errors
+            }
+            return next
+        })
+    }, [])
 
     const onboardingTourStarted = useAppSelector(getOnboardingTourStarted)
     const onboardingTourCategory = useAppSelector(getOnboardingTourCategory)
@@ -423,39 +445,57 @@ const CenterPanel = (props: Props) => {
                     />
                 </RootPortal>}
 
-            <div className='top-head'>
+            <div className={`top-head ${headerCollapsed ? 'is-collapsed' : ''}`}>
                 <TopBar/>
-                <div className='mid-head'>
-                    <ViewTitle
-                        key={board.id + board.title}
-                        board={board}
+                {/* Slim bar: visible only when the header drawer is collapsed. */}
+                <div className='headerCollapsedBar'>
+                    <span className='headerCollapsedTitle'>{board.title}</span>
+                    <IconButton
+                        icon={<ChevronDown/>}
+                        onClick={toggleHeaderCollapsed}
+                        title={intl.formatMessage({id: 'CenterPanel.expand-header', defaultMessage: '展开标题栏'})}
+                    />
+                </div>
+                {/* Full header: slides up / down as a drawer. Kept mounted
+                    (CSS hides it) so ViewHeader state (e.g. search) survives. */}
+                <div className='headerDrawerBody'>
+                    <div className='mid-head'>
+                        <ViewTitle
+                            key={board.id + board.title}
+                            board={board}
+                            readonly={props.readonly}
+                        />
+                        <div className='shareButtonWrapper'>
+                            {showShareButton &&
+                            <ShareBoardButton
+                                enableSharedBoards={props.clientConfig?.enablePublicSharedBoards || false}
+                            />
+                            }
+                            {showShareLoginButton &&
+                                <ShareBoardLoginButton/>
+                            }
+                            <ShareBoardTourStep/>
+                            <IconButton
+                                icon={<ChevronUp/>}
+                                onClick={toggleHeaderCollapsed}
+                                title={intl.formatMessage({id: 'CenterPanel.collapse-header', defaultMessage: '收起标题栏'})}
+                            />
+                        </div>
+                    </div>
+                    <ViewHeader
+                        board={props.board}
+                        activeView={props.activeView}
+                        cards={props.cards}
+                        views={props.views}
+                        groupByProperty={props.groupByProperty}
+                        dateDisplayProperty={props.dateDisplayProperty}
+                        addCard={addEmptyCardAndShow}
+                        addCardFromTemplate={addCardFromTemplate}
+                        addCardTemplate={addCardTemplate}
+                        editCardTemplate={editCardTemplate}
                         readonly={props.readonly}
                     />
-                    <div className='shareButtonWrapper'>
-                        {showShareButton &&
-                        <ShareBoardButton
-                            enableSharedBoards={props.clientConfig?.enablePublicSharedBoards || false}
-                        />
-                        }
-                        {showShareLoginButton &&
-                            <ShareBoardLoginButton/>
-                        }
-                        <ShareBoardTourStep/>
-                    </div>
                 </div>
-                <ViewHeader
-                    board={props.board}
-                    activeView={props.activeView}
-                    cards={props.cards}
-                    views={props.views}
-                    groupByProperty={props.groupByProperty}
-                    dateDisplayProperty={props.dateDisplayProperty}
-                    addCard={addEmptyCardAndShow}
-                    addCardFromTemplate={addCardFromTemplate}
-                    addCardTemplate={addCardTemplate}
-                    editCardTemplate={editCardTemplate}
-                    readonly={props.readonly}
-                />
             </div>
 
             {activeView.fields.viewType === 'board' &&

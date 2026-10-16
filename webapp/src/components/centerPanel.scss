@@ -47,13 +47,51 @@
         left: 0;
         background: rgb(var(--center-channel-bg-rgb));
 
-        > .mid-head {
-            margin-top: 24px;
-            flex: 0 0 auto;
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
+        // Header drawer: the full header slides up into a slim bar.
+        .headerCollapsedBar {
+            display: none;
+        }
+
+        .headerDrawerBody {
+            overflow: hidden;
+            max-height: 600px;
+            transition: max-height 0.3s ease, opacity 0.25s ease;
+        }
+
+        &.is-collapsed {
+            .headerCollapsedBar {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                height: 32px;
+                padding: 0 4px 0 12px;
+                border-bottom: 1px solid rgba(var(--center-channel-color-rgb), 0.08);
+
+                .headerCollapsedTitle {
+                    font-size: 13px;
+                    font-weight: 600;
+                    color: rgba(var(--center-channel-color-rgb), 0.8);
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+            }
+
+            .headerDrawerBody {
+                max-height: 0;
+                opacity: 0;
+            }
+        }
+
+        .headerDrawerBody {
+            > .mid-head {
+                margin-top: 24px;
+                flex: 0 0 auto;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
         }
 
         .ViewTitle {
