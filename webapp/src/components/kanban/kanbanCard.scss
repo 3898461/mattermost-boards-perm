@@ -11,12 +11,18 @@
     // Card tint follows the lane header color; falls back to plain bg.
     background-color: rgb(var(--center-channel-bg-rgb));
     background-color: color-mix(in srgb, var(--column-color, transparent) 14%, rgb(var(--center-channel-bg-rgb)));
-    // Card text follows the lane color too: 40% lane + 60% default text,
-    // so it reads as tinted but stays dark enough to read.
-    color: rgb(var(--center-channel-color-rgb));
-    color: color-mix(in srgb, var(--column-color, rgb(var(--center-channel-color-rgb))) 40%, rgb(var(--center-channel-color-rgb)));
+    // Card text: ALL card fonts use the title color (tinted by lane
+    // color + 20% lighter), so the whole card reads in one tone.
+    color: rgba(var(--center-channel-color-rgb), 0.8);
+    color: color-mix(in srgb, var(--column-color, rgba(var(--center-channel-color-rgb), 0.8)) 40%, rgba(var(--center-channel-color-rgb), 0.8));
     box-shadow: rgba(var(--center-channel-color-rgb), 0.1) 0 0 0 1px,
         rgba(var(--center-channel-color-rgb), 0.1) 0 2px 4px;
+
+    // Labels / pills on the card also use the title color.
+    .Label {
+        color: rgba(var(--center-channel-color-rgb), 0.8);
+        color: color-mix(in srgb, var(--column-color, rgba(var(--center-channel-color-rgb), 0.8)) 40%, rgba(var(--center-channel-color-rgb), 0.8));
+    }
 
     cursor: pointer;
     color: rgb(var(--center-channel-color-rgb));
@@ -86,8 +92,10 @@
             max-height: 100px;
             -webkit-line-clamp: 5;
             -webkit-box-orient: vertical; // stylelint-disable-line
-            // Card main title: 11px, tinted by lane color + 20% lighter.
-            font-size: 11px;
+            // Card main title: 12px, tinted by lane color + 20% lighter.
+            // Explicitly normal style: no italic from anywhere.
+            font-size: 12px;
+            font-style: normal;
             color: rgba(var(--center-channel-color-rgb), 0.8);
             color: color-mix(in srgb, var(--column-color, rgba(var(--center-channel-color-rgb), 0.8)) 40%, rgba(var(--center-channel-color-rgb), 0.8));
         }
