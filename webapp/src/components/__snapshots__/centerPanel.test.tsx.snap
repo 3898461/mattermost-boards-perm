@@ -53,7 +53,7 @@ exports[`components/centerPanel Clicking on the Hidden card count should open a 
         </span>
       </div>
       <div
-        class="headerDrawerBody"
+        class="headerDrawerBody "
       >
         <div
           class="mid-head"
@@ -794,7 +794,7 @@ exports[`components/centerPanel return centerPanel and click on card to show car
         </span>
       </div>
       <div
-        class="headerDrawerBody"
+        class="headerDrawerBody "
       >
         <div
           class="mid-head"
@@ -1382,7 +1382,7 @@ exports[`components/centerPanel return centerPanel and click on new card to edit
         </span>
       </div>
       <div
-        class="headerDrawerBody"
+        class="headerDrawerBody "
       >
         <div
           class="mid-head"
@@ -2073,7 +2073,7 @@ exports[`components/centerPanel return centerPanel and press touch 1 with readon
         </span>
       </div>
       <div
-        class="headerDrawerBody"
+        class="headerDrawerBody "
       >
         <div
           class="mid-head"
@@ -2505,7 +2505,7 @@ exports[`components/centerPanel return centerPanel and press touch ctrl+d for on
         </span>
       </div>
       <div
-        class="headerDrawerBody"
+        class="headerDrawerBody "
       >
         <div
           class="mid-head"
@@ -3196,7 +3196,7 @@ exports[`components/centerPanel return centerPanel and press touch del for one c
         </span>
       </div>
       <div
-        class="headerDrawerBody"
+        class="headerDrawerBody "
       >
         <div
           class="mid-head"
@@ -3887,7 +3887,7 @@ exports[`components/centerPanel return centerPanel and press touch esc for one c
         </span>
       </div>
       <div
-        class="headerDrawerBody"
+        class="headerDrawerBody "
       >
         <div
           class="mid-head"
@@ -4578,7 +4578,7 @@ exports[`components/centerPanel return centerPanel and press touch esc for one c
         </span>
       </div>
       <div
-        class="headerDrawerBody"
+        class="headerDrawerBody "
       >
         <div
           class="mid-head"
@@ -5269,7 +5269,7 @@ exports[`components/centerPanel return centerPanel and press touch esc for two c
         </span>
       </div>
       <div
-        class="headerDrawerBody"
+        class="headerDrawerBody "
       >
         <div
           class="mid-head"
@@ -5960,7 +5960,7 @@ exports[`components/centerPanel return centerPanel and press touch esc for two c
         </span>
       </div>
       <div
-        class="headerDrawerBody"
+        class="headerDrawerBody "
       >
         <div
           class="mid-head"
@@ -6651,7 +6651,7 @@ exports[`components/centerPanel return centerPanel and press touch esc for two c
         </span>
       </div>
       <div
-        class="headerDrawerBody"
+        class="headerDrawerBody "
       >
         <div
           class="mid-head"
@@ -7342,7 +7342,7 @@ exports[`components/centerPanel return centerPanel and select one card and click
         </span>
       </div>
       <div
-        class="headerDrawerBody"
+        class="headerDrawerBody "
       >
         <div
           class="mid-head"
@@ -8033,7 +8033,7 @@ exports[`components/centerPanel return centerPanel and select one card and click
         </span>
       </div>
       <div
-        class="headerDrawerBody"
+        class="headerDrawerBody "
       >
         <div
           class="mid-head"
@@ -8724,7 +8724,7 @@ exports[`components/centerPanel should match snapshot for Gallery 1`] = `
         </span>
       </div>
       <div
-        class="headerDrawerBody"
+        class="headerDrawerBody "
       >
         <div
           class="mid-head"
@@ -9032,7 +9032,7 @@ exports[`components/centerPanel should match snapshot for Kanban 1`] = `
         </span>
       </div>
       <div
-        class="headerDrawerBody"
+        class="headerDrawerBody "
       >
         <div
           class="mid-head"
@@ -9586,7 +9586,7 @@ exports[`components/centerPanel should match snapshot for Kanban, not shared 1`]
         </span>
       </div>
       <div
-        class="headerDrawerBody"
+        class="headerDrawerBody "
       >
         <div
           class="mid-head"
@@ -10140,7 +10140,7 @@ exports[`components/centerPanel should match snapshot for Table 1`] = `
         </span>
       </div>
       <div
-        class="headerDrawerBody"
+        class="headerDrawerBody "
       >
         <div
           class="mid-head"

@@ -95,6 +95,18 @@ const CenterPanel = (props: Props) => {
             return true
         }
     })
+    // The drawer body needs overflow:hidden during the collapse animation,
+    // but overflow:visible once settled, otherwise the ViewHeader dropdown
+    // menus (rendered inline, not in a portal) get clipped.
+    const [headerOverflowVisible, setHeaderOverflowVisible] = useState(!headerCollapsed)
+    useEffect(() => {
+        if (!headerCollapsed) {
+            const t = setTimeout(() => setHeaderOverflowVisible(true), 350)
+            return () => clearTimeout(t)
+        }
+        setHeaderOverflowVisible(false)
+        return undefined
+    }, [headerCollapsed])
     const toggleHeaderCollapsed = useCallback(() => {
         setHeaderCollapsed((prev) => {
             const next = !prev
@@ -461,7 +473,7 @@ const CenterPanel = (props: Props) => {
                 </div>
                 {/* Full header: slides up / down as a drawer. Kept mounted
                     (CSS hides it) so ViewHeader state (e.g. search) survives. */}
-                <div className='headerDrawerBody'>
+                <div className={`headerDrawerBody ${headerOverflowVisible ? 'overflow-visible' : ''}`}>
                     <div className='mid-head'>
                         <ViewTitle
                             key={board.id + board.title}

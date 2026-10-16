@@ -117,10 +117,13 @@ const KanbanCard = (props: Props) => {
         const ids: string[] = Array.isArray(value) ? value.filter((v) => typeof v === 'string' && v) : (typeof value === 'string' && value ? [value] : [])
         return ids.map((id) => titleLabelTemplate.options.find((o) => o.id === id)).filter((o) => Boolean(o))
     }, [titleLabelTemplate, card.fields.properties])
-    const restPropertyTemplates = useMemo(
-        () => visiblePropertyTemplates.filter((t) => t !== titleLabelTemplate),
-        [visiblePropertyTemplates, titleLabelTemplate],
-    )
+    const restPropertyTemplates = useMemo(() => {
+        const rest = visiblePropertyTemplates.filter((t) => t !== titleLabelTemplate)
+        // Due date goes to the very bottom of the card.
+        const nonDate = rest.filter((t) => t.type !== 'date')
+        const date = rest.filter((t) => t.type === 'date')
+        return [...nonDate, ...date]
+    }, [visiblePropertyTemplates, titleLabelTemplate])
 
     return (
         <>

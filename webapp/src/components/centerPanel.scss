@@ -79,6 +79,12 @@
             overflow: hidden;
             max-height: 600px;
             transition: max-height 0.3s ease, opacity 0.25s ease;
+
+            // Once settled open, let the dropdown menus overflow above
+            // the kanban (they render inline, not in a portal).
+            &.overflow-visible {
+                overflow: visible;
+            }
         }
 
         &.is-collapsed {
