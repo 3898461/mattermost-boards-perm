@@ -13,6 +13,7 @@ import TelemetryClient, {TelemetryActions, TelemetryCategory} from '../../teleme
 import {Utils} from '../../utils'
 import MenuWrapper from '../../widgets/menuWrapper'
 import Tooltip from '../../widgets/tooltip'
+import Label from '../../widgets/label'
 import PropertyValueElement from '../propertyValueElement'
 import ConfirmationDialogBox, {ConfirmationDialogBoxProps} from '../confirmationDialogBox'
 import './kanbanCard.scss'
@@ -94,18 +95,28 @@ const KanbanCard = (props: Props) => {
         emojiData = getValidEmojiData(card.fields.icon)
     }
 
-    // The last visible select property (e.g. the project-code pill) is
-    // shown as a leading label in the title row; the rest render below.
+    // The last visible multi-select property (e.g. the project-code pills)
+    // is shown as leading labels in the title row; the rest render below.
     // Skipped when the property has no value (would render an empty pill).
+    // Labels are rendered directly (no div wrapper) so they stay inline
+    // in the title text flow and wrapped lines start at the left edge.
     const titleLabelTemplate = useMemo(() => {
         for (let i = visiblePropertyTemplates.length - 1; i >= 0; i--) {
             const t = visiblePropertyTemplates[i]
-            if (t.type === 'select' && card.fields.properties[t.id]) {
+            if (t.type === 'multiSelect' && card.fields.properties[t.id]) {
                 return t
             }
         }
         return undefined
     }, [visiblePropertyTemplates, card.fields.properties])
+    const titleLabelOptions = useMemo(() => {
+        if (!titleLabelTemplate) {
+            return []
+        }
+        const value = card.fields.properties[titleLabelTemplate.id]
+        const ids: string[] = Array.isArray(value) ? value.filter((v) => typeof v === 'string' && v) : (typeof value === 'string' && value ? [value] : [])
+        return ids.map((id) => titleLabelTemplate.options.find((o) => o.id === id)).filter((o) => Boolean(o))
+    }, [titleLabelTemplate, card.fields.properties])
     const restPropertyTemplates = useMemo(
         () => visiblePropertyTemplates.filter((t) => t !== titleLabelTemplate),
         [visiblePropertyTemplates, titleLabelTemplate],
@@ -157,17 +168,14 @@ const KanbanCard = (props: Props) => {
                         key='__title'
                         className='octo-titletext'
                     >
-                        {titleLabelTemplate &&
-                        <span className='title-label'>
-                            <PropertyValueElement
-                                board={board}
-                                readOnly={true}
-                                card={card}
-                                propertyTemplate={titleLabelTemplate}
-                                showEmptyPlaceholder={false}
-                            />
-                        </span>
-                        }
+                        {titleLabelOptions.map((option) => (
+                            <Label
+                                key={option!.id}
+                                color={option!.color}
+                            >
+                                {option!.value}
+                            </Label>
+                        ))}
                         {card.title || intl.formatMessage({id: 'KanbanCard.untitled', defaultMessage: 'Untitled'})}
                     </div>
                 </div>

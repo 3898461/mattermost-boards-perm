@@ -86,29 +86,24 @@
         }
 
         .octo-titletext {
-            display: -webkit-box; // stylelint-disable-line
+            // Plain block so the leading labels + title text flow as one
+            // inline paragraph: first line starts with the pills, wrapped
+            // lines start at the left edge (no hanging indent).
+            // (-webkit-box would stack the pills and the text vertically.)
+            display: block;
             overflow: hidden;
-            text-overflow: ellipsis;
             max-height: 100px;
-            -webkit-line-clamp: 5;
-            -webkit-box-orient: vertical; // stylelint-disable-line
             // Card main title: 12px, pure black.
             // Explicitly normal style: no italic from anywhere.
             font-size: 12px;
             font-style: normal;
             color: #000;
 
-            // Leading select pill (e.g. project code) inline in the title
-            // flow: first line starts with the pill, wrapped lines start
-            // at the left edge (no hanging indent).
-            .title-label {
-                margin-right: 6px;
-
-                .Label {
-                    margin: 0;
-                    vertical-align: middle;
-                    color: #000;
-                }
+            // Leading multi-select pills inline in the title flow.
+            .Label {
+                margin: 0 6px 0 0;
+                vertical-align: middle;
+                color: #000;
             }
         }
     }
