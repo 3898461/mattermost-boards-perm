@@ -8,9 +8,9 @@
     border-radius: 8px;
     margin-bottom: 10px;
     padding: 12px 16px;
-    // Card tint follows the lane header color; falls back to plain bg.
+    // Card background: lane tint 24% (was 14%) — 10% more solid.
     background-color: rgb(var(--center-channel-bg-rgb));
-    background-color: color-mix(in srgb, var(--column-color, transparent) 14%, rgb(var(--center-channel-bg-rgb)));
+    background-color: color-mix(in srgb, var(--column-color, transparent) 24%, rgb(var(--center-channel-bg-rgb)));
     // Card text: ALL card fonts use the title color (tinted by lane
     // color + 20% lighter), so the whole card reads in one tone.
     color: rgba(var(--center-channel-color-rgb), 0.8);
@@ -92,12 +92,11 @@
             max-height: 100px;
             -webkit-line-clamp: 5;
             -webkit-box-orient: vertical; // stylelint-disable-line
-            // Card main title: 12px, tinted by lane color + 20% lighter.
+            // Card main title: 12px, pure black.
             // Explicitly normal style: no italic from anywhere.
             font-size: 12px;
             font-style: normal;
-            color: rgba(var(--center-channel-color-rgb), 0.8);
-            color: color-mix(in srgb, var(--column-color, rgba(var(--center-channel-color-rgb), 0.8)) 40%, rgba(var(--center-channel-color-rgb), 0.8));
+            color: #000;
         }
     }
 }
