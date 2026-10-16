@@ -94,6 +94,23 @@ const KanbanCard = (props: Props) => {
         emojiData = getValidEmojiData(card.fields.icon)
     }
 
+    // The last visible select property (e.g. the project-code pill) is
+    // shown as a leading label in the title row; the rest render below.
+    // Skipped when the property has no value (would render an empty pill).
+    const titleLabelTemplate = useMemo(() => {
+        for (let i = visiblePropertyTemplates.length - 1; i >= 0; i--) {
+            const t = visiblePropertyTemplates[i]
+            if (t.type === 'select' && card.fields.properties[t.id]) {
+                return t
+            }
+        }
+        return undefined
+    }, [visiblePropertyTemplates, card.fields.properties])
+    const restPropertyTemplates = useMemo(
+        () => visiblePropertyTemplates.filter((t) => t !== titleLabelTemplate),
+        [visiblePropertyTemplates, titleLabelTemplate],
+    )
+
     return (
         <>
             <div
@@ -140,10 +157,21 @@ const KanbanCard = (props: Props) => {
                         key='__title'
                         className='octo-titletext'
                     >
+                        {titleLabelTemplate &&
+                        <span className='title-label'>
+                            <PropertyValueElement
+                                board={board}
+                                readOnly={true}
+                                card={card}
+                                propertyTemplate={titleLabelTemplate}
+                                showEmptyPlaceholder={false}
+                            />
+                        </span>
+                        }
                         {card.title || intl.formatMessage({id: 'KanbanCard.untitled', defaultMessage: 'Untitled'})}
                     </div>
                 </div>
-                {visiblePropertyTemplates.map((template) => (
+                {restPropertyTemplates.map((template) => (
                     <Tooltip
                         key={template.id}
                         title={template.name}

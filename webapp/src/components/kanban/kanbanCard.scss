@@ -97,6 +97,19 @@
             font-size: 12px;
             font-style: normal;
             color: #000;
+
+            // Leading select pill (e.g. project code) inline in the title
+            // flow: first line starts with the pill, wrapped lines start
+            // at the left edge (no hanging indent).
+            .title-label {
+                margin-right: 6px;
+
+                .Label {
+                    margin: 0;
+                    vertical-align: middle;
+                    color: #000;
+                }
+            }
         }
     }
 }
