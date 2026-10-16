@@ -93,17 +93,19 @@
             display: block;
             overflow: hidden;
             max-height: 100px;
-            // Card main title: 12px, pure black.
+            // Card main title: 12px.
             // Explicitly normal style: no italic from anywhere.
+            // No explicit color: inherits the card color (same as the due
+            // date) so it follows the theme (light in dark mode).
             font-size: 12px;
             font-style: normal;
-            color: #000;
 
             // Leading multi-select pills inline in the title flow.
             .Label {
                 margin: 0 6px 0 0;
                 vertical-align: middle;
-                color: #000;
+                // No explicit color: inherits the card color like the
+                // title, so the pill text follows the theme too.
             }
         }
     }
