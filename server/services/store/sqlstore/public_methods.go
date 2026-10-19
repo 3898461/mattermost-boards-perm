@@ -747,7 +747,10 @@ func (s *SQLStore) PatchUserPreferences(userID string, patch model.UserPreferenc
 }
 
 func (s *SQLStore) PostMessage(message string, postType string, channelID string) error {
-	return s.postMessage(s.db, message, postType, channelID)
+	// Bot disabled: board bot posts are suppressed entirely. Previously
+	// this created the bot (EnsureBot) and posted link/unlink messages
+	// to the board's channel.
+	return nil
 
 }
 
@@ -826,7 +829,8 @@ func (s *SQLStore) SearchUsersByTeam(teamID string, searchQuery string, asGuestI
 }
 
 func (s *SQLStore) SendMessage(message string, postType string, receipts []string) error {
-	return s.sendMessage(s.db, message, postType, receipts)
+	// Bot disabled: board bot DMs are suppressed entirely.
+	return nil
 
 }
 

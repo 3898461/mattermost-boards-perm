@@ -96,29 +96,13 @@ func NewBoardsApp(api model.ServicesAPI, manifest *mm_model.Manifest) (*BoardsAp
 
 	wsPluginAdapter := ws.NewPluginAdapter(api, auth.New(cfg, db, permissionsService), db, logger)
 
-	backendParams := notifyBackendParams{
-		cfg:         cfg,
-		servicesAPI: api,
-		appAPI:      &appAPI{store: db},
-		permissions: permissionsService,
-		serverRoot:  baseURL + "/boards",
-		logger:      logger,
-	}
-
+	// Notification backends (mentions + subscriptions) are DISABLED:
+	// they create the "boards" bot user and post change notifications
+	// through the backend, which does not respect the webapp-only
+	// visibleTo permissions — an unauthorized edit could leak via the
+	// bot. No backends -> EnsureBot is never called, no bot, no posts.
+	// initNotificationService still adds a log-only backend.
 	var notifyBackends []notify.Backend
-
-	mentionsBackend, err := createMentionsNotifyBackend(backendParams)
-	if err != nil {
-		return nil, fmt.Errorf("error creating mention notifications backend: %w", err)
-	}
-	notifyBackends = append(notifyBackends, mentionsBackend)
-
-	subscriptionsBackend, err2 := createSubscriptionsNotifyBackend(backendParams)
-	if err2 != nil {
-		return nil, fmt.Errorf("error creating subscription notifications backend: %w", err2)
-	}
-	notifyBackends = append(notifyBackends, subscriptionsBackend)
-	mentionsBackend.AddListener(subscriptionsBackend)
 
 	params := server.Params{
 		Cfg:                cfg,
@@ -136,8 +120,6 @@ func NewBoardsApp(api model.ServicesAPI, manifest *mm_model.Manifest) (*BoardsAp
 	if err != nil {
 		return nil, fmt.Errorf("error initializing the server: %w", err)
 	}
-
-	backendParams.appAPI.init(db, server.App())
 
 	// ToDo: Cloud Limits have been disabled by design. We should
 	// revisit the decision and update the related code accordingly
