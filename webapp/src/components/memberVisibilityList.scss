@@ -19,6 +19,27 @@
             border-radius: 10px;
             background: rgba(var(--center-channel-color-rgb), 0.08);
         }
+
+        .visibility-list-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .visibility-invert-btn {
+            font-size: 11px;
+            padding: 1px 8px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(var(--center-channel-color-rgb), 0.08);
+            color: rgba(var(--center-channel-color-rgb), 0.72);
+            cursor: pointer;
+
+            &:hover {
+                background: rgba(var(--center-channel-color-rgb), 0.16);
+                color: rgb(var(--center-channel-color-rgb));
+            }
+        }
     }
 
     .visibility-list-members {

@@ -112,9 +112,20 @@ exports[`components/viewHeader/viewHeaderActionsMenu return menu 1`] = `
                 >
                   View permissions
                   <span
-                    class="visibility-list-status"
+                    class="visibility-list-actions"
                   >
-                    Everyone
+                    <span
+                      class="visibility-list-status"
+                    >
+                      Everyone
+                    </span>
+                    <button
+                      class="visibility-invert-btn"
+                      title="反选"
+                      type="button"
+                    >
+                      反选
+                    </button>
                   </span>
                 </div>
                 <div
@@ -274,9 +285,20 @@ exports[`components/viewHeader/viewHeaderActionsMenu return menu and verify call
                 >
                   View permissions
                   <span
-                    class="visibility-list-status"
+                    class="visibility-list-actions"
                   >
-                    Everyone
+                    <span
+                      class="visibility-list-status"
+                    >
+                      Everyone
+                    </span>
+                    <button
+                      class="visibility-invert-btn"
+                      title="反选"
+                      type="button"
+                    >
+                      反选
+                    </button>
                   </span>
                 </div>
                 <div
@@ -436,9 +458,20 @@ exports[`components/viewHeader/viewHeaderActionsMenu return menu and verify call
                 >
                   View permissions
                   <span
-                    class="visibility-list-status"
+                    class="visibility-list-actions"
                   >
-                    Everyone
+                    <span
+                      class="visibility-list-status"
+                    >
+                      Everyone
+                    </span>
+                    <button
+                      class="visibility-invert-btn"
+                      title="反选"
+                      type="button"
+                    >
+                      反选
+                    </button>
                   </span>
                 </div>
                 <div

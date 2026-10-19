@@ -96,6 +96,27 @@ const MemberVisibilityList = (props: Props): JSX.Element => {
         return restrictedUserIDs!.includes(user.id)
     }
 
+    // Invert selection for non-admin members (admins stay checked/locked).
+    const invertSelection = () => {
+        const allIDs = Object.keys(boardUsersById)
+        const current = new Set<string>(restricted ? restrictedUserIDs! : allIDs)
+        const next = new Set<string>()
+        allIDs.forEach((id) => {
+            if (adminIDs.has(id)) {
+                next.add(id)
+            } else if (!current.has(id)) {
+                next.add(id)
+            }
+        })
+        const nextArr = [...next]
+        // Everyone checked again -> back to "visible to everyone"
+        if (nextArr.length >= allIDs.length) {
+            onChange(undefined)
+        } else {
+            onChange(nextArr)
+        }
+    }
+
     return (
         <div
             className='MemberVisibilityList'
@@ -103,10 +124,23 @@ const MemberVisibilityList = (props: Props): JSX.Element => {
         >
             <div className='visibility-list-header'>
                 {intl.formatMessage({id: 'MemberVisibilityList.title', defaultMessage: 'View permissions'})}
-                <span className='visibility-list-status'>
-                    {restricted ?
-                        intl.formatMessage({id: 'MemberVisibilityList.restricted', defaultMessage: 'Restricted'}) :
-                        intl.formatMessage({id: 'MemberVisibilityList.everyone', defaultMessage: 'Everyone'})}
+                <span className='visibility-list-actions'>
+                    <span className='visibility-list-status'>
+                        {restricted ?
+                            intl.formatMessage({id: 'MemberVisibilityList.restricted', defaultMessage: 'Restricted'}) :
+                            intl.formatMessage({id: 'MemberVisibilityList.everyone', defaultMessage: 'Everyone'})}
+                    </span>
+                    <button
+                        type='button'
+                        className='visibility-invert-btn'
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            invertSelection()
+                        }}
+                        title={intl.formatMessage({id: 'MemberVisibilityList.invert', defaultMessage: '反选'})}
+                    >
+                        {intl.formatMessage({id: 'MemberVisibilityList.invert', defaultMessage: '反选'})}
+                    </button>
                 </span>
             </div>
             <div className='visibility-list-members'>
