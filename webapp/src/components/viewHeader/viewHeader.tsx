@@ -235,9 +235,9 @@ const ViewHeader = (props: Props) => {
                     cards={cards}
                 />
 
-                {/* New card button */}
+                {/* New card button (admins only) */}
 
-                <BoardPermissionGate permissions={[Permission.ManageBoardCards]}>
+                <BoardPermissionGate permissions={[Permission.ManageBoardRoles]}>
                     <NewCardButton
                         addCard={props.addCard}
                         addCardFromTemplate={props.addCardFromTemplate}

@@ -16,7 +16,7 @@ import PropertyMenu, {PropertyTypes} from '../../widgets/propertyMenu'
 import Calculations from '../calculations/calculations'
 import PropertyValueElement from '../propertyValueElement'
 import ConfirmationDialogBox, {ConfirmationDialogBoxProps} from '../confirmationDialogBox'
-import DraggablePropertyRow, {PROPERTY_ORDER_KEY} from './draggablePropertyRow'
+import DraggablePropertyRow, {getEffectiveOrderIds} from './draggablePropertyRow'
 import {sendFlashMessage} from '../flashMessages'
 import Menu from '../../widgets/menu'
 import {IDType, Utils} from '../../utils'
@@ -136,16 +136,12 @@ const CardDetailProperties = (props: Props) => {
         setShowConfirmationDialog(true)
     }
 
-    // Sort properties by the UI-only order stored in board.properties,
-    // falling back to the natural cardProperties order.
+    // Sort properties by the effective UI-only order (stored order cleaned
+    // of deleted-property phantoms, new properties appended). Must match
+    // the order DraggablePropertyRow.move operates on.
     const orderedProperties = (() => {
-        const stored = (board.properties || {})[PROPERTY_ORDER_KEY]
-        const orderIds: string[] | null = Array.isArray(stored) && stored.every((id) => typeof id === 'string') ? stored as string[] : null
         const filtered = board.cardProperties.filter((propertyTemplate: IPropertyTemplate) => canViewProperty(propertyTemplate, me?.id, canBypassViewPermissions))
-        if (!orderIds) {
-            return filtered
-        }
-        const orderIndex = new Map(orderIds.map((id, i) => [id, i]))
+        const orderIndex = new Map(getEffectiveOrderIds(board).map((id, i) => [id, i]))
         return [...filtered].sort((a, b) => {
             const ai = orderIndex.has(a.id) ? orderIndex.get(a.id)! : Number.MAX_SAFE_INTEGER
             const bi = orderIndex.has(b.id) ? orderIndex.get(b.id)! : Number.MAX_SAFE_INTEGER

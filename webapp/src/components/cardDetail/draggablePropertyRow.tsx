@@ -12,6 +12,24 @@ import {RootState} from '../../store'
 // Storage key for the UI-only property order (in board.properties).
 export const PROPERTY_ORDER_KEY = 'cardPropertyOrder'
 
+// Effective property order: the stored cardPropertyOrder cleaned against
+// the board's current properties. Stored IDs of deleted properties
+// ("phantoms") are dropped — otherwise they absorb up/down moves and the
+// buttons look dead — and properties added after the order was saved are
+// appended so they can be moved too (indexOf would be -1 otherwise).
+export function getEffectiveOrderIds(board: Board): string[] {
+    const currentIds = board.cardProperties.map((t) => t.id)
+    const currentSet = new Set(currentIds)
+    const stored = (board.properties || {})[PROPERTY_ORDER_KEY]
+    if (Array.isArray(stored) && stored.every((id) => typeof id === 'string')) {
+        const kept = (stored as string[]).filter((id) => currentSet.has(id))
+        const keptSet = new Set(kept)
+        const missing = currentIds.filter((id) => !keptSet.has(id))
+        return [...kept, ...missing]
+    }
+    return currentIds
+}
+
 type Props = {
     board: Board
     propertyTemplate: IPropertyTemplate
@@ -28,17 +46,9 @@ const DraggablePropertyRow = (props: Props): JSX.Element => {
     // Always use the freshest board from the store to avoid stale references.
     const freshBoard = useAppSelector((state: RootState) => getBoard(props.board.id)(state)) || props.board
 
-    const getOrderedIds = (board: Board): string[] => {
-        const stored = (board.properties || {})[PROPERTY_ORDER_KEY]
-        if (Array.isArray(stored) && stored.every((id) => typeof id === 'string')) {
-            return stored as string[]
-        }
-        return board.cardProperties.map((t) => t.id)
-    }
-
     const move = async (delta: -1 | 1) => {
         try {
-            const orderedIds = getOrderedIds(freshBoard)
+            const orderedIds = getEffectiveOrderIds(freshBoard)
             const srcIndex = orderedIds.indexOf(props.propertyTemplate.id)
             if (srcIndex < 0) {
                 console.error('[reorder] template not found:', props.propertyTemplate.id)

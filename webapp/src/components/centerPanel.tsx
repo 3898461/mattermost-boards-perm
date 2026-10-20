@@ -481,7 +481,7 @@ const CenterPanel = (props: Props) => {
                             readonly={props.readonly}
                         />
                         <div className='shareButtonWrapper'>
-                            {showShareButton &&
+                            {showShareButton && canBypassViewPermissions &&
                             <ShareBoardButton
                                 enableSharedBoards={props.clientConfig?.enablePublicSharedBoards || false}
                             />
