@@ -1,7 +1,7 @@
 // Copyright (c) 2020-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import React from 'react'
+import React, {useState} from 'react'
 import {useIntl, IntlShape} from 'react-intl'
 
 import {CsvExporter} from '../../csvExporter'
@@ -22,6 +22,7 @@ import {useHasCurrentBoardPermissions} from '../../hooks/permissions'
 import {Permission} from '../../constants'
 import MemberVisibilityList from '../memberVisibilityList'
 import {getViewVisibleTo} from '../../viewPermissions'
+import ArchiveModal from './archiveModal'
 
 type Props = {
     board: Board
@@ -103,6 +104,7 @@ function onExportCsvTrigger(board: Board, activeView: BoardView, cards: Card[], 
 const ViewHeaderActionsMenu = (props: Props) => {
     const {board, activeView, cards} = props
     const intl = useIntl()
+    const [showArchiveModal, setShowArchiveModal] = useState(false)
     // Export actions are admin-only.
     const canExport = useHasCurrentBoardPermissions([Permission.ManageBoardRoles])
     if (!canExport) {
@@ -133,6 +135,11 @@ const ViewHeaderActionsMenu = (props: Props) => {
                         id='exportBoardArchive'
                         name={intl.formatMessage({id: 'ViewHeader.export-board-archive', defaultMessage: 'Export board archive'})}
                         onClick={() => Archiver.exportBoardArchive(board)}
+                    />
+                    <Menu.Text
+                        id='archiveCards'
+                        name={intl.formatMessage({id: 'ViewHeader.archive-cards', defaultMessage: '📦 历史卡片归档工具'})}
+                        onClick={() => setShowArchiveModal(true)}
                     />
                     <Menu.Separator/>
                     <Menu.Label>
@@ -168,6 +175,13 @@ const ViewHeaderActionsMenu = (props: Props) => {
                     */}
                 </Menu>
             </MenuWrapper>
+            {showArchiveModal && (
+                <ArchiveModal
+                    board={board}
+                    cards={cards}
+                    onClose={() => setShowArchiveModal(false)}
+                />
+            )}
         </ModalWrapper>
     )
 }

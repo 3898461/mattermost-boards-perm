@@ -360,6 +360,31 @@ func (s *SQLStore) insertBlocks(db sq.BaseRunner, blocks []*model.Block, userID 
 	return nil
 }
 
+// moveBlocksToBoard reassigns the given blocks to another board by
+// updating ONLY the board_id column, in both the blocks table and the
+// blocks_history table. It deliberately does not touch create_at or
+// update_at: archived cards must keep their original historical
+// timestamps (this is the store-level move that the block PATCH API
+// cannot express).
+func (s *SQLStore) moveBlocksToBoard(db sq.BaseRunner, blockIDs []string, targetBoardID string) error {
+	if len(blockIDs) == 0 {
+		return nil
+	}
+
+	for _, table := range []string{"blocks", "blocks_history"} {
+		query := s.getQueryBuilder(db).Update(s.tablePrefix+table).
+			Set("board_id", targetBoardID).
+			Where(sq.Eq{"id": blockIDs})
+
+		if _, err := query.Exec(); err != nil {
+			s.logger.Error("moveBlocksToBoard ERROR", mlog.Err(err), mlog.String("table", table))
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (s *SQLStore) deleteBlock(db sq.BaseRunner, blockID string, modifiedBy string) error {
 	return s.deleteBlockAndChildren(db, blockID, modifiedBy, false)
 }

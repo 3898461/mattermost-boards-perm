@@ -154,6 +154,14 @@ func (a *API) handleGetBlocks(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// Server-side masking (true isolation): non-admins must not receive
+	// sensitive property values or restricted views via the API, even
+	// though the webapp also hides them in the UI.
+	isAdmin := a.permissions.HasPermissionToBoard(userID, boardID, model.PermissionManageBoardRoles)
+	if !isAdmin {
+		blocks = a.maskSensitiveBlocks(blocks, board, userID)
+	}
+
 	a.logger.Debug("GetBlocks",
 		mlog.String("boardID", boardID),
 		mlog.String("parentID", parentID),
@@ -597,6 +605,31 @@ func (a *API) handlePatchBlock(w http.ResponseWriter, r *http.Request) {
 	auditRec.AddMeta("boardID", boardID)
 	auditRec.AddMeta("blockID", blockID)
 
+	// Server-side write guard (true isolation): non-admins must not write
+	// sensitive money fields via the API, even by crafting a raw request.
+	board, err := a.app.GetBoard(boardID)
+	if err != nil {
+		a.errorResponse(w, r, err)
+		return
+	}
+	isAdmin := a.permissions.HasPermissionToBoard(userID, boardID, model.PermissionManageBoardRoles)
+	if !isAdmin && patch.UpdatedFields != nil {
+		if propsRaw, exists := patch.UpdatedFields["properties"]; exists {
+			if propsMap, ok := propsRaw.(map[string]interface{}); ok {
+				for _, prop := range board.CardProperties {
+					pID, _ := prop["id"].(string)
+					pName, _ := prop["name"].(string)
+					if _, attempted := propsMap[pID]; attempted {
+						if pName == "单价" || pName == "实际金额" || pName == "实际单价" {
+							a.errorResponse(w, r, model.NewErrPermission("无权修改受限敏感金额字段"))
+							return
+						}
+					}
+				}
+			}
+		}
+	}
+
 	if _, err = a.app.PatchBlockAndNotify(blockID, patch, userID, disableNotify); err != nil {
 		a.errorResponse(w, r, err)
 		return
@@ -702,6 +735,46 @@ func (a *API) handlePatchBlocks(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			teamID = board.TeamID
+		}
+	}
+
+	// Server-side write guard for the batch endpoint: without it, the
+	// handlePatchBlock check above could be bypassed via PATCH batch.
+	for i, blockPatch := range patches.BlockPatches {
+		if i >= len(patches.BlockIDs) {
+			break
+		}
+		if blockPatch.UpdatedFields == nil {
+			continue
+		}
+		propsRaw, exists := blockPatch.UpdatedFields["properties"]
+		if !exists {
+			continue
+		}
+		propsMap, ok := propsRaw.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		batchBlock, bErr := a.app.GetBlockByID(patches.BlockIDs[i])
+		if bErr != nil || batchBlock == nil {
+			continue
+		}
+		if a.permissions.HasPermissionToBoard(userID, batchBlock.BoardID, model.PermissionManageBoardRoles) {
+			continue
+		}
+		batchBoard, bErr := a.app.GetBoard(batchBlock.BoardID)
+		if bErr != nil || batchBoard == nil {
+			continue
+		}
+		for _, prop := range batchBoard.CardProperties {
+			pID, _ := prop["id"].(string)
+			pName, _ := prop["name"].(string)
+			if _, attempted := propsMap[pID]; attempted {
+				if pName == "单价" || pName == "实际金额" || pName == "实际单价" {
+					a.errorResponse(w, r, model.NewErrPermission("无权修改受限敏感金额字段"))
+					return
+				}
+			}
 		}
 	}
 
@@ -814,4 +887,89 @@ func (a *API) handleDuplicateBlock(w http.ResponseWriter, r *http.Request) {
 	jsonBytesResponse(w, http.StatusOK, data)
 
 	auditRec.Success()
+}
+
+// maskSensitiveBlocks strips, for a non-admin caller, the values of card
+// properties the caller is not allowed to see, and drops view blocks the
+// caller is not allowed to see. A property is hidden when its visibleTo
+// list is non-empty and does not contain userID, or when its name is one
+// of the hard-coded sensitive money fields (单价 / 实际金额 / 实际单价),
+// which are hidden from non-admins regardless of visibleTo.
+func (a *API) maskSensitiveBlocks(blocks []*model.Block, board *model.Board, userID string) []*model.Block {
+	if board == nil || len(blocks) == 0 {
+		return blocks
+	}
+
+	hiddenPropIDs := make(map[string]bool)
+	for _, prop := range board.CardProperties {
+		propID, _ := prop["id"].(string)
+		if propID == "" {
+			continue
+		}
+		if vRaw, exists := prop["visibleTo"]; exists {
+			if vList, ok := vRaw.([]interface{}); ok && len(vList) > 0 {
+				allowed := false
+				for _, u := range vList {
+					if uStr, ok := u.(string); ok && uStr == userID {
+						allowed = true
+						break
+					}
+				}
+				if !allowed {
+					hiddenPropIDs[propID] = true
+					continue
+				}
+			}
+		}
+		name, _ := prop["name"].(string)
+		if name == "单价" || name == "实际金额" || name == "实际单价" {
+			hiddenPropIDs[propID] = true
+		}
+	}
+
+	result := make([]*model.Block, 0, len(blocks))
+	for _, b := range blocks {
+		// 视图级隔离：未授权成员直接不下发 view block
+		if b.Type == model.TypeView && b.Fields != nil {
+			if vRaw, exists := b.Fields["visibleTo"]; exists {
+				if vList, ok := vRaw.([]interface{}); ok && len(vList) > 0 {
+					allowed := false
+					for _, u := range vList {
+						if uStr, ok := u.(string); ok && uStr == userID {
+							allowed = true
+							break
+						}
+					}
+					if !allowed {
+						continue
+					}
+				}
+			}
+		}
+
+		// 卡片属性脱敏
+		if b.Type == model.TypeCard && b.Fields != nil {
+			if propsRaw, exists := b.Fields["properties"]; exists {
+				if propsMap, ok := propsRaw.(map[string]interface{}); ok {
+					newProps := make(map[string]interface{}, len(propsMap))
+					for k, v := range propsMap {
+						if !hiddenPropIDs[k] {
+							newProps[k] = v
+						}
+					}
+					clone := *b
+					cloneFields := make(map[string]interface{}, len(b.Fields))
+					for fk, fv := range b.Fields {
+						cloneFields[fk] = fv
+					}
+					cloneFields["properties"] = newProps
+					clone.Fields = cloneFields
+					result = append(result, &clone)
+					continue
+				}
+			}
+		}
+		result = append(result, b)
+	}
+	return result
 }

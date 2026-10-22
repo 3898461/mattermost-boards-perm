@@ -645,6 +645,30 @@ func (s *SQLStore) InsertBoardWithAdmin(board *model.Board, userID string) (*mod
 
 }
 
+func (s *SQLStore) MoveBlocksToBoard(blockIDs []string, targetBoardID string) error {
+	if s.dbType == model.SqliteDBType {
+		return s.moveBlocksToBoard(s.db, blockIDs, targetBoardID)
+	}
+	tx, txErr := s.db.BeginTx(context.Background(), nil)
+	if txErr != nil {
+		return txErr
+	}
+	err := s.moveBlocksToBoard(tx, blockIDs, targetBoardID)
+	if err != nil {
+		if rollbackErr := tx.Rollback(); rollbackErr != nil {
+			s.logger.Error("transaction rollback error", mlog.Err(rollbackErr), mlog.String("methodName", "MoveBlocksToBoard"))
+		}
+		return err
+	}
+
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
 func (s *SQLStore) PatchBlock(blockID string, blockPatch *model.BlockPatch, userID string) error {
 	if s.dbType == model.SqliteDBType {
 		return s.patchBlock(s.db, blockID, blockPatch, userID)
@@ -747,9 +771,10 @@ func (s *SQLStore) PatchUserPreferences(userID string, patch model.UserPreferenc
 }
 
 func (s *SQLStore) PostMessage(message string, postType string, channelID string) error {
-	// Bot disabled: board bot posts are suppressed entirely. Previously
-	// this created the bot (EnsureBot) and posted link/unlink messages
-	// to the board's channel.
+	// Bot policy: board bot channel posts stay suppressed (only the
+	// sanitized @mention DM backend is enabled). The generated wrapper
+	// would call the deleted postMessage implementation; keep the
+	// no-op override that the nobot change applied by hand.
 	return nil
 
 }
@@ -766,6 +791,11 @@ func (s *SQLStore) ReorderCategories(userID string, teamID string, newCategoryOr
 
 func (s *SQLStore) ReorderCategoryBoards(categoryID string, newBoardsOrder []string) ([]string, error) {
 	return s.reorderCategoryBoards(s.db, categoryID, newBoardsOrder)
+
+}
+
+func (s *SQLStore) RestoreFiles(fileIDs []string) error {
+	return s.restoreFiles(s.db, fileIDs)
 
 }
 
@@ -798,11 +828,6 @@ func (s *SQLStore) SaveFileInfo(fileInfo *mmModel.FileInfo) error {
 
 }
 
-func (s *SQLStore) RestoreFiles(fileIDs []string) error {
-	return s.restoreFiles(s.db, fileIDs)
-
-}
-
 func (s *SQLStore) SaveMember(bm *model.BoardMember) (*model.BoardMember, error) {
 	return s.saveMember(s.db, bm)
 
@@ -829,7 +854,7 @@ func (s *SQLStore) SearchUsersByTeam(teamID string, searchQuery string, asGuestI
 }
 
 func (s *SQLStore) SendMessage(message string, postType string, receipts []string) error {
-	// Bot disabled: board bot DMs are suppressed entirely.
+	// Bot policy: see PostMessage above. Keep the no-op override.
 	return nil
 
 }

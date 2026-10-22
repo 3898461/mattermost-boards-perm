@@ -4,6 +4,8 @@
 import {Board, IPropertyTemplate, IPropertyOption} from './blocks/board'
 import {Card} from './blocks/card'
 import {getBoard} from './store/boards'
+import {getCards} from './store/cards'
+import {getMe} from './store/users'
 import store from './store'
 import {sendFlashMessage} from './components/flashMessages'
 
@@ -50,6 +52,41 @@ export function isAutoManagedProperty(name: string | undefined): boolean {
 
 // Statuses whose cards keep their amount when the unit price changes.
 const LOCKED_STATUSES = new Set<string>(['待付款', '已付款'])
+
+// --- Financial snapshot (2026-10-21) -------------------------------------
+// The first time a card enters a locked status (待付款/已付款), a
+// snapshot of its money state is frozen into the card's fields under
+// AMOUNT_SNAPSHOT_FIELD. Later price changes can move the live 实际金额
+// inputs around, but the snapshot never changes again, and its presence
+// is what the UI uses to show the gold lock badge and to force 人天 /
+// 实际单价 read-only.
+export const AMOUNT_SNAPSHOT_FIELD = 'amountSnapshot'
+
+export type AmountSnapshot = {
+    lockedAt: number
+    lockedBy?: string
+    status: string
+    amount?: number
+    personDays?: number
+    unitPrice?: number
+    detail: Record<string, number>
+}
+
+export function getAmountSnapshot(card: Card): AmountSnapshot | null {
+    const raw = (card.fields as Record<string, unknown>)[AMOUNT_SNAPSHOT_FIELD]
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+        return null
+    }
+    const snap = raw as AmountSnapshot
+    if (typeof snap.lockedAt !== 'number') {
+        return null
+    }
+    return snap
+}
+
+export function isAmountLocked(card: Card): boolean {
+    return getAmountSnapshot(card) !== null
+}
 
 // status option label -> date property name (first entry wins, never overwritten)
 const STATUS_DATE_MAP: Array<{statusProp: string, optionLabel: string, dateProp: string}> = [
@@ -98,12 +135,14 @@ function flash(content: string, severity: 'normal' | 'high' = 'normal'): void {
 let inAutomation = false
 
 type SetProperty = (propertyId: string, value?: string) => Promise<void>
+type SetCardField = (field: string, value: unknown) => Promise<void>
 
 export async function afterPropertyChange(args: {
     boardId: string
     card: Card
     changedPropertyId: string
     setProperty: SetProperty
+    setCardField?: SetCardField
 }): Promise<void> {
     if (inAutomation) {
         return
@@ -116,9 +155,71 @@ export async function afterPropertyChange(args: {
     try {
         await applyAmountAutomation(board, args.card, args.changedPropertyId, args.setProperty)
         await applyDateStamps(board, args.card, args.changedPropertyId, args.setProperty)
+        if (args.setCardField) {
+            await applyAmountSnapshot(board, args.card, args.changedPropertyId, args.setCardField)
+        }
     } finally {
         inAutomation = false
     }
+}
+
+// Freezes the financial snapshot the first time the card's 项目状态
+// enters a locked status. Reads the freshest card from the store so
+// amounts recomputed moments earlier in this same automation pass are
+// captured, not the stale pre-change values.
+async function applyAmountSnapshot(board: Board, card: Card, changedPropertyId: string, setCardField: SetCardField): Promise<void> {
+    const tStatus = findTemplateByName(board, SETTLE_PROP_NAMES.projectStatus)
+    if (!tStatus || tStatus.id !== changedPropertyId) {
+        return
+    }
+    const statusLabel = optionById(tStatus, stringProp(card, tStatus) || '')?.value
+    if (!statusLabel || !LOCKED_STATUSES.has(statusLabel)) {
+        return
+    }
+
+    const fresh = getCards(store.getState())[card.id] || card
+    if (getAmountSnapshot(fresh)) {
+        // Already frozen once; the first snapshot always stands.
+        return
+    }
+
+    const num = (name: string): number | undefined => {
+        const t = findTemplateByName(board, name)
+        if (!t) {
+            return undefined
+        }
+        const n = parseFloat(stringProp(fresh, t) || '')
+        return isNaN(n) ? undefined : n
+    }
+
+    let detail: Record<string, number> = {}
+    const tDetail = findTemplateByName(board, '完成度明细')
+    if (tDetail) {
+        const raw = fresh.fields.properties[tDetail.id]
+        if (typeof raw === 'string' && raw) {
+            try {
+                const parsed = JSON.parse(raw)
+                if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+                    detail = parsed as Record<string, number>
+                }
+            } catch {
+                detail = {}
+            }
+        }
+    }
+
+    const me = getMe(store.getState())
+    const snapshot: AmountSnapshot = {
+        lockedAt: Date.now(),
+        lockedBy: me?.id,
+        status: statusLabel,
+        amount: num(SETTLE_PROP_NAMES.amount),
+        personDays: num(SETTLE_PROP_NAMES.personDays),
+        unitPrice: num(SETTLE_PROP_NAMES.unitPrice),
+        detail,
+    }
+    await setCardField(AMOUNT_SNAPSHOT_FIELD, snapshot)
+    flash(`财务快照已固化（${statusLabel}）：金额 ${snapshot.amount ?? 0}，人天 ${snapshot.personDays ?? 0}`)
 }
 
 async function applyAmountAutomation(board: Board, card: Card, changedPropertyId: string, setProperty: SetProperty): Promise<void> {

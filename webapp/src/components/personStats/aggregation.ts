@@ -13,6 +13,7 @@ const PROP_AMOUNT = '实际金额'
 const PROP_STATUS = '项目状态'
 const PROP_COMPLETE_DATE = '完成日期'
 const PROP_DETAIL = '完成度明细'
+const PROP_UNIT_PRICE = '实际单价'
 
 // Status categories
 const STATUS_SCHEDULED = ['预排期', '已下单', '草图', '细化', '暂停']
@@ -109,18 +110,31 @@ function getStringProp(card: Card, propId: string | undefined): string {
     return String(val || '')
 }
 
+export type StatCategory = 'scheduled' | 'completed' | 'settled'
+
+// Resolves the card's 项目状态 option label (select properties store
+// the option ID).
+export function resolveStatusLabel(card: Card, board: Board): string {
+    const statusProp = board.cardProperties.find((p) => p.name === PROP_STATUS)
+    const rawStatus = getStringProp(card, statusProp?.id)
+    return statusProp?.options?.find((o) => o.id === rawStatus)?.value || rawStatus
+}
+
+// Resolves the card's 实际单价 option label (e.g. "网易图标1000").
+export function resolveUnitPriceLabel(card: Card, board: Board): string {
+    const prop = board.cardProperties.find((p) => p.name === PROP_UNIT_PRICE)
+    const raw = getStringProp(card, prop?.id)
+    return prop?.options?.find((o) => o.id === raw)?.value || raw
+}
+
 // Categorize a card and check if it falls in the date range.
 // Returns 'scheduled' | 'completed' | 'settled' | null (not in range).
 function categorizeCard(
     card: Card,
     board: Board,
     range: DateRange,
-): 'scheduled' | 'completed' | 'settled' | null {
-    const statusProp = board.cardProperties.find((p) => p.name === PROP_STATUS)
-    const statusPropId = statusProp?.id
-    const rawStatus = getStringProp(card, statusPropId)
-    // Select properties store the option ID; resolve to the option name.
-    const status = statusProp?.options?.find((o) => o.id === rawStatus)?.value || rawStatus
+): StatCategory | null {
+    const status = resolveStatusLabel(card, board)
 
     if (STATUS_SCHEDULED.includes(status)) {
         // Use creation date for scheduled cards
@@ -151,17 +165,41 @@ function categorizeCard(
     return null
 }
 
-export function aggregatePersonStats(
-    board: Board,
-    cards: Card[],
-    range: DateRange,
-): PersonStatRow[] {
+// One settlement flow entry: a single producer's share of a single
+// card (amount = card amount x share percentage), so flow totals
+// always tie out with the per-person summary.
+export type PersonFlowRow = {
+    userId: string
+    cardId: string
+    cardTitle: string
+    category: StatCategory
+    statusLabel: string
+    unitPriceLabel: string
+    share: number
+    days: number
+    amount: number
+}
+
+export type PersonAggregation = {
+    rows: PersonStatRow[]
+    flow: PersonFlowRow[]
+}
+
+type SplitEntry = {
+    card: Card
+    category: StatCategory
+}
+
+// Shared split core: given pre-selected (card, bucket) entries, split
+// each card's man-days and amount across producers per 完成度明细.
+function splitEntries(board: Board, entries: SplitEntry[]): PersonAggregation {
     const manDaysPropId = getPropertyId(board, PROP_MAN_DAYS)
     const amountPropId = getPropertyId(board, PROP_AMOUNT)
     const detailPropId = getPropertyId(board, PROP_DETAIL)
 
     const byUser = new Map<string, PersonStatRow>()
     const projectCountByUser = new Map<string, Set<string>>()
+    const flow: PersonFlowRow[] = []
 
     const getRow = (userId: string): PersonStatRow => {
         let row = byUser.get(userId)
@@ -184,23 +222,15 @@ export function aggregatePersonStats(
         return row
     }
 
-    for (const card of cards) {
-        const category = categorizeCard(card, board, range)
-        if (!category) {
-            continue
-        }
-
+    for (const {card, category} of entries) {
         const manDays = getNumericProp(card, manDaysPropId)
         const amount = getNumericProp(card, amountPropId)
         const detailJson = detailPropId ? String(card.fields.properties[detailPropId] || '') : ''
         const detail = parseDetail(detailJson)
+        const statusLabel = resolveStatusLabel(card, board)
+        const unitPriceLabel = resolveUnitPriceLabel(card, board)
 
-        const userIds = Object.keys(detail)
-        if (userIds.length === 0) {
-            continue // No detail, cannot split
-        }
-
-        for (const userId of userIds) {
+        for (const userId of Object.keys(detail)) {
             let pct = detail[userId]
             // Be tolerant: percentage might be stored as string.
             if (typeof pct === 'string') {
@@ -227,15 +257,103 @@ export function aggregatePersonStats(
                 row.settledDays += days
                 row.settledAmount += amt
             }
+
+            flow.push({
+                userId,
+                cardId: card.id,
+                cardTitle: card.title || '未命名卡片',
+                category,
+                statusLabel,
+                unitPriceLabel,
+                share: pct,
+                days,
+                amount: amt,
+            })
         }
     }
 
-    // Set project counts
     for (const [userId, set] of projectCountByUser) {
         byUser.get(userId)!.projectCount = set.size
     }
 
-    return Array.from(byUser.values())
+    return {rows: Array.from(byUser.values()), flow}
+}
+
+// Summary mode entries: the settlement-bucket rules (status category
+// plus its own date field per bucket).
+function summaryEntries(board: Board, cards: Card[], range: DateRange): SplitEntry[] {
+    const out: SplitEntry[] = []
+    for (const card of cards) {
+        const category = categorizeCard(card, board, range)
+        if (category) {
+            out.push({card, category})
+        }
+    }
+    return out
+}
+
+export function aggregatePerson(board: Board, cards: Card[], range: DateRange): PersonAggregation {
+    return splitEntries(board, summaryEntries(board, cards, range))
+}
+
+export function aggregatePersonStats(
+    board: Board,
+    cards: Card[],
+    range: DateRange,
+): PersonStatRow[] {
+    return aggregatePerson(board, cards, range).rows
+}
+
+export function aggregatePersonFlow(
+    board: Board,
+    cards: Card[],
+    range: DateRange,
+): PersonFlowRow[] {
+    return aggregatePerson(board, cards, range).flow
+}
+
+// Bucket by status alone (no date rule): used inside pivot mode,
+// where card selection is driven by the pivot's own date property.
+export function statusBucketOf(card: Card, board: Board): StatCategory {
+    const status = resolveStatusLabel(card, board)
+    if (STATUS_SCHEDULED.includes(status)) {
+        return 'scheduled'
+    }
+    if (STATUS_SETTLED.includes(status)) {
+        return 'settled'
+    }
+    return 'completed'
+}
+
+export type PivotSelection = {
+    datePropertyId?: string
+    statusValues: string[]
+}
+
+// Pivot mode: select cards whose pivot date property falls inside
+// the range (and whose status is in statusValues when non-empty),
+// then split with status-only bucketing.
+export function aggregatePivot(
+    board: Board,
+    cards: Card[],
+    range: DateRange,
+    pivot: PivotSelection,
+): PersonAggregation {
+    if (!pivot.datePropertyId) {
+        return {rows: [], flow: []}
+    }
+    const entries: SplitEntry[] = []
+    for (const card of cards) {
+        const ts = getDateTimestamp(card, pivot.datePropertyId)
+        if (!ts || ts < range.start || ts > range.end) {
+            continue
+        }
+        if (pivot.statusValues.length > 0 && !pivot.statusValues.includes(resolveStatusLabel(card, board))) {
+            continue
+        }
+        entries.push({card, category: statusBucketOf(card, board)})
+    }
+    return splitEntries(board, entries)
 }
 
 // Date range helpers

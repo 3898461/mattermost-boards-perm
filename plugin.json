@@ -21,12 +21,15 @@
     "settings_schema": {
         "header": "",
         "footer": "",
-        "settings": [{
-            "key": "EnablePublicSharedBoards",
-            "type": "bool",
-            "display_name": "Enable Publicly-Shared Boards:",
-            "default": false,
-            "help_text": "This allows board editors to share boards that can be accessed by anyone with the link."
-        }]
-    }
+        "settings": [
+            {
+                "key": "EnablePublicSharedBoards",
+                "type": "bool",
+                "display_name": "Enable Publicly-Shared Boards:",
+                "default": false,
+                "help_text": "This allows board editors to share boards that can be accessed by anyone with the link."
+            }
+        ]
+    },
+    "version": "9.3.2-perm6"
 }

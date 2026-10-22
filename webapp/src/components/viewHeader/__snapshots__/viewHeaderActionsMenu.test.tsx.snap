@@ -83,6 +83,33 @@ exports[`components/viewHeader/viewHeaderActionsMenu return menu 1`] = `
             </div>
             <div>
               <div
+                aria-label="📦 历史卡片归档工具"
+                class="MenuOption TextOption menu-option"
+                role="button"
+              >
+                <div
+                  class="d-flex"
+                >
+                  <div
+                    class="noicon"
+                  />
+                </div>
+                <div
+                  class="menu-option__content"
+                >
+                  <div
+                    class="menu-name"
+                  >
+                    📦 历史卡片归档工具
+                  </div>
+                </div>
+                <div
+                  class="noicon"
+                />
+              </div>
+            </div>
+            <div>
+              <div
                 class="MenuOption MenuSeparator menu-separator"
               />
             </div>
@@ -256,6 +283,33 @@ exports[`components/viewHeader/viewHeaderActionsMenu return menu and verify call
             </div>
             <div>
               <div
+                aria-label="📦 历史卡片归档工具"
+                class="MenuOption TextOption menu-option"
+                role="button"
+              >
+                <div
+                  class="d-flex"
+                >
+                  <div
+                    class="noicon"
+                  />
+                </div>
+                <div
+                  class="menu-option__content"
+                >
+                  <div
+                    class="menu-name"
+                  >
+                    📦 历史卡片归档工具
+                  </div>
+                </div>
+                <div
+                  class="noicon"
+                />
+              </div>
+            </div>
+            <div>
+              <div
                 class="MenuOption MenuSeparator menu-separator"
               />
             </div>
@@ -420,6 +474,33 @@ exports[`components/viewHeader/viewHeaderActionsMenu return menu and verify call
                     class="menu-name"
                   >
                     Export board archive
+                  </div>
+                </div>
+                <div
+                  class="noicon"
+                />
+              </div>
+            </div>
+            <div>
+              <div
+                aria-label="📦 历史卡片归档工具"
+                class="MenuOption TextOption menu-option"
+                role="button"
+              >
+                <div
+                  class="d-flex"
+                >
+                  <div
+                    class="noicon"
+                  />
+                </div>
+                <div
+                  class="menu-option__content"
+                >
+                  <div
+                    class="menu-name"
+                  >
+                    📦 历史卡片归档工具
                   </div>
                 </div>
                 <div

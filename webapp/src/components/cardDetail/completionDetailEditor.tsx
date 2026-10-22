@@ -28,8 +28,57 @@ type Props = {
 // Completion split across producers, e.g. {"<userId>": 20, "<userId>": 80}.
 // Rows follow the "制作人" (multi-person) property, so any headcount works.
 // Saved only when every share is 0-100 and the total is exactly 100.
+//
+// Smart allocation rules (2026-10-21):
+// - 1 producer: share is locked to 100% automatically.
+// - 2 producers: editing one sets the other to 100 - value; 50:50 preset
+//   and a swap button are provided.
+// - 3+ producers: fully manual, with one-click equal split and per-row
+//   "fill the remainder" helpers. Total must still be exactly 100 to save.
 const PRODUCERS_PROP = '制作人'
 const TOTAL_PROP = '总完成度'
+
+// Stable per-person colors for the segmented share bar and the avatar
+// circles in the producer micro-cards (cycles if there are more people).
+export const PRODUCER_COLORS = [
+    '#1c7ed6', '#e8590c', '#2b8a3e', '#862e9c', '#e64980',
+    '#0b7285', '#a61e4d', '#5f3dc4', '#d9480f', '#1971c2',
+]
+
+export function producerColor(index: number): string {
+    return PRODUCER_COLORS[index % PRODUCER_COLORS.length]
+}
+
+function round2(n: number): number {
+    return Math.round(n * 100) / 100
+}
+
+function clampShare(n: number): number {
+    if (isNaN(n)) {
+        return 0
+    }
+    return round2(Math.min(100, Math.max(0, n)))
+}
+
+// Equal split of 100 across ids; the last person absorbs rounding so the
+// total is exactly 100.
+export function splitEvenly(ids: string[]): Record<string, string> {
+    const out: Record<string, string> = {}
+    if (ids.length === 0) {
+        return out
+    }
+    const each = round2(100 / ids.length)
+    let acc = 0
+    ids.forEach((id, i) => {
+        if (i === ids.length - 1) {
+            out[id] = String(round2(100 - acc))
+        } else {
+            out[id] = String(each)
+            acc = round2(acc + each)
+        }
+    })
+    return out
+}
 
 function parseDetail(raw: unknown): Record<string, number> {
     if (typeof raw !== 'string' || !raw) {
@@ -93,21 +142,78 @@ const CompletionDetailEditor = (props: Props): JSX.Element => {
         producerIds.forEach((id) => {
             next[id] = savedDetail[id] !== undefined ? String(savedDetail[id]) : ''
         })
+        // Single producer: the share is always 100% (input locked below).
+        if (producerIds.length === 1) {
+            next[producerIds[0]] = '100'
+        }
         setDraft(next)
     }, [producerIds.join(','), card.fields.properties[propertyTemplate.id]]) // eslint-disable-line react-hooks/exhaustive-deps
+
+    const shareOf = (id: string): number => {
+        const n = parseFloat(draft[id] || '0')
+        return isNaN(n) ? 0 : n
+    }
 
     const total = useMemo(() => {
         let sum = 0
         producerIds.forEach((id) => {
-            const n = parseFloat(draft[id] || '0')
-            if (!isNaN(n)) {
-                sum += n
-            }
+            sum += shareOf(id)
         })
-        return Math.round(sum * 100) / 100
-    }, [draft, producerIds])
+        return round2(sum)
+    }, [draft, producerIds]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const totalOk = Math.abs(total - 100) < 1e-9
+    const count = producerIds.length
+    const single = count === 1
+    const pair = count === 2
+
+    // --- smart allocation handlers -------------------------------------
+
+    const onShareChange = (id: string, raw: string) => {
+        if (single) {
+            return
+        }
+        const next = {...draft, [id]: raw}
+        if (pair) {
+            const n = parseFloat(raw)
+            if (!isNaN(n)) {
+                const other = producerIds.find((p) => p !== id)!
+                next[other] = String(clampShare(100 - n))
+            }
+        }
+        setDraft(next)
+    }
+
+    const onPreset5050 = () => {
+        if (pair) {
+            setDraft({[producerIds[0]]: '50', [producerIds[1]]: '50'})
+        }
+    }
+
+    const onSwap = () => {
+        if (!pair) {
+            return
+        }
+        const [a, b] = producerIds
+        setDraft({...draft, [a]: draft[b] ?? '', [b]: draft[a] ?? ''})
+    }
+
+    const onSplitEvenly = () => {
+        setDraft(splitEvenly(producerIds))
+    }
+
+    // Fill this person's share with whatever is left to reach 100.
+    const onFillRemainder = (id: string) => {
+        let others = 0
+        producerIds.forEach((p) => {
+            if (p !== id) {
+                others += shareOf(p)
+            }
+        })
+        setDraft({...draft, [id]: String(clampShare(100 - others))})
+    }
+
+    // --- save (unchanged hard validation: total must be exactly 100) ---
 
     const onSave = async () => {
         // Rebuild from the current producer list: drop removed people,
@@ -176,35 +282,140 @@ const CompletionDetailEditor = (props: Props): JSX.Element => {
         )
     }
 
-    if (readOnly) {
+    // Segmented colored share bar + producer micro-card, shared by the
+    // editable and read-only renderings. Values come from `values`.
+    const renderShareVisuals = (values: Record<string, number>) => {
+        const sum = producerIds.reduce((acc, id) => acc + (values[id] || 0), 0)
         return (
-            <div className='completion-detail-editor completion-detail-editor--readonly'>
-                {producerIds.map((id) => `${displayName(id)} ${savedDetail[id] ?? 0}%`).join(' · ')}
+            <div
+                className='completion-detail-editor__bar'
+                role='img'
+                aria-label={producerIds.map((id) => `${displayName(id)} ${values[id] || 0}%`).join('，')}
+            >
+                {producerIds.map((id, i) => {
+                    const share = values[id] || 0
+                    if (share <= 0) {
+                        return null
+                    }
+                    // Width is relative to 100 when the split is complete;
+                    // relative to the current sum while still editing, so
+                    // the bar always reflects proportions truthfully.
+                    const base = sum > 100 ? sum : 100
+                    return (
+                        <div
+                            key={id}
+                            className='completion-detail-editor__bar-segment'
+                            style={{width: `${(share / base) * 100}%`, backgroundColor: producerColor(i)}}
+                            title={`${displayName(id)} ${share}%`}
+                        />
+                    )
+                })}
             </div>
         )
     }
 
+    const renderMicroCard = (id: string, index: number) => (
+        <span className='completion-detail-editor__person'>
+            <span
+                className='completion-detail-editor__avatar'
+                style={{backgroundColor: producerColor(index)}}
+                aria-hidden='true'
+            >
+                {displayName(id).slice(0, 1)}
+            </span>
+            <span className='completion-detail-editor__name'>{displayName(id)}</span>
+        </span>
+    )
+
+    if (readOnly) {
+        return (
+            <div className='completion-detail-editor completion-detail-editor--readonly'>
+                {renderShareVisuals(savedDetail)}
+                {producerIds.map((id, i) => (
+                    <div
+                        key={id}
+                        className='completion-detail-editor__row'
+                    >
+                        {renderMicroCard(id, i)}
+                        <span className='completion-detail-editor__readonly-pct'>{`${savedDetail[id] ?? 0}%`}</span>
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+    const draftValues: Record<string, number> = {}
+    producerIds.forEach((id) => {
+        draftValues[id] = shareOf(id)
+    })
+
     return (
         <div className='completion-detail-editor'>
-            {producerIds.map((id) => (
+            {renderShareVisuals(draftValues)}
+            {producerIds.map((id, i) => (
                 <div
                     key={id}
                     className='completion-detail-editor__row'
                 >
-                    <span className='completion-detail-editor__name'>{displayName(id)}</span>
+                    {renderMicroCard(id, i)}
                     <input
                         className='completion-detail-editor__input'
                         type='number'
                         min={0}
                         max={100}
                         step='any'
-                        value={draft[id] ?? ''}
-                        onChange={(e) => setDraft({...draft, [id]: e.target.value})}
+                        value={single ? '100' : (draft[id] ?? '')}
+                        disabled={single}
+                        onChange={(e) => onShareChange(id, e.target.value)}
                         aria-label={displayName(id)}
                     />
                     <span className='completion-detail-editor__pct'>%</span>
+                    {count >= 3 && (
+                        <button
+                            type='button'
+                            className='completion-detail-editor__mini-btn'
+                            onClick={() => onFillRemainder(id)}
+                            title={intl.formatMessage({id: 'CompletionDetail.fill-title', defaultMessage: '把剩余差额补给此人'})}
+                        >
+                            {intl.formatMessage({id: 'CompletionDetail.fill', defaultMessage: '补齐'})}
+                        </button>
+                    )}
                 </div>
             ))}
+            {single && (
+                <div className='completion-detail-editor__hint'>
+                    {intl.formatMessage({id: 'CompletionDetail.single-auto', defaultMessage: '只有一位制作人，已自动设为 100%'})}
+                </div>
+            )}
+            {pair && (
+                <div className='completion-detail-editor__tools'>
+                    <button
+                        type='button'
+                        className='completion-detail-editor__mini-btn'
+                        onClick={onPreset5050}
+                    >
+                        {'50:50'}
+                    </button>
+                    <button
+                        type='button'
+                        className='completion-detail-editor__mini-btn'
+                        onClick={onSwap}
+                    >
+                        {intl.formatMessage({id: 'CompletionDetail.swap', defaultMessage: '互换比例'})}
+                    </button>
+                </div>
+            )}
+            {count >= 3 && (
+                <div className='completion-detail-editor__tools'>
+                    <button
+                        type='button'
+                        className='completion-detail-editor__mini-btn'
+                        onClick={onSplitEvenly}
+                    >
+                        {intl.formatMessage({id: 'CompletionDetail.even', defaultMessage: '一键均分'})}
+                    </button>
+                </div>
+            )}
             <div className='completion-detail-editor__footer'>
                 <span className={`completion-detail-editor__total ${totalOk ? 'completion-detail-editor__total--ok' : 'completion-detail-editor__total--bad'}`}>
                     {intl.formatMessage({id: 'CompletionDetail.total', defaultMessage: '合计：{total}%'}, {total: String(total)})}

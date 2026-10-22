@@ -12,6 +12,7 @@ import TelemetryClient from './telemetry/telemetryClient'
 
 import {getMessages} from './i18n'
 import {FlashMessages} from './components/flashMessages'
+import CompletionConfirmHost from './components/completionConfirmHost'
 import NewVersionBanner from './components/newVersionBanner'
 import {Utils} from './utils'
 import {fetchMe, getMe} from './store/users'
@@ -50,6 +51,7 @@ const App = (props: Props): JSX.Element => {
         >
             <DndProvider backend={Utils.isMobile() ? TouchBackend : HTML5Backend}>
                 <FlashMessages milliseconds={2000}/>
+                <CompletionConfirmHost/>
                 <div id='frame'>
                     <div id='main'>
                         <NewVersionBanner/>

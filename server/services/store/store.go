@@ -25,6 +25,8 @@ type Store interface {
 	GetSubTree2(boardID, blockID string, opts model.QuerySubtreeOptions) ([]*model.Block, error)
 	GetBlocksForBoard(boardID string) ([]*model.Block, error)
 	// @withTransaction
+	MoveBlocksToBoard(blockIDs []string, targetBoardID string) error
+	// @withTransaction
 	InsertBlock(block *model.Block, userID string) error
 	// @withTransaction
 	DeleteBlock(blockID string, modifiedBy string) error

@@ -24,12 +24,14 @@ func (pd *PluginDelivery) MentionDeliver(mentionedUser *mm_model.User, extract s
 		return "", fmt.Errorf("cannot get direct channel: %w", err)
 	}
 	link := utils.MakeCardLink(pd.serverRoot, evt.Board.TeamID, evt.Board.ID, evt.Card.ID)
-	boardLink := utils.MakeBoardLink(pd.serverRoot, evt.Board.TeamID, evt.Board.ID)
 
+	// Sanitized mention message: mentioner + comment text + card link
+	// only. The board title is deliberately not passed in, so it can
+	// never leak into the DM (see formatMessage).
 	post := &mm_model.Post{
 		UserId:    pd.botID,
 		ChannelId: channel.Id,
-		Message:   formatMessage(author.Username, extract, evt.Card.Title, link, evt.BlockChanged, boardLink, evt.Board.Title),
+		Message:   formatMessage(author.Username, extract, evt.Card.Title, link),
 	}
 
 	if _, err := pd.api.CreatePost(post); err != nil {

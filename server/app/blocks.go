@@ -374,6 +374,88 @@ func (a *App) DeleteBlockAndNotify(blockID string, modifiedBy string, disableNot
 	return nil
 }
 
+// ArchiveCardsToBoard moves the given cards (and every descendant
+// block: contents, comments, attachments) from their current board to
+// targetBoardID. The move is done at the store level by reassigning
+// board_id only, so every block keeps its original CreateAt/UpdateAt
+// timestamps. It returns the IDs of the cards actually moved.
+//
+// Cards that do not exist, are not cards, or do not belong to
+// sourceBoardID are skipped and not reported as moved.
+func (a *App) ArchiveCardsToBoard(sourceBoardID string, targetBoardID string, cardIDs []string, userID string) ([]string, error) {
+	if sourceBoardID == targetBoardID {
+		return nil, model.NewErrBadRequest("target board is the source board")
+	}
+
+	targetBoard, err := a.store.GetBoard(targetBoardID)
+	if err != nil {
+		return nil, err
+	}
+	if targetBoard == nil {
+		return nil, model.NewErrNotFound("target board not found")
+	}
+
+	sourceBoard, err := a.store.GetBoard(sourceBoardID)
+	if err != nil {
+		return nil, err
+	}
+
+	allBlocks, err := a.store.GetBlocksForBoard(sourceBoardID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Index the source board's blocks by parent for descendant walks.
+	childrenByParent := make(map[string][]*model.Block)
+	byID := make(map[string]*model.Block, len(allBlocks))
+	for _, b := range allBlocks {
+		byID[b.ID] = b
+		childrenByParent[b.ParentID] = append(childrenByParent[b.ParentID], b)
+	}
+
+	movedCardIDs := []string{}
+	blockIDs := []string{}
+	movedCards := []*model.Block{}
+	for _, cardID := range cardIDs {
+		card, ok := byID[cardID]
+		if !ok || card.Type != model.TypeCard {
+			continue
+		}
+		// Collect the card plus its whole descendant subtree (BFS).
+		queue := []*model.Block{card}
+		for len(queue) > 0 {
+			cur := queue[0]
+			queue = queue[1:]
+			blockIDs = append(blockIDs, cur.ID)
+			queue = append(queue, childrenByParent[cur.ID]...)
+		}
+		movedCardIDs = append(movedCardIDs, cardID)
+		movedCards = append(movedCards, card)
+	}
+
+	if len(blockIDs) == 0 {
+		return movedCardIDs, nil
+	}
+
+	if err := a.store.MoveBlocksToBoard(blockIDs, targetBoardID); err != nil {
+		return nil, err
+	}
+
+	// Notify both boards: source clients drop the cards, target
+	// clients pick them up (with their new BoardID).
+	a.blockChangeNotifier.Enqueue(func() error {
+		for _, card := range movedCards {
+			a.wsAdapter.BroadcastBlockDelete(sourceBoard.TeamID, card.ID, sourceBoardID)
+			moved := *card
+			moved.BoardID = targetBoardID
+			a.wsAdapter.BroadcastBlockChange(targetBoard.TeamID, &moved)
+		}
+		return nil
+	})
+
+	return movedCardIDs, nil
+}
+
 func (a *App) GetLastBlockHistoryEntry(blockID string) (*model.Block, error) {
 	blocks, err := a.store.GetBlockHistory(blockID, model.QueryBlockHistoryOptions{Limit: 1, Descending: true})
 	if err != nil {

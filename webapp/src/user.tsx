@@ -12,6 +12,7 @@ interface IUser {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     props: Record<string, any>
     create_at: number
+    last_picture_update?: number
     update_at: number
     is_bot: boolean
     is_guest: boolean

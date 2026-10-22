@@ -13,6 +13,20 @@ type KanbanCalculationFields = {
     propertyId: string
 }
 
+// Per-view configuration for the personnel statistics view:
+// producer group labels and per-person internal conversion rates
+// (元/人天). Maintained by board admins inside the stats view.
+type PersonStatsPivotConfig = {
+    datePropertyId?: string
+    statusValues?: string[]
+}
+
+type PersonStatsViewConfig = {
+    groups: Record<string, string>
+    rates: Record<string, number>
+    pivots?: Record<string, PersonStatsPivotConfig>
+}
+
 type BoardViewFields = {
     viewType: IViewType
     groupById?: string
@@ -33,6 +47,7 @@ type BoardViewFields = {
     // Only board admins bypass. Stored in the view block fields, so it
     // passes through the server untouched.
     visibleTo?: string[]
+    personStatsConfig?: PersonStatsViewConfig
 }
 
 type BoardView = Block & {
@@ -59,6 +74,16 @@ function createBoardView(block?: Block): BoardView {
             kanbanCalculations: {...(block?.fields.kanbanCalculations) || {}},
             defaultTemplateId: block?.fields.defaultTemplateId || '',
             visibleTo: block?.fields.visibleTo ? [...block.fields.visibleTo] : undefined,
+            personStatsConfig: block?.fields.personStatsConfig ? {
+                groups: {...(block.fields.personStatsConfig.groups || {})},
+                rates: {...(block.fields.personStatsConfig.rates || {})},
+                pivots: block.fields.personStatsConfig.pivots ? Object.fromEntries(
+                    Object.entries(block.fields.personStatsConfig.pivots as Record<string, PersonStatsPivotConfig>).map(([k, v]) => [k, {
+                        datePropertyId: v?.datePropertyId,
+                        statusValues: v?.statusValues ? [...v.statusValues] : undefined,
+                    }]),
+                ) : undefined,
+            } : undefined,
         },
     }
 }
@@ -70,4 +95,4 @@ function sortBoardViewsAlphabetically(views: BoardView[]): BoardView[] {
     }).sort((v1, v2) => v1.title.localeCompare(v2.title)).map((v) => v.view)
 }
 
-export {BoardView, IViewType, ISortOption, sortBoardViewsAlphabetically, createBoardView, KanbanCalculationFields}
+export {BoardView, IViewType, ISortOption, sortBoardViewsAlphabetically, createBoardView, KanbanCalculationFields, PersonStatsViewConfig, PersonStatsPivotConfig}

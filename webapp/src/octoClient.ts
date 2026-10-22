@@ -350,6 +350,21 @@ class OctoClient {
         return fixedBlocks
     }
 
+    // Moves cards (with all descendant blocks) to another board,
+    // preserving their original timestamps. Board admins only.
+    async archiveCards(boardId: string, cardIds: string[], targetBoardId: string): Promise<{movedCardIds: string[], count: number}> {
+        const body = JSON.stringify({cardIds, targetBoardId})
+        const response = await fetch(`${this.getBaseURL()}/api/v2/boards/${boardId}/archive-cards`, Client4.getOptions({
+            method: 'POST',
+            headers: this.headers(),
+            body,
+        }))
+        if (!response.ok) {
+            throw new Error(`archiveCards failed: ${response.status}`)
+        }
+        return response.json()
+    }
+
     async patchBlock(boardId: string, blockId: string, blockPatch: BlockPatch): Promise<Response> {
         Utils.log(`patchBlock: ${blockId} block`)
         const body = JSON.stringify(blockPatch)

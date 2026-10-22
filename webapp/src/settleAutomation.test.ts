@@ -3,7 +3,10 @@
 
 import {Board} from './blocks/board'
 import {
+    AMOUNT_SNAPSHOT_FIELD,
     findTemplateByName,
+    getAmountSnapshot,
+    isAmountLocked,
     isAutoManagedProperty,
     parseTrailingNumber,
     SETTLE_PROP_NAMES,
@@ -28,6 +31,30 @@ describe('settleAutomation pure helpers', () => {
         expect(isAutoManagedProperty(SETTLE_PROP_NAMES.unitPriceSelect)).toBe(false)
         expect(isAutoManagedProperty(undefined)).toBe(false)
         expect(isAutoManagedProperty('')).toBe(false)
+    })
+
+    test('amount snapshot helpers read the frozen snapshot field', () => {
+        const board: Board = TestBlockFactory.createBoard()
+        const card = TestBlockFactory.createCard(board)
+        expect(getAmountSnapshot(card)).toBeNull()
+        expect(isAmountLocked(card)).toBe(false)
+
+        ;(card.fields as Record<string, unknown>)[AMOUNT_SNAPSHOT_FIELD] = {
+            lockedAt: 1700000000000,
+            lockedBy: 'user-1',
+            status: '已付款',
+            amount: 9000,
+            personDays: 10,
+            unitPrice: 900,
+            detail: {'user-1': 100},
+        }
+        const snap = getAmountSnapshot(card)
+        expect(snap?.status).toBe('已付款')
+        expect(snap?.amount).toBe(9000)
+        expect(isAmountLocked(card)).toBe(true)
+
+        ;(card.fields as Record<string, unknown>)[AMOUNT_SNAPSHOT_FIELD] = {bogus: true}
+        expect(getAmountSnapshot(card)).toBeNull()
     })
 
     test('findTemplateByName matches exact property names', () => {

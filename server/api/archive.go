@@ -23,6 +23,7 @@ const (
 
 func (a *API) registerAchivesRoutes(r *mux.Router) {
 	// Archive APIs
+	r.HandleFunc("/boards/{boardID}/archive-cards", a.sessionRequired(a.handleArchiveCards)).Methods("POST")
 	r.HandleFunc("/boards/{boardID}/archive/export", a.sessionRequired(a.handleArchiveExportBoard)).Methods("GET")
 	r.HandleFunc("/teams/{teamID}/archive/import", a.sessionRequired(a.handleArchiveImport)).Methods("POST")
 	r.HandleFunc("/teams/{teamID}/archive/export", a.sessionRequired(a.handleArchiveExportTeam)).Methods("GET")

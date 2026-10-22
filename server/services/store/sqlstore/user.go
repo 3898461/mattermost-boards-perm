@@ -50,6 +50,7 @@ func (s *SQLStore) baseUserQuery(showEmail, showName bool) sq.SelectBuilder {
 			"u.DeleteAt as delete_at",
 			"b.UserId IS NOT NULL AS is_bot",
 			"u.roles = 'system_guest' as is_guest",
+			"u.LastPictureUpdate as last_picture_update",
 		).
 		From("Users as u").
 		LeftJoin("Bots b ON ( b.UserID = u.id )")
@@ -73,6 +74,7 @@ func (s *SQLStore) usersFromRows(rows *sql.Rows) ([]*model.User, error) {
 			&user.DeleteAt,
 			&user.IsBot,
 			&user.IsGuest,
+			&user.LastPictureUpdate,
 		)
 		if err != nil {
 			return nil, err
@@ -97,6 +99,7 @@ func mmUserToFbUser(mmUser *mmModel.User) model.User {
 		Nickname:    mmUser.Nickname,
 		FirstName:   mmUser.FirstName,
 		LastName:    mmUser.LastName,
+		LastPictureUpdate: mmUser.LastPictureUpdate,
 		MfaSecret:   mmUser.MfaSecret,
 		AuthService: mmUser.AuthService,
 		AuthData:    authData,

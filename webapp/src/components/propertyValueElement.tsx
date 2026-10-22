@@ -8,7 +8,8 @@ import {Board, IPropertyTemplate, safePropertyValue} from '../blocks/board'
 import {Card} from '../blocks/card'
 
 import propsRegistry from '../properties'
-import {isAutoManagedProperty} from '../settleAutomation'
+import {isAutoManagedProperty, isAmountLocked, SETTLE_PROP_NAMES} from '../settleAutomation'
+import AmountLockBadge from './cardDetail/amountLockBadge'
 import CompletionDetailEditor from './cardDetail/completionDetailEditor'
 import {useAppSelector} from '../store/hooks'
 import {getMe} from '../store/users'
@@ -112,7 +113,12 @@ const PropertyValueElement = (props: Props): JSX.Element => {
     const Editor = property.Editor
     // Settlement auto-managed properties (单价/实际金额/总完成度) are
     // display-only; every save recomputes them anyway.
-    const effectiveReadOnly = readOnly || isAutoManagedProperty(propertyTemplate.name)
+    // Once the financial snapshot is frozen, 人天 and 实际单价 are
+    // locked read-only too: their edits drive the amount calculation.
+    const amountLocked = isAmountLocked(card)
+    const lockedReadOnly = amountLocked &&
+        (propertyTemplate.name === SETTLE_PROP_NAMES.personDays || propertyTemplate.name === SETTLE_PROP_NAMES.unitPriceSelect)
+    const effectiveReadOnly = readOnly || isAutoManagedProperty(propertyTemplate.name) || lockedReadOnly
     if (SETTLE_CUSTOM_EDITORS[propertyTemplate.name || '']) {
         return (
             <CompletionDetailEditor
@@ -127,7 +133,7 @@ const PropertyValueElement = (props: Props): JSX.Element => {
     if (!props.detailed && (propertyTemplate.type === 'person' || propertyTemplate.type === 'multiPerson')) {
         return <PersonSummary card={card} propertyTemplate={propertyTemplate} />
     }
-    return (
+    const editor = (
         <Editor
             property={property}
             card={card}
@@ -138,6 +144,22 @@ const PropertyValueElement = (props: Props): JSX.Element => {
             propertyValue={propertyValue}
         />
     )
+    // Gold lock badge next to 实际金额 / 项目状态 in the card detail
+    // (detailed) rendering once the snapshot exists.
+    const showLockBadge = Boolean(props.detailed) && amountLocked &&
+        (propertyTemplate.name === SETTLE_PROP_NAMES.amount || propertyTemplate.name === SETTLE_PROP_NAMES.projectStatus)
+    if (showLockBadge) {
+        return (
+            <span className='property-value-element__lockwrap'>
+                {editor}
+                <AmountLockBadge
+                    board={board}
+                    card={card}
+                />
+            </span>
+        )
+    }
+    return editor
 }
 
 export default PropertyValueElement

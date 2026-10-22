@@ -26,6 +26,8 @@ import {Category} from './store/sidebar'
 import {UserConfigPatch, UserPreference} from './user'
 import store from './store'
 import {afterPropertyChange} from './settleAutomation'
+import {evaluateCompletionGate} from './completionGate'
+import {requestCompletionConfirmation} from './completionConfirm'
 import {updateBoards} from './store/boards'
 import {updateViews} from './store/views'
 import {updateCards} from './store/cards'
@@ -667,11 +669,38 @@ class Mutator {
             return
         }
 
+        // Completion gate: moving a multi-producer card into the "完成"
+        // status requires explicit confirmation of the producer split
+        // (see completionGate/completionConfirm). Single-producer cards
+        // pass straight through. A gate error never blocks the change.
+        let gateReq: ReturnType<typeof evaluateCompletionGate> = null
+        let gateShares: Record<string, number> | undefined
+        try {
+            gateReq = evaluateCompletionGate(boardId, card, propertyId, value)
+            if (gateReq) {
+                const result = await requestCompletionConfirmation(gateReq)
+                if (!result.confirmed) {
+                    return
+                }
+                gateShares = result.shares
+            }
+        } catch (e) {
+            Utils.logError(`completion gate failed: ${e}`)
+        }
+
         const newCard = createCard(card)
         if (value) {
             newCard.fields.properties[propertyId] = value
         } else {
             delete newCard.fields.properties[propertyId]
+        }
+        // Shares edited inside the confirmation dialog ship in the
+        // same patch as the status change, so they cannot diverge.
+        if (gateShares && gateReq?.detailPropertyId) {
+            newCard.fields.properties[gateReq.detailPropertyId] = JSON.stringify(gateShares)
+            if (gateReq.totalPropertyId) {
+                newCard.fields.properties[gateReq.totalPropertyId] = '100'
+            }
         }
         await this.updateBlock(boardId, newCard, card, description)
         TelemetryClient.trackEvent(TelemetryCategory, TelemetryActions.EditCardProperty, {board: card.boardId, card: card.id})
@@ -683,6 +712,11 @@ class Mutator {
                 card: newCard,
                 changedPropertyId: propertyId,
                 setProperty: (pid, val) => this.changePropertyValue(boardId, newCard, pid, val, 'settle automation'),
+                setCardField: async (field, value) => {
+                    const snapshotCard = createCard(newCard)
+                    snapshotCard.fields[field] = value as never
+                    await this.updateBlock(boardId, snapshotCard, newCard, 'set card field')
+                },
             })
         } catch (e) {
             Utils.logError(`settle automation failed: ${e}`)

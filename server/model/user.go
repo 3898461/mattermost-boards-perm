@@ -36,6 +36,9 @@ type User struct {
 	// The user's last name
 	LastName string `json:"lastname"`
 
+	// Last time the user's profile picture was updated (ms); 0 means no custom picture
+	LastPictureUpdate int64 `json:"last_picture_update,omitempty"`
+
 	// swagger:ignore
 	Password string `json:"-"`
 
