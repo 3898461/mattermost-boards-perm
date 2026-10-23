@@ -21,12 +21,14 @@ import GalleryIcon from '../widgets/icons/gallery'
 import TableIcon from '../widgets/icons/table'
 import Menu from '../widgets/menu'
 
-import BoardPermissionGate from './permissions/boardPermissionGate'
-import './viewMenu.scss'
 import {useAppSelector} from '../store/hooks'
 import {getMe} from '../store/users'
 import {useHasCurrentBoardPermissions} from '../hooks/permissions'
 import {canViewView} from '../viewPermissions'
+
+import BoardPermissionGate from './permissions/boardPermissionGate'
+
+import './viewMenu.scss'
 
 type Props = {
     board: Board
@@ -98,7 +100,7 @@ const ViewMenu = (props: Props) => {
     }, [props.views, showView])
 
     const handleAddViewBoard = useCallback(() => {
-        const {board, activeView, intl} = props
+        const {board, activeView} = props
         Utils.log('addview-board')
 
         TelemetryClient.trackEvent(TelemetryCategory, TelemetryActions.CreateBoardView, {board: board.id, view: activeView.id})
@@ -125,7 +127,7 @@ const ViewMenu = (props: Props) => {
     }, [props.activeView, props.board, props.intl, showView])
 
     const handleAddViewTable = useCallback(() => {
-        const {board, activeView, intl} = props
+        const {board, activeView} = props
 
         Utils.log('addview-table')
 
@@ -156,7 +158,7 @@ const ViewMenu = (props: Props) => {
     }, [props.activeView, props.board, props.intl, showView])
 
     const handleAddViewGallery = useCallback(() => {
-        const {board, activeView, intl} = props
+        const {board, activeView} = props
 
         Utils.log('addview-gallery')
 
@@ -185,7 +187,7 @@ const ViewMenu = (props: Props) => {
     }, [props.board, props.activeView, props.intl, showView])
 
     const handleAddViewCalendar = useCallback(() => {
-        const {board, activeView, intl} = props
+        const {board, activeView} = props
 
         Utils.log('addview-calendar')
 
@@ -218,7 +220,7 @@ const ViewMenu = (props: Props) => {
     }, [props.board, props.activeView, props.intl, showView])
 
     const handleAddViewPersonStats = useCallback(() => {
-        const {board, activeView, intl} = props
+        const {board, activeView} = props
 
         Utils.log('addview-personStats')
 

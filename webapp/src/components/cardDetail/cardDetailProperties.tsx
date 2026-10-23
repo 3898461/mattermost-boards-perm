@@ -16,7 +16,7 @@ import PropertyMenu, {PropertyTypes} from '../../widgets/propertyMenu'
 import Calculations from '../calculations/calculations'
 import PropertyValueElement from '../propertyValueElement'
 import ConfirmationDialogBox, {ConfirmationDialogBoxProps} from '../confirmationDialogBox'
-import DraggablePropertyRow, {getEffectiveOrderIds} from './draggablePropertyRow'
+
 import {sendFlashMessage} from '../flashMessages'
 import Menu from '../../widgets/menu'
 import {IDType, Utils} from '../../utils'
@@ -28,6 +28,8 @@ import {PropertyType} from '../../properties/types'
 import {useAppSelector} from '../../store/hooks'
 import {getMe} from '../../store/users'
 import {canViewProperty} from '../../propertyPermissions'
+
+import DraggablePropertyRow, {getEffectiveOrderIds} from './draggablePropertyRow'
 
 type Props = {
     board: Board

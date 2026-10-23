@@ -1,9 +1,10 @@
-// Copyright (c) 2026-present Mattermost, Inc. All Rights Reserved.
+// Copyright (c) 2020-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
 import {Board, IPropertyTemplate} from '../../blocks/board'
 import {Card} from '../../blocks/card'
 import {TestBlockFactory} from '../../test/testBlockFactory'
+
 import {parseCardDate, selectArchiveCandidates} from './archiveModal'
 
 function template(id: string, name: string, type: string, options: Array<{id: string, value: string}> = []): IPropertyTemplate {

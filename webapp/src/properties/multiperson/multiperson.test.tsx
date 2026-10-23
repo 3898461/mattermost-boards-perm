@@ -60,7 +60,7 @@ describe('properties/multiperson', () => {
                 teammateNameDisplay: 'username',
             },
         },
-
+        boards: {},
     }
 
     test('not readonly not existing user', async () => {

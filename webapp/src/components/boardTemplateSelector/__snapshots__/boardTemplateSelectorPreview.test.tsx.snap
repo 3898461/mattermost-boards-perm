@@ -239,7 +239,7 @@ exports[`components/boardTemplateSelector/boardTemplateSelectorPreview should ma
         <div
           class="octo-board-header-cell KanbanColumnHeader"
           draggable="true"
-          style="opacity: 1;"
+          style="opacity: 1; --column-color: var(--prop-orange);"
         >
           <span
             class="Label propColorOrange "
@@ -291,7 +291,7 @@ exports[`components/boardTemplateSelector/boardTemplateSelectorPreview should ma
         <div
           class="octo-board-header-cell KanbanColumnHeader"
           draggable="true"
-          style="opacity: 1;"
+          style="opacity: 1; --column-color: var(--prop-blue);"
         >
           <span
             class="Label propColorBlue "
@@ -412,6 +412,7 @@ exports[`components/boardTemplateSelector/boardTemplateSelectorPreview should ma
         </div>
         <div
           class="octo-board-column"
+          style="--column-color: var(--prop-orange);"
         >
           <button
             type="button"
@@ -423,6 +424,7 @@ exports[`components/boardTemplateSelector/boardTemplateSelectorPreview should ma
         </div>
         <div
           class="octo-board-column"
+          style="--column-color: var(--prop-blue);"
         >
           <button
             type="button"

@@ -1,3 +1,6 @@
+// Copyright (c) 2020-present Mattermost, Inc. All Rights Reserved.
+// See LICENSE.txt for license information.
+
 // Pan-to-scroll for the kanban board (horizontal only):
 // - Drag on empty space (not on a card / button / input / header) to pan
 //   the board left / right. Cursor shows grab / grabbing.

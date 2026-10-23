@@ -22,6 +22,7 @@ import {useHasCurrentBoardPermissions} from '../../hooks/permissions'
 import {Permission} from '../../constants'
 import MemberVisibilityList from '../memberVisibilityList'
 import {getViewVisibleTo} from '../../viewPermissions'
+
 import ArchiveModal from './archiveModal'
 
 type Props = {

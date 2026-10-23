@@ -1,4 +1,4 @@
-// Copyright (c) 2026-present Mattermost, Inc. All Rights Reserved.
+// Copyright (c) 2020-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
 import React, {useEffect, useRef, useState} from 'react'
@@ -14,8 +14,10 @@ import {
     CompletionConfirmResult,
     registerCompletionConfirmHandler,
 } from '../completionConfirm'
-import {producerColor} from './cardDetail/completionDetailEditor'
+
 import Button from '../widgets/buttons/button'
+
+import {producerColor} from './cardDetail/completionDetailEditor'
 import Dialog from './dialog'
 
 import './completionConfirmHost.scss'

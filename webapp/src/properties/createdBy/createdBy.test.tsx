@@ -34,6 +34,7 @@ describe('properties/createdBy', () => {
                     teammateNameDisplay: 'username',
                 },
             },
+            boards: {},
         })
 
         const component = wrapIntl(
@@ -70,6 +71,7 @@ describe('properties/createdBy', () => {
                     teammateNameDisplay: 'username',
                 },
             },
+            boards: {},
         })
 
         const component = wrapIntl(

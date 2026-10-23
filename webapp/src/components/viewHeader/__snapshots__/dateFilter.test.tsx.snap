@@ -89,6 +89,7 @@ exports[`components/viewHeader/dateFilter handles calendar click event 1`] = `
             "value1",
           ],
           "kanbanCalculations": Object {},
+          "personStatsConfig": undefined,
           "sortOptions": Array [
             Object {
               "propertyId": "property1",
@@ -102,6 +103,7 @@ exports[`components/viewHeader/dateFilter handles calendar click event 1`] = `
           "viewType": "board",
           "visibleOptionIds": Array [],
           "visiblePropertyIds": Array [],
+          "visibleTo": undefined,
         },
         "id": "testViewID",
         "limited": false,

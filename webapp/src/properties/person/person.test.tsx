@@ -41,6 +41,7 @@ describe('properties/person', () => {
                 teammateNameDisplay: 'username',
             },
         },
+        boards: {},
     }
 
     test('not readOnly not existing user', async () => {

@@ -50,6 +50,7 @@ describe('properties/updatedBy', () => {
                     teammateNameDisplay: 'username',
                 },
             },
+            boards: {},
         })
 
         const component = (

@@ -266,7 +266,7 @@ exports[`src/components/workspace return workspace and showcard 1`] = `
         class="BoardComponent"
       >
         <div
-          class="top-head"
+          class="top-head is-collapsed"
         >
           <div
             class="TopBar"
@@ -290,108 +290,221 @@ exports[`src/components/workspace return workspace and showcard 1`] = `
             </a>
           </div>
           <div
-            class="mid-head"
+            class="headerDrawerToggle"
+          >
+            <button
+              aria-label="展开标题栏"
+              title="展开标题栏"
+              type="button"
+            >
+              <i
+                class="CompassIcon icon-chevron-down ChevronDownIcon"
+              />
+            </button>
+          </div>
+          <div
+            class="headerCollapsedBar"
+          >
+            <span
+              class="headerCollapsedTitle"
+            >
+              board title
+            </span>
+          </div>
+          <div
+            class="headerDrawerBody "
           >
             <div
-              class="ViewTitle"
+              class="mid-head"
             >
               <div
-                class="add-buttons add-visible"
-              >
-                <button
-                  type="button"
-                >
-                  <i
-                    class="CompassIcon icon-eye-off-outline"
-                  />
-                  <span>
-                    hide description
-                  </span>
-                </button>
-              </div>
-              <div
-                class="title"
+                class="ViewTitle"
               >
                 <div
-                  class="IconSelector"
+                  class="add-buttons add-visible"
+                >
+                  <button
+                    type="button"
+                  >
+                    <i
+                      class="CompassIcon icon-eye-off-outline"
+                    />
+                    <span>
+                      hide description
+                    </span>
+                  </button>
+                </div>
+                <div
+                  class="title"
                 >
                   <div
-                    aria-label="menuwrapper"
+                    class="IconSelector"
+                  >
+                    <div
+                      aria-label="menuwrapper"
+                      class="MenuWrapper"
+                      role="button"
+                    >
+                      <div
+                        class="octo-icon size-m"
+                      >
+                        <span>
+                          i
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    class="Editable title"
+                    placeholder="Untitled board"
+                    spellcheck="true"
+                    title="board title"
+                    value="board title"
+                  />
+                </div>
+                <div
+                  class="description"
+                >
+                  <div
+                    class="MarkdownEditor octo-editor  "
+                  >
+                    <div
+                      class="octo-editor-preview"
+                      data-testid="preview-element"
+                    >
+                      <div
+                        class="mocked-message-html"
+                      >
+                        Test Comment
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="shareButtonWrapper"
+              >
+                <div
+                  class="ShareBoardButton"
+                >
+                  <button
+                    title="Share board"
+                    type="button"
+                  >
+                    <i
+                      class="CompassIcon icon-lock-outline LockOutlineIcon"
+                    />
+                    <span>
+                      Share
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div
+              class="ViewHeader"
+            >
+              <div
+                class="viewSelector"
+              >
+                <input
+                  class="Editable "
+                  placeholder="Untitled View"
+                  spellcheck="true"
+                  title="view title"
+                  value="view title"
+                />
+                <div>
+                  <div
+                    aria-label="View menu"
                     class="MenuWrapper"
                     role="button"
                   >
-                    <div
-                      class="octo-icon size-m"
+                    <button
+                      type="button"
                     >
-                      <span>
-                        i
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <input
-                  class="Editable title"
-                  placeholder="Untitled board"
-                  spellcheck="true"
-                  title="board title"
-                  value="board title"
-                />
-              </div>
-              <div
-                class="description"
-              >
-                <div
-                  class="MarkdownEditor octo-editor  "
-                >
-                  <div
-                    class="octo-editor-preview"
-                    data-testid="preview-element"
-                  >
-                    <div
-                      class="mocked-message-html"
-                    >
-                      Test Comment
-                    </div>
+                      <i
+                        class="CompassIcon icon-chevron-down DropdownIcon"
+                      />
+                    </button>
                   </div>
                 </div>
               </div>
-            </div>
-            <div
-              class="shareButtonWrapper"
-            >
               <div
-                class="ShareBoardButton"
+                class="octo-spacer"
+              />
+              <div
+                aria-label="Properties menu"
+                class="MenuWrapper"
+                role="button"
               >
                 <button
-                  title="Share board"
                   type="button"
                 >
-                  <i
-                    class="CompassIcon icon-lock-outline LockOutlineIcon"
-                  />
                   <span>
-                    Share
+                    Properties
                   </span>
                 </button>
               </div>
-            </div>
-          </div>
-          <div
-            class="ViewHeader"
-          >
-            <div
-              class="viewSelector"
-            >
-              <input
-                class="Editable "
-                placeholder="Untitled View"
-                spellcheck="true"
-                title="view title"
-                value="view title"
-              />
-              <div>
+              <div
+                aria-label="menuwrapper"
+                class="MenuWrapper"
+                role="button"
+              >
+                <button
+                  type="button"
+                >
+                  <span>
+                    Group by: 
+                    <span
+                      id="groupByLabel"
+                    >
+                      Property 2
+                    </span>
+                  </span>
+                </button>
+              </div>
+              <div
+                class="ModalWrapper"
+              >
+                <button
+                  type="button"
+                >
+                  <span>
+                    Filter
+                  </span>
+                </button>
+              </div>
+              <div
+                aria-label="menuwrapper"
+                class="MenuWrapper"
+                role="button"
+              >
+                <button
+                  type="button"
+                >
+                  <span>
+                    Sort
+                  </span>
+                </button>
+              </div>
+              <div
+                class="board-search-field"
+              >
+                <i
+                  class="CompassIcon icon-magnify board-search-icon"
+                />
+                <input
+                  class="Editable "
+                  placeholder="Search cards"
+                  value=""
+                />
+              </div>
+              <div
+                class="ModalWrapper"
+              >
                 <div
-                  aria-label="View menu"
+                  aria-label="View header menu"
                   class="MenuWrapper"
                   role="button"
                 >
@@ -399,118 +512,31 @@ exports[`src/components/workspace return workspace and showcard 1`] = `
                     type="button"
                   >
                     <i
-                      class="CompassIcon icon-chevron-down DropdownIcon"
+                      class="CompassIcon icon-dots-horizontal OptionsIcon"
                     />
                   </button>
                 </div>
               </div>
-            </div>
-            <div
-              class="octo-spacer"
-            />
-            <div
-              aria-label="Properties menu"
-              class="MenuWrapper"
-              role="button"
-            >
-              <button
-                type="button"
-              >
-                <span>
-                  Properties
-                </span>
-              </button>
-            </div>
-            <div
-              aria-label="menuwrapper"
-              class="MenuWrapper"
-              role="button"
-            >
-              <button
-                type="button"
-              >
-                <span>
-                  Group by: 
-                  <span
-                    id="groupByLabel"
-                  >
-                    Property 2
-                  </span>
-                </span>
-              </button>
-            </div>
-            <div
-              class="ModalWrapper"
-            >
-              <button
-                type="button"
-              >
-                <span>
-                  Filter
-                </span>
-              </button>
-            </div>
-            <div
-              aria-label="menuwrapper"
-              class="MenuWrapper"
-              role="button"
-            >
-              <button
-                type="button"
-              >
-                <span>
-                  Sort
-                </span>
-              </button>
-            </div>
-            <div
-              class="board-search-field"
-            >
-              <i
-                class="CompassIcon icon-magnify board-search-icon"
-              />
-              <input
-                class="Editable "
-                placeholder="Search cards"
-                value=""
-              />
-            </div>
-            <div
-              class="ModalWrapper"
-            >
               <div
-                aria-label="View header menu"
-                class="MenuWrapper"
-                role="button"
-              >
-                <button
-                  type="button"
-                >
-                  <i
-                    class="CompassIcon icon-dots-horizontal OptionsIcon"
-                  />
-                </button>
-              </div>
-            </div>
-            <div
-              class="ButtonWithMenu"
-            >
-              <div
-                class="button-text"
-              >
-                New
-              </div>
-              <div
-                aria-label="menuwrapper"
-                class="MenuWrapper"
-                role="button"
+                class="ButtonWithMenu"
               >
                 <div
-                  class="button-dropdown"
+                  class="button-text"
                 >
-                  <i
-                    class="CompassIcon icon-chevron-down DropdownIcon"
-                  />
+                  New
+                </div>
+                <div
+                  aria-label="menuwrapper"
+                  class="MenuWrapper"
+                  role="button"
+                >
+                  <div
+                    class="button-dropdown"
+                  >
+                    <i
+                      class="CompassIcon icon-chevron-down DropdownIcon"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -574,7 +600,7 @@ exports[`src/components/workspace return workspace and showcard 1`] = `
             <div
               class="octo-board-header-cell KanbanColumnHeader"
               draggable="true"
-              style="opacity: 1;"
+              style="opacity: 1; --column-color: var(--prop-blue);"
             >
               <span
                 class="Label propColorBlue "
@@ -781,6 +807,7 @@ exports[`src/components/workspace return workspace and showcard 1`] = `
             </div>
             <div
               class="octo-board-column"
+              style="--column-color: var(--prop-blue);"
             >
               <button
                 type="button"
@@ -810,7 +837,7 @@ exports[`src/components/workspace return workspace readonly and showcard 1`] = `
         class="BoardComponent"
       >
         <div
-          class="top-head"
+          class="top-head is-collapsed"
         >
           <div
             class="TopBar"
@@ -834,102 +861,128 @@ exports[`src/components/workspace return workspace readonly and showcard 1`] = `
             </a>
           </div>
           <div
-            class="mid-head"
+            class="headerDrawerToggle"
+          >
+            <button
+              aria-label="展开标题栏"
+              title="展开标题栏"
+              type="button"
+            >
+              <i
+                class="CompassIcon icon-chevron-down ChevronDownIcon"
+              />
+            </button>
+          </div>
+          <div
+            class="headerCollapsedBar"
+          >
+            <span
+              class="headerCollapsedTitle"
+            >
+              board title
+            </span>
+          </div>
+          <div
+            class="headerDrawerBody "
           >
             <div
-              class="ViewTitle"
+              class="mid-head"
             >
               <div
-                class="add-buttons add-visible"
-              />
-              <div
-                class="title"
+                class="ViewTitle"
               >
                 <div
-                  class="IconSelector"
-                >
-                  <div
-                    class="octo-icon size-m readonly"
-                  >
-                    <span>
-                      i
-                    </span>
-                  </div>
-                </div>
-                <input
-                  class="Editable readonly title"
-                  placeholder="Untitled board"
-                  readonly=""
-                  spellcheck="true"
-                  title="board title"
-                  value="board title"
+                  class="add-buttons add-visible"
                 />
-              </div>
-              <div
-                class="description"
-              >
                 <div
-                  class="MarkdownEditor octo-editor  "
+                  class="title"
                 >
                   <div
-                    class="octo-editor-preview"
-                    data-testid="preview-element"
+                    class="IconSelector"
                   >
                     <div
-                      class="mocked-message-html"
+                      class="octo-icon size-m readonly"
                     >
-                      Test Comment
+                      <span>
+                        i
+                      </span>
+                    </div>
+                  </div>
+                  <input
+                    class="Editable readonly title"
+                    placeholder="Untitled board"
+                    readonly=""
+                    spellcheck="true"
+                    title="board title"
+                    value="board title"
+                  />
+                </div>
+                <div
+                  class="description"
+                >
+                  <div
+                    class="MarkdownEditor octo-editor  "
+                  >
+                    <div
+                      class="octo-editor-preview"
+                      data-testid="preview-element"
+                    >
+                      <div
+                        class="mocked-message-html"
+                      >
+                        Test Comment
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div
-              class="shareButtonWrapper"
-            >
               <div
-                class="ShareBoardLoginButton"
+                class="shareButtonWrapper"
               >
-                <button
-                  title="Login"
-                  type="button"
+                <div
+                  class="ShareBoardLoginButton"
                 >
-                  <span>
-                    Login
-                  </span>
-                </button>
+                  <button
+                    title="Login"
+                    type="button"
+                  >
+                    <span>
+                      Login
+                    </span>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-          <div
-            class="ViewHeader"
-          >
             <div
-              class="viewSelector"
+              class="ViewHeader"
             >
-              <input
-                class="Editable readonly "
-                placeholder="Untitled View"
-                readonly=""
-                spellcheck="true"
-                title="view title"
-                value="view title"
+              <div
+                class="viewSelector"
+              >
+                <input
+                  class="Editable readonly "
+                  placeholder="Untitled View"
+                  readonly=""
+                  spellcheck="true"
+                  title="view title"
+                  value="view title"
+                />
+              </div>
+              <div
+                class="octo-spacer"
               />
-            </div>
-            <div
-              class="octo-spacer"
-            />
-            <div
-              class="board-search-field"
-            >
-              <i
-                class="CompassIcon icon-magnify board-search-icon"
-              />
-              <input
-                class="Editable "
-                placeholder="Search cards"
-                value=""
-              />
+              <div
+                class="board-search-field"
+              >
+                <i
+                  class="CompassIcon icon-magnify board-search-icon"
+                />
+                <input
+                  class="Editable "
+                  placeholder="Search cards"
+                  value=""
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -971,7 +1024,7 @@ exports[`src/components/workspace return workspace readonly and showcard 1`] = `
             <div
               class="octo-board-header-cell KanbanColumnHeader"
               draggable="true"
-              style="opacity: 1;"
+              style="opacity: 1; --column-color: var(--prop-blue);"
             >
               <span
                 class="Label propColorBlue "
@@ -1102,6 +1155,7 @@ exports[`src/components/workspace return workspace readonly and showcard 1`] = `
             </div>
             <div
               class="octo-board-column"
+              style="--column-color: var(--prop-blue);"
             />
           </div>
         </div>
@@ -1389,7 +1443,7 @@ exports[`src/components/workspace should match snapshot 1`] = `
         class="BoardComponent"
       >
         <div
-          class="top-head"
+          class="top-head is-collapsed"
         >
           <div
             class="TopBar"
@@ -1413,108 +1467,221 @@ exports[`src/components/workspace should match snapshot 1`] = `
             </a>
           </div>
           <div
-            class="mid-head"
+            class="headerDrawerToggle"
+          >
+            <button
+              aria-label="展开标题栏"
+              title="展开标题栏"
+              type="button"
+            >
+              <i
+                class="CompassIcon icon-chevron-down ChevronDownIcon"
+              />
+            </button>
+          </div>
+          <div
+            class="headerCollapsedBar"
+          >
+            <span
+              class="headerCollapsedTitle"
+            >
+              board title
+            </span>
+          </div>
+          <div
+            class="headerDrawerBody "
           >
             <div
-              class="ViewTitle"
+              class="mid-head"
             >
               <div
-                class="add-buttons add-visible"
-              >
-                <button
-                  type="button"
-                >
-                  <i
-                    class="CompassIcon icon-eye-off-outline"
-                  />
-                  <span>
-                    hide description
-                  </span>
-                </button>
-              </div>
-              <div
-                class="title"
+                class="ViewTitle"
               >
                 <div
-                  class="IconSelector"
+                  class="add-buttons add-visible"
+                >
+                  <button
+                    type="button"
+                  >
+                    <i
+                      class="CompassIcon icon-eye-off-outline"
+                    />
+                    <span>
+                      hide description
+                    </span>
+                  </button>
+                </div>
+                <div
+                  class="title"
                 >
                   <div
-                    aria-label="menuwrapper"
+                    class="IconSelector"
+                  >
+                    <div
+                      aria-label="menuwrapper"
+                      class="MenuWrapper"
+                      role="button"
+                    >
+                      <div
+                        class="octo-icon size-m"
+                      >
+                        <span>
+                          i
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    class="Editable title"
+                    placeholder="Untitled board"
+                    spellcheck="true"
+                    title="board title"
+                    value="board title"
+                  />
+                </div>
+                <div
+                  class="description"
+                >
+                  <div
+                    class="MarkdownEditor octo-editor  "
+                  >
+                    <div
+                      class="octo-editor-preview"
+                      data-testid="preview-element"
+                    >
+                      <div
+                        class="mocked-message-html"
+                      >
+                        Test Comment
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="shareButtonWrapper"
+              >
+                <div
+                  class="ShareBoardButton"
+                >
+                  <button
+                    title="Share board"
+                    type="button"
+                  >
+                    <i
+                      class="CompassIcon icon-lock-outline LockOutlineIcon"
+                    />
+                    <span>
+                      Share
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div
+              class="ViewHeader"
+            >
+              <div
+                class="viewSelector"
+              >
+                <input
+                  class="Editable "
+                  placeholder="Untitled View"
+                  spellcheck="true"
+                  title="view title"
+                  value="view title"
+                />
+                <div>
+                  <div
+                    aria-label="View menu"
                     class="MenuWrapper"
                     role="button"
                   >
-                    <div
-                      class="octo-icon size-m"
+                    <button
+                      type="button"
                     >
-                      <span>
-                        i
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <input
-                  class="Editable title"
-                  placeholder="Untitled board"
-                  spellcheck="true"
-                  title="board title"
-                  value="board title"
-                />
-              </div>
-              <div
-                class="description"
-              >
-                <div
-                  class="MarkdownEditor octo-editor  "
-                >
-                  <div
-                    class="octo-editor-preview"
-                    data-testid="preview-element"
-                  >
-                    <div
-                      class="mocked-message-html"
-                    >
-                      Test Comment
-                    </div>
+                      <i
+                        class="CompassIcon icon-chevron-down DropdownIcon"
+                      />
+                    </button>
                   </div>
                 </div>
               </div>
-            </div>
-            <div
-              class="shareButtonWrapper"
-            >
               <div
-                class="ShareBoardButton"
+                class="octo-spacer"
+              />
+              <div
+                aria-label="Properties menu"
+                class="MenuWrapper"
+                role="button"
               >
                 <button
-                  title="Share board"
                   type="button"
                 >
-                  <i
-                    class="CompassIcon icon-lock-outline LockOutlineIcon"
-                  />
                   <span>
-                    Share
+                    Properties
                   </span>
                 </button>
               </div>
-            </div>
-          </div>
-          <div
-            class="ViewHeader"
-          >
-            <div
-              class="viewSelector"
-            >
-              <input
-                class="Editable "
-                placeholder="Untitled View"
-                spellcheck="true"
-                title="view title"
-                value="view title"
-              />
-              <div>
+              <div
+                aria-label="menuwrapper"
+                class="MenuWrapper"
+                role="button"
+              >
+                <button
+                  type="button"
+                >
+                  <span>
+                    Group by: 
+                    <span
+                      id="groupByLabel"
+                    >
+                      Property 2
+                    </span>
+                  </span>
+                </button>
+              </div>
+              <div
+                class="ModalWrapper"
+              >
+                <button
+                  type="button"
+                >
+                  <span>
+                    Filter
+                  </span>
+                </button>
+              </div>
+              <div
+                aria-label="menuwrapper"
+                class="MenuWrapper"
+                role="button"
+              >
+                <button
+                  type="button"
+                >
+                  <span>
+                    Sort
+                  </span>
+                </button>
+              </div>
+              <div
+                class="board-search-field"
+              >
+                <i
+                  class="CompassIcon icon-magnify board-search-icon"
+                />
+                <input
+                  class="Editable "
+                  placeholder="Search cards"
+                  value=""
+                />
+              </div>
+              <div
+                class="ModalWrapper"
+              >
                 <div
-                  aria-label="View menu"
+                  aria-label="View header menu"
                   class="MenuWrapper"
                   role="button"
                 >
@@ -1522,118 +1689,31 @@ exports[`src/components/workspace should match snapshot 1`] = `
                     type="button"
                   >
                     <i
-                      class="CompassIcon icon-chevron-down DropdownIcon"
+                      class="CompassIcon icon-dots-horizontal OptionsIcon"
                     />
                   </button>
                 </div>
               </div>
-            </div>
-            <div
-              class="octo-spacer"
-            />
-            <div
-              aria-label="Properties menu"
-              class="MenuWrapper"
-              role="button"
-            >
-              <button
-                type="button"
-              >
-                <span>
-                  Properties
-                </span>
-              </button>
-            </div>
-            <div
-              aria-label="menuwrapper"
-              class="MenuWrapper"
-              role="button"
-            >
-              <button
-                type="button"
-              >
-                <span>
-                  Group by: 
-                  <span
-                    id="groupByLabel"
-                  >
-                    Property 2
-                  </span>
-                </span>
-              </button>
-            </div>
-            <div
-              class="ModalWrapper"
-            >
-              <button
-                type="button"
-              >
-                <span>
-                  Filter
-                </span>
-              </button>
-            </div>
-            <div
-              aria-label="menuwrapper"
-              class="MenuWrapper"
-              role="button"
-            >
-              <button
-                type="button"
-              >
-                <span>
-                  Sort
-                </span>
-              </button>
-            </div>
-            <div
-              class="board-search-field"
-            >
-              <i
-                class="CompassIcon icon-magnify board-search-icon"
-              />
-              <input
-                class="Editable "
-                placeholder="Search cards"
-                value=""
-              />
-            </div>
-            <div
-              class="ModalWrapper"
-            >
               <div
-                aria-label="View header menu"
-                class="MenuWrapper"
-                role="button"
-              >
-                <button
-                  type="button"
-                >
-                  <i
-                    class="CompassIcon icon-dots-horizontal OptionsIcon"
-                  />
-                </button>
-              </div>
-            </div>
-            <div
-              class="ButtonWithMenu"
-            >
-              <div
-                class="button-text"
-              >
-                New
-              </div>
-              <div
-                aria-label="menuwrapper"
-                class="MenuWrapper"
-                role="button"
+                class="ButtonWithMenu"
               >
                 <div
-                  class="button-dropdown"
+                  class="button-text"
                 >
-                  <i
-                    class="CompassIcon icon-chevron-down DropdownIcon"
-                  />
+                  New
+                </div>
+                <div
+                  aria-label="menuwrapper"
+                  class="MenuWrapper"
+                  role="button"
+                >
+                  <div
+                    class="button-dropdown"
+                  >
+                    <i
+                      class="CompassIcon icon-chevron-down DropdownIcon"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -1697,7 +1777,7 @@ exports[`src/components/workspace should match snapshot 1`] = `
             <div
               class="octo-board-header-cell KanbanColumnHeader"
               draggable="true"
-              style="opacity: 1;"
+              style="opacity: 1; --column-color: var(--prop-blue);"
             >
               <span
                 class="Label propColorBlue "
@@ -1904,6 +1984,7 @@ exports[`src/components/workspace should match snapshot 1`] = `
             </div>
             <div
               class="octo-board-column"
+              style="--column-color: var(--prop-blue);"
             >
               <button
                 type="button"
@@ -1933,7 +2014,7 @@ exports[`src/components/workspace should match snapshot with readonly 1`] = `
         class="BoardComponent"
       >
         <div
-          class="top-head"
+          class="top-head is-collapsed"
         >
           <div
             class="TopBar"
@@ -1957,102 +2038,128 @@ exports[`src/components/workspace should match snapshot with readonly 1`] = `
             </a>
           </div>
           <div
-            class="mid-head"
+            class="headerDrawerToggle"
+          >
+            <button
+              aria-label="展开标题栏"
+              title="展开标题栏"
+              type="button"
+            >
+              <i
+                class="CompassIcon icon-chevron-down ChevronDownIcon"
+              />
+            </button>
+          </div>
+          <div
+            class="headerCollapsedBar"
+          >
+            <span
+              class="headerCollapsedTitle"
+            >
+              board title
+            </span>
+          </div>
+          <div
+            class="headerDrawerBody "
           >
             <div
-              class="ViewTitle"
+              class="mid-head"
             >
               <div
-                class="add-buttons add-visible"
-              />
-              <div
-                class="title"
+                class="ViewTitle"
               >
                 <div
-                  class="IconSelector"
-                >
-                  <div
-                    class="octo-icon size-m readonly"
-                  >
-                    <span>
-                      i
-                    </span>
-                  </div>
-                </div>
-                <input
-                  class="Editable readonly title"
-                  placeholder="Untitled board"
-                  readonly=""
-                  spellcheck="true"
-                  title="board title"
-                  value="board title"
+                  class="add-buttons add-visible"
                 />
-              </div>
-              <div
-                class="description"
-              >
                 <div
-                  class="MarkdownEditor octo-editor  "
+                  class="title"
                 >
                   <div
-                    class="octo-editor-preview"
-                    data-testid="preview-element"
+                    class="IconSelector"
                   >
                     <div
-                      class="mocked-message-html"
+                      class="octo-icon size-m readonly"
                     >
-                      Test Comment
+                      <span>
+                        i
+                      </span>
+                    </div>
+                  </div>
+                  <input
+                    class="Editable readonly title"
+                    placeholder="Untitled board"
+                    readonly=""
+                    spellcheck="true"
+                    title="board title"
+                    value="board title"
+                  />
+                </div>
+                <div
+                  class="description"
+                >
+                  <div
+                    class="MarkdownEditor octo-editor  "
+                  >
+                    <div
+                      class="octo-editor-preview"
+                      data-testid="preview-element"
+                    >
+                      <div
+                        class="mocked-message-html"
+                      >
+                        Test Comment
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div
-              class="shareButtonWrapper"
-            >
               <div
-                class="ShareBoardLoginButton"
+                class="shareButtonWrapper"
               >
-                <button
-                  title="Login"
-                  type="button"
+                <div
+                  class="ShareBoardLoginButton"
                 >
-                  <span>
-                    Login
-                  </span>
-                </button>
+                  <button
+                    title="Login"
+                    type="button"
+                  >
+                    <span>
+                      Login
+                    </span>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-          <div
-            class="ViewHeader"
-          >
             <div
-              class="viewSelector"
+              class="ViewHeader"
             >
-              <input
-                class="Editable readonly "
-                placeholder="Untitled View"
-                readonly=""
-                spellcheck="true"
-                title="view title"
-                value="view title"
+              <div
+                class="viewSelector"
+              >
+                <input
+                  class="Editable readonly "
+                  placeholder="Untitled View"
+                  readonly=""
+                  spellcheck="true"
+                  title="view title"
+                  value="view title"
+                />
+              </div>
+              <div
+                class="octo-spacer"
               />
-            </div>
-            <div
-              class="octo-spacer"
-            />
-            <div
-              class="board-search-field"
-            >
-              <i
-                class="CompassIcon icon-magnify board-search-icon"
-              />
-              <input
-                class="Editable "
-                placeholder="Search cards"
-                value=""
-              />
+              <div
+                class="board-search-field"
+              >
+                <i
+                  class="CompassIcon icon-magnify board-search-icon"
+                />
+                <input
+                  class="Editable "
+                  placeholder="Search cards"
+                  value=""
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -2094,7 +2201,7 @@ exports[`src/components/workspace should match snapshot with readonly 1`] = `
             <div
               class="octo-board-header-cell KanbanColumnHeader"
               draggable="true"
-              style="opacity: 1;"
+              style="opacity: 1; --column-color: var(--prop-blue);"
             >
               <span
                 class="Label propColorBlue "
@@ -2225,6 +2332,7 @@ exports[`src/components/workspace should match snapshot with readonly 1`] = `
             </div>
             <div
               class="octo-board-column"
+              style="--column-color: var(--prop-blue);"
             />
           </div>
         </div>

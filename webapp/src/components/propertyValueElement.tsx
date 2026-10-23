@@ -9,13 +9,15 @@ import {Card} from '../blocks/card'
 
 import propsRegistry from '../properties'
 import {isAutoManagedProperty, isAmountLocked, SETTLE_PROP_NAMES} from '../settleAutomation'
-import AmountLockBadge from './cardDetail/amountLockBadge'
-import CompletionDetailEditor from './cardDetail/completionDetailEditor'
+
 import {useAppSelector} from '../store/hooks'
 import {getMe} from '../store/users'
 import {RootState} from '../store'
 import {IUser} from '../user'
 import {Utils} from '../utils'
+
+import CompletionDetailEditor from './cardDetail/completionDetailEditor'
+import AmountLockBadge from './cardDetail/amountLockBadge'
 
 import './propertyValueElement.scss'
 

@@ -44,6 +44,12 @@ import {UserConfigPatch} from '../user'
 
 import octoClient from '../octoClient'
 
+import IconButton from '../widgets/buttons/iconButton'
+
+import ChevronUp from '../widgets/icons/chevronUp'
+
+import ChevronDown from '../widgets/icons/chevronDown'
+
 import ShareBoardButton from './shareBoard/shareBoardButton'
 import ShareBoardLoginButton from './shareBoard/shareBoardLoginButton'
 
@@ -64,9 +70,6 @@ import Gallery from './gallery/gallery'
 import PersonStats from './personStats/personStats'
 import {BoardTourSteps, FINISHED, TOUR_BOARD, TOUR_CARD} from './onboardingTour'
 import ShareBoardTourStep from './onboardingTour/shareBoard/shareBoard'
-import IconButton from '../widgets/buttons/iconButton'
-import ChevronUp from '../widgets/icons/chevronUp'
-import ChevronDown from '../widgets/icons/chevronDown'
 
 type Props = {
     clientConfig?: ClientConfig
