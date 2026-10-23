@@ -7,6 +7,7 @@ import {getBoard} from './store/boards'
 import store from './store'
 import {findTemplateByName, SETTLE_PROP_NAMES} from './settleAutomation'
 import {CompletionConfirmRequest} from './completionConfirm'
+import {cardActualHours} from './actualHours'
 
 // Gate for moving a card into the "完成" status (2026-10-21):
 // - single-producer (or producer-less) cards pass straight through;
@@ -48,6 +49,52 @@ function parseDetail(raw: unknown): Record<string, number> {
     return {}
 }
 
+// --- actual-hours gate -------------------------------------------------
+//
+// Moving a card INTO "完成" additionally requires 实际耗时 to be
+// filled (total > 0). Unlike the completion-share gate this applies
+// to EVERY card, single-producer included. When it blocks, the
+// mutator aborts the change and opens the card so the user can fill
+// the per-producer hours in the detail editor. Evaluated BEFORE the
+// completion-share gate: hours first, shares second.
+
+export type HoursGateRequest = {
+    cardId: string
+    cardTitle: string
+}
+
+export function evaluateHoursGate(boardId: string, card: Card, propertyId: string, value?: string | string[]): HoursGateRequest | null {
+    const board = getBoard(boardId)(store.getState())
+    if (!board) {
+        return null
+    }
+    return buildHoursGateRequest(board, card, propertyId, value)
+}
+
+// Pure core of the hours gate, split out for unit testing.
+export function buildHoursGateRequest(board: Board, card: Card, propertyId: string, value?: string | string[]): HoursGateRequest | null {
+    if (typeof value !== 'string' || !value) {
+        return null
+    }
+    const statusTemplate = board.cardProperties.find((t) => t.id === propertyId)
+    if (!statusTemplate || statusTemplate.name !== SETTLE_PROP_NAMES.projectStatus) {
+        return null
+    }
+    const newLabel = statusTemplate.options.find((o) => o.id === value)?.value?.trim()
+    if (newLabel !== DONE_LABEL) {
+        return null
+    }
+    const oldValue = card.fields.properties[propertyId]
+    const oldLabel = typeof oldValue === 'string' ? statusTemplate.options.find((o) => o.id === oldValue)?.value?.trim() : undefined
+    if (oldLabel === DONE_LABEL) {
+        return null
+    }
+    if (cardActualHours(board, card) > 0) {
+        return null
+    }
+    return {cardId: card.id, cardTitle: card.title || '未命名卡片'}
+}
+
 // Returns the confirmation request when this change needs one,
 // otherwise null (change may proceed immediately).
 export function evaluateCompletionGate(boardId: string, card: Card, propertyId: string, value?: string | string[]): CompletionConfirmRequest | null {
@@ -69,12 +116,12 @@ export function buildCompletionRequest(board: Board, card: Card, propertyId: str
     if (!statusTemplate || statusTemplate.name !== SETTLE_PROP_NAMES.projectStatus) {
         return null
     }
-    const newLabel = statusTemplate.options.find((o) => o.id === value)?.value
+    const newLabel = statusTemplate.options.find((o) => o.id === value)?.value?.trim()
     if (newLabel !== DONE_LABEL) {
         return null
     }
     const oldValue = card.fields.properties[propertyId]
-    const oldLabel = typeof oldValue === 'string' ? statusTemplate.options.find((o) => o.id === oldValue)?.value : undefined
+    const oldLabel = typeof oldValue === 'string' ? statusTemplate.options.find((o) => o.id === oldValue)?.value?.trim() : undefined
     if (oldLabel === DONE_LABEL) {
         return null
     }

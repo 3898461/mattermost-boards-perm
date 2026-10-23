@@ -29,3 +29,9 @@
         color: rgb(var(--center-channel-color-rgb));
     }
 }
+
+.property-value-element__hours-hint {
+    color: rgba(var(--center-channel-color-rgb), 0.55);
+    font-size: 12px;
+    margin-top: 4px;
+}

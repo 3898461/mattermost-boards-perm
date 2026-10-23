@@ -101,6 +101,7 @@
   "CardDetailProperty.property-change-action-button": "修改属性",
   "CardDetailProperty.property-changed": "已成功修改属性！",
   "CardDetailProperty.property-deleted": "成功删除 {propertyName}！",
+  "CardDetailProperty.property-delete-failed": "删除属性失败：{error}",
   "CardDetailProperty.property-name-change-subtext": "属性的类型从\"{oldPropType}\" 更改为\"{newPropType}\"",
   "CardDetial.limited-link": "了解更多关于我们的计划。",
   "CardDialog.delete-confirmation-dialog-attachment": "确认删除附件",

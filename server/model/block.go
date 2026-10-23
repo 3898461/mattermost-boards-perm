@@ -290,6 +290,30 @@ func validateUpdatedFields(fields map[string]interface{}) error {
 			}
 		}
 
+		if key == "kanbanCalculations" {
+			// Kanban calculation settings are keyed by group (option)
+			// ID, and the column holding cards with no group value has
+			// long been keyed by the empty string. That empty key is
+			// legitimate client data, so it is allowed at this level;
+			// the calculation entries below it follow the normal rules.
+			if calcMap, ok := value.(map[string]interface{}); ok {
+				for groupKey, calc := range calcMap {
+					if groupKey != "" && !safeInputPattern.MatchString(groupKey) {
+						message := fmt.Sprintf("invalid characters in block with key: %s", groupKey)
+						return NewErrBadRequest(message)
+					}
+
+					if calcFields, ok := calc.(map[string]interface{}); ok {
+						if err := validateUpdatedFields(calcFields); err != nil {
+							return err
+						}
+					}
+				}
+			}
+
+			continue
+		}
+
 		if nestedMap, ok := value.(map[string]interface{}); ok {
 			if err := validateUpdatedFields(nestedMap); err != nil {
 				return err

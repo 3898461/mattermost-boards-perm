@@ -32,6 +32,7 @@ import {getHiddenBoardIDs} from '../store/sidebar'
 import {useHasCurrentBoardPermissions} from '../hooks/permissions'
 import {Permission} from '../constants'
 import {canViewView} from '../viewPermissions'
+import {registerCardOpener} from '../cardOpener'
 
 import CenterPanel from './centerPanel'
 import BoardTemplateSelector from './boardTemplateSelector/boardTemplateSelector'
@@ -92,6 +93,14 @@ function CenterContent(props: Props) {
         history.push(newPath)
         dispatch(setCurrentCard(cardId || ''))
     }, [match, history])
+
+    // Let non-React callers (the mutator's actual-hours gate) open a
+    // card of the board currently on screen.
+    useEffect(() => registerCardOpener((boardId, cardId) => {
+        if (board && boardId === board.id) {
+            showCard(cardId)
+        }
+    }), [board, showCard])
 
     useEffect(() => {
         const onConfigChangeHandler = (_: WSClient, config: ClientConfig) => {

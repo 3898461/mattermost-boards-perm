@@ -550,11 +550,29 @@ class OctoClient {
         Utils.log(`\t Blocks ${babp.blockIDs.join(', ')}`)
 
         const body = JSON.stringify(babp)
-        return fetch(this.getBaseURL() + '/api/v2/boards-and-blocks', Client4.getOptions({
+        const response = await fetch(this.getBaseURL() + '/api/v2/boards-and-blocks', Client4.getOptions({
             method: 'PATCH',
             headers: this.headers(),
             body,
         }))
+        if (!response.ok) {
+            // Callers historically treated any response as success, so a
+            // rejected batch (e.g. a 400 from server-side validation)
+            // was reported to the user as done while nothing was
+            // applied. Surface the server's error instead, so failures
+            // are visible and diagnosable.
+            let message = `patchBoardsAndBlocks failed: ${response.status}`
+            try {
+                const data = await response.json()
+                if (data && typeof data.error === 'string' && data.error) {
+                    message += `: ${data.error}`
+                }
+            } catch {
+                // Non-JSON error body: the status is all we have.
+            }
+            throw new Error(message)
+        }
+        return response
     }
 
     // Sharing

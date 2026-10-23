@@ -64,7 +64,7 @@ export function selectArchiveCandidates(board: Board, cards: Card[], cutoffMonth
     if (!statusTemplate) {
         return []
     }
-    const paidOptionIds = new Set(statusTemplate.options.filter((o) => o.value === '已付款').map((o) => o.id))
+    const paidOptionIds = new Set(statusTemplate.options.filter((o) => o.value.trim() === '已付款').map((o) => o.id))
     if (paidOptionIds.size === 0) {
         return []
     }

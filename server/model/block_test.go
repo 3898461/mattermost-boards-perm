@@ -384,6 +384,74 @@ func TestValidateBlockPatch(t *testing.T) {
 		require.EqualError(t, err, "Invalid Block ID")
 	})
 
+	t.Run("Should return nil for kanbanCalculations with the empty group key", func(t *testing.T) {
+		patch := &BlockPatch{
+			UpdatedFields: map[string]interface{}{
+				"kanbanCalculations": map[string]interface{}{
+					"": map[string]interface{}{
+						"calculation": "sum",
+						"propertyId":  "a8daz81s4xjgke1ww6cwik5w7ye",
+					},
+					"adeo5xuwne3qjue83fcozekz8ko": map[string]interface{}{
+						"calculation": "count",
+						"propertyId":  "__title",
+					},
+				},
+			},
+		}
+
+		err := ValidateBlockPatch(patch)
+
+		require.NoError(t, err)
+	})
+
+	t.Run("Should return error for kanbanCalculations with an invalid group key", func(t *testing.T) {
+		patch := &BlockPatch{
+			UpdatedFields: map[string]interface{}{
+				"kanbanCalculations": map[string]interface{}{
+					"a,b": map[string]interface{}{
+						"calculation": "count",
+						"propertyId":  "__title",
+					},
+				},
+			},
+		}
+
+		err := ValidateBlockPatch(patch)
+
+		require.Error(t, err)
+	})
+
+	t.Run("Should return error for kanbanCalculations with an invalid nested key", func(t *testing.T) {
+		patch := &BlockPatch{
+			UpdatedFields: map[string]interface{}{
+				"kanbanCalculations": map[string]interface{}{
+					"": map[string]interface{}{
+						"bad,key": "sum",
+					},
+				},
+			},
+		}
+
+		err := ValidateBlockPatch(patch)
+
+		require.Error(t, err)
+	})
+
+	t.Run("Should return error for an empty key outside kanbanCalculations", func(t *testing.T) {
+		patch := &BlockPatch{
+			UpdatedFields: map[string]interface{}{
+				"columnCalculations": map[string]interface{}{
+					"": "sum",
+				},
+			},
+		}
+
+		err := ValidateBlockPatch(patch)
+
+		require.Error(t, err)
+	})
+
 	t.Run("Should return error for block patch with nested UpdatedFields", func(t *testing.T) {
 		patch := &BlockPatch{
 			ParentID: nil,

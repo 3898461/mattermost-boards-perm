@@ -1,0 +1,122 @@
+.hours-detail-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 4px 0;
+    min-width: 220px;
+}
+
+.hours-detail-editor--hint {
+    color: rgba(var(--center-channel-color-rgb), 0.6);
+    font-size: 12px;
+}
+
+.hours-detail-editor--readonly {
+    color: rgba(var(--center-channel-color-rgb), 0.9);
+    font-size: 13px;
+}
+
+.hours-detail-editor__cells {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.hours-detail-editor__cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 72px;
+}
+
+.hours-detail-editor__avatar {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.hours-detail-editor__avatar--fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.hours-detail-editor__name {
+    max-width: 72px;
+    overflow: hidden;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.hours-detail-editor__input {
+    width: 60px;
+    border: 1px solid rgba(var(--center-channel-color-rgb), 0.3);
+    box-shadow: none;
+    outline: none;
+    text-align: center;
+}
+
+.hours-detail-editor__input:focus {
+    border-color: var(--button-bg);
+    box-shadow: none;
+}
+
+.hours-detail-editor__value {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.hours-detail-editor__hint {
+    color: rgba(var(--center-channel-color-rgb), 0.6);
+    font-size: 12px;
+}
+
+.hours-detail-editor__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 2px;
+}
+
+.hours-detail-editor__total {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.hours-detail-editor__total--ok {
+    color: var(--online-indicator);
+}
+
+.hours-detail-editor__total--bad {
+    color: var(--error-text);
+}
+
+/* Same green as the completion editor's save button. */
+.hours-detail-editor__save {
+    width: 60px;
+    padding: 4px 0;
+    border: 0;
+    background-color: rgb(55, 165, 121);
+    color: #fff;
+    font-size: 12px;
+}
+
+.hours-detail-editor__save:hover {
+    background-color: rgb(45, 145, 105);
+    color: #fff;
+}
+
+.hours-detail-summary {
+    color: rgba(var(--center-channel-color-rgb), 0.9);
+    font-size: 13px;
+}
+
+.hours-detail-summary--muted {
+    color: rgba(var(--center-channel-color-rgb), 0.55);
+}

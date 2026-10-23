@@ -13,6 +13,7 @@ import mutator from '../../mutator'
 import ValueSelector from '../../widgets/valueSelector'
 
 import {PropertyProps} from '../types'
+import {pickOptionColor, sortOptionsByFamily} from '../optionColor'
 
 const SelectProperty = (props: PropertyProps) => {
     const {propertyValue, propertyTemplate, board, card} = props
@@ -25,7 +26,7 @@ const SelectProperty = (props: PropertyProps) => {
         const option: IPropertyOption = {
             id: Utils.createGuid(IDType.BlockID),
             value: newValue,
-            color: 'propColorDefault',
+            color: pickOptionColor(board, propertyTemplate, newValue),
         }
         mutator.insertPropertyOption(board.id, board.cardProperties, propertyTemplate, option, 'add property option').then(() => {
             mutator.changePropertyValue(board.id, card, propertyTemplate.id, option.id)
@@ -61,7 +62,7 @@ const SelectProperty = (props: PropertyProps) => {
     return (
         <ValueSelector
             emptyValue={emptyDisplayValue}
-            options={propertyTemplate.options}
+            options={sortOptionsByFamily(board, propertyTemplate.options)}
             value={propertyTemplate.options.find((p: IPropertyOption) => p.id === propertyValue)}
             onCreate={onCreate}
             onChange={onChange}

@@ -9,6 +9,7 @@ import {Board, IPropertyTemplate} from '../../blocks/board'
 import {BoardView} from '../../blocks/boardView'
 import {Card} from '../../blocks/card'
 import mutator from '../../mutator'
+import {sendFlashMessage} from '../flashMessages'
 import Menu from '../../widgets/menu'
 import BoardPermissionGate from '../permissions/boardPermissionGate'
 import MemberVisibilityList from '../memberVisibilityList'
@@ -89,7 +90,13 @@ const TableHeaderMenu: FC<Props> = (props: Props): JSX.Element => {
                     <Menu.Text
                         id='delete'
                         name={intl.formatMessage({id: 'TableHeaderMenu.delete', defaultMessage: 'Delete'})}
-                        onClick={() => mutator.deleteProperty(board, views, cards, templateId)}
+                        onClick={async () => {
+                            try {
+                                await mutator.deleteProperty(board, views, cards, templateId)
+                            } catch (err: any) {
+                                sendFlashMessage({content: intl.formatMessage({id: 'CardDetailProperty.property-delete-failed', defaultMessage: 'Failed to delete property: {error}'}, {error: err?.message || String(err)}), severity: 'high'})
+                            }
+                        }}
                     />
                 </>}
         </Menu>

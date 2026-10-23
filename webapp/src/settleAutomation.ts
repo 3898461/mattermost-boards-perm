@@ -172,7 +172,7 @@ async function applyAmountSnapshot(board: Board, card: Card, changedPropertyId: 
     if (!tStatus || tStatus.id !== changedPropertyId) {
         return
     }
-    const statusLabel = optionById(tStatus, stringProp(card, tStatus) || '')?.value
+    const statusLabel = optionById(tStatus, stringProp(card, tStatus) || '')?.value?.trim()
     if (!statusLabel || !LOCKED_STATUSES.has(statusLabel)) {
         return
     }
@@ -245,7 +245,7 @@ async function applyAmountAutomation(board: Board, card: Card, changedPropertyId
 
     // Parse the unit price from the selected option label.
     const selectOptionId = stringProp(card, tSelect)
-    const selectLabel = selectOptionId ? optionById(tSelect, selectOptionId)?.value : undefined
+    const selectLabel = selectOptionId ? optionById(tSelect, selectOptionId)?.value?.trim() : undefined
     const price = selectLabel ? parseTrailingNumber(selectLabel) : undefined
     if (price === undefined) {
         flash('实际单价选项格式不对（选项名末尾需要是数字），已保留原金额，请联系管理员', 'high')
@@ -256,7 +256,7 @@ async function applyAmountAutomation(board: Board, card: Card, changedPropertyId
     const tClient = findTemplateByName(board, SETTLE_PROP_NAMES.client)
     if (tClient && selectLabel) {
         const clientOptionId = stringProp(card, tClient)
-        const clientLabel = clientOptionId ? optionById(tClient, clientOptionId)?.value : undefined
+        const clientLabel = clientOptionId ? optionById(tClient, clientOptionId)?.value?.trim() : undefined
         if (clientLabel && !selectLabel.startsWith(clientLabel)) {
             flash(`实际单价“${selectLabel}”与甲方“${clientLabel}”不一致，请检查`, 'normal')
         }
@@ -266,7 +266,7 @@ async function applyAmountAutomation(board: Board, card: Card, changedPropertyId
     // is ignored), unless the card never got an amount -- then calculate it.
     const tStatus = findTemplateByName(board, SETTLE_PROP_NAMES.projectStatus)
     if (tStatus) {
-        const statusLabel = optionById(tStatus, stringProp(card, tStatus) || '')?.value
+        const statusLabel = optionById(tStatus, stringProp(card, tStatus) || '')?.value?.trim()
         const existingAmount = parseFloat(stringProp(card, tAmount) || '')
         if (statusLabel && LOCKED_STATUSES.has(statusLabel) && !isNaN(existingAmount)) {
             return
@@ -296,7 +296,7 @@ async function applyDateStamps(board: Board, card: Card, changedPropertyId: stri
         if (!tStatus || tStatus.id !== changedPropertyId) {
             continue
         }
-        const statusLabel = optionById(tStatus, stringProp(card, tStatus) || '')?.value
+        const statusLabel = optionById(tStatus, stringProp(card, tStatus) || '')?.value?.trim()
         if (statusLabel !== mapping.optionLabel) {
             continue
         }

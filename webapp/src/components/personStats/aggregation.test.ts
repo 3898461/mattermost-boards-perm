@@ -9,6 +9,7 @@ import {
     aggregatePersonFlow,
     aggregatePersonStats,
     aggregatePivot,
+    collectUnclassified,
     DateRange,
 } from './aggregation'
 
@@ -172,5 +173,143 @@ describe('aggregatePivot', () => {
         const {rows, flow} = aggregatePivot(board, [], RANGE, {datePropertyId: undefined, statusValues: []})
         expect(rows).toHaveLength(0)
         expect(flow).toHaveLength(0)
+    })
+})
+
+describe('trim defense (状态选项名带空白)', () => {
+    // Regression for the 2026-10-22 production incident: the board's
+    // 完成 option value carried a trailing space ('完成 '), and the
+    // summary's exact-match bucketing silently dropped every completed
+    // card. Labels must be trimmed before any comparison.
+    function boardWithPaddedDone() {
+        const board = buildBoard()
+        const status = board.cardProperties.find((p) => p.id === 'p-status')!
+        status.options = status.options.map((o) => (o.id === 'o-done' ? {...o, value: '完成 '} : o))
+        return board
+    }
+
+    test('汇总：选项名带尾空格的完成卡仍进已完成未结桶', () => {
+        const board = boardWithPaddedDone()
+        const card = makeCard(board, {title: '带空格完成卡', createAt: IN_RANGE})
+        card.fields.properties['p-status'] = 'o-done'
+        card.fields.properties['p-days'] = '5.5'
+        card.fields.properties['p-amount'] = '4933.5'
+        card.fields.properties['p-detail'] = JSON.stringify({u1: 80, u2: 20})
+        card.fields.properties['p-done'] = JSON.stringify({from: IN_RANGE})
+
+        const rows = aggregatePersonStats(board, [card], RANGE)
+        expect(rows).toHaveLength(2)
+        const r1 = rows.find((r) => r.userId === 'u1')!
+        expect(r1.completedDays).toBeCloseTo(4.4)
+        expect(r1.completedAmount).toBeCloseTo(3946.8)
+
+        const flow = aggregatePersonFlow(board, [card], RANGE)
+        expect(flow).toHaveLength(2)
+        expect(flow[0].category).toBe('completed')
+        expect(flow[0].statusLabel).toBe('完成')
+    })
+
+    test('透视：状态筛选值带空格时仍能匹配', () => {
+        const board = boardWithPaddedDone()
+        const card = makeCard(board, {title: '透视完成卡', createAt: IN_RANGE})
+        card.fields.properties['p-status'] = 'o-done'
+        card.fields.properties['p-days'] = '10'
+        card.fields.properties['p-amount'] = '4000'
+        card.fields.properties['p-detail'] = JSON.stringify({u1: 100})
+        card.fields.properties['p-apply'] = JSON.stringify({from: IN_RANGE})
+
+        const {flow} = aggregatePivot(board, [card], RANGE, {
+            datePropertyId: 'p-apply',
+            statusValues: ['完成 '],
+        })
+        expect(flow).toHaveLength(1)
+        expect(flow[0].category).toBe('completed')
+    })
+})
+
+describe('待办归桶与未归类检测', () => {
+    test('待办状态的卡进已安排桶（按创建日期）', () => {
+        const board = buildBoard()
+        const status = board.cardProperties.find((p) => p.id === 'p-status')!
+        status.options = [...status.options, {id: 'o-todo', value: '待办', color: ''}]
+        const card = makeCard(board, {title: '待办卡', createAt: IN_RANGE})
+        card.fields.properties['p-status'] = 'o-todo'
+        card.fields.properties['p-days'] = '3'
+        card.fields.properties['p-amount'] = '2700'
+        card.fields.properties['p-detail'] = JSON.stringify({u1: 100})
+
+        const rows = aggregatePersonStats(board, [card], RANGE)
+        expect(rows).toHaveLength(1)
+        expect(rows[0].scheduledDays).toBeCloseTo(3)
+        expect(rows[0].scheduledAmount).toBeCloseTo(2700)
+    })
+
+    test('collectUnclassified：未知状态计入、已归类与超期卡不计入', () => {
+        const board = buildBoard()
+        const status = board.cardProperties.find((p) => p.id === 'p-status')!
+        status.options = [...status.options, {id: 'o-rework', value: '返工', color: ''}]
+
+        const rework = makeCard(board, {title: '返工卡', createAt: IN_RANGE})
+        rework.fields.properties['p-status'] = 'o-rework'
+        const unset = makeCard(board, {title: '无状态卡', createAt: IN_RANGE})
+        const doneOutOfRange = makeCard(board, {title: '上期完成卡', createAt: OUT_RANGE})
+        doneOutOfRange.fields.properties['p-status'] = 'o-done'
+        doneOutOfRange.fields.properties['p-done'] = JSON.stringify({from: OUT_RANGE})
+        const scheduled = makeCard(board, {title: '草图卡', createAt: IN_RANGE})
+        scheduled.fields.properties['p-status'] = 'o-draft'
+
+        const info = collectUnclassified(board, [rework, unset, doneOutOfRange, scheduled])
+        expect(info.count).toBe(2)
+        expect(info.statuses).toContain('返工')
+        expect(info.statuses).toContain('')
+    })
+})
+
+describe('actual-hours efficiency pairing', () => {
+    function buildBoardWithHours() {
+        const board = buildBoard()
+        board.cardProperties.push(makeTemplate('p-hours-detail', '实际耗时明细', 'text'))
+        return board
+    }
+
+    test('已完成卡成对计算：实际、对比报价、覆盖数', () => {
+        const board = buildBoardWithHours()
+        const card = makeCard(board, {title: '已完成卡', createAt: IN_RANGE})
+        card.fields.properties['p-status'] = 'o-done'
+        card.fields.properties['p-done'] = JSON.stringify({from: IN_RANGE})
+        card.fields.properties['p-days'] = '10'
+        card.fields.properties['p-amount'] = '9000'
+        card.fields.properties['p-detail'] = JSON.stringify({u1: 60, u2: 40})
+        card.fields.properties['p-hours-detail'] = JSON.stringify({u1: 3, u2: 2.5})
+        const rows = aggregatePersonStats(board, [card], RANGE)
+        const r1 = rows.find((r) => r.userId === 'u1')!
+        const r2 = rows.find((r) => r.userId === 'u2')!
+        expect(r1.actualHours).toBe(3)
+        expect(r1.quotedPairedDays).toBeCloseTo(6, 9)
+        expect(r1.effCardCount).toBe(1)
+        expect(r2.actualHours).toBe(2.5)
+        expect(r2.quotedPairedDays).toBeCloseTo(4, 9)
+        expect(r2.effCardCount).toBe(1)
+    })
+
+    test('没填明细的卡不进成对统计，已安排的卡也不进', () => {
+        const board = buildBoardWithHours()
+        const noHours = makeCard(board, {title: '没填耗时', createAt: IN_RANGE})
+        noHours.fields.properties['p-status'] = 'o-done'
+        noHours.fields.properties['p-done'] = JSON.stringify({from: IN_RANGE})
+        noHours.fields.properties['p-days'] = '10'
+        noHours.fields.properties['p-detail'] = JSON.stringify({u1: 100})
+        const scheduled = makeCard(board, {title: '草图卡', createAt: IN_RANGE})
+        scheduled.fields.properties['p-status'] = 'o-draft'
+        scheduled.fields.properties['p-days'] = '5'
+        scheduled.fields.properties['p-detail'] = JSON.stringify({u1: 100})
+        scheduled.fields.properties['p-hours-detail'] = JSON.stringify({u1: 2})
+        const rows = aggregatePersonStats(board, [noHours, scheduled], RANGE)
+        const r1 = rows.find((r) => r.userId === 'u1')!
+        expect(r1.effCardCount).toBe(0)
+        expect(r1.actualHours).toBe(0)
+        expect(r1.quotedPairedDays).toBe(0)
+        // The ordinary day totals are unaffected by the pairing.
+        expect(r1.totalDays).toBeCloseTo(15, 9)
     })
 })

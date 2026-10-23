@@ -11,6 +11,7 @@ import {useAppSelector} from '../../store/hooks'
 import {Position} from '../cardDetail/cardDetailContents'
 
 import {Board, IPropertyOption, IPropertyTemplate, BoardGroup} from '../../blocks/board'
+import {pickOptionColor} from '../../properties/optionColor'
 import {Card} from '../../blocks/card'
 import {BoardView} from '../../blocks/boardView'
 import mutator from '../../mutator'
@@ -95,7 +96,7 @@ const Kanban = (props: Props) => {
         const option: IPropertyOption = {
             id: Utils.createGuid(IDType.BlockID),
             value: 'New group',
-            color: 'propColorDefault',
+            color: pickOptionColor(board, groupByProperty!, 'New group'),
         }
 
         await mutator.insertPropertyOption(board.id, board.cardProperties, groupByProperty!, option, 'add group')

@@ -4,6 +4,9 @@
 import React, {useState, useEffect} from 'react'
 import {createNanoEvents} from 'nanoevents'
 
+import store from '../store'
+import {getCurrentBoardId, getMyBoardMembership} from '../store/boards'
+
 import './flashMessages.scss'
 
 export type FlashMessage = {
@@ -14,6 +17,19 @@ export type FlashMessage = {
 const emitter = createNanoEvents()
 
 export function sendFlashMessage(message: FlashMessage): void {
+    // Product rule (2026-10-22): flash prompts are shown to board admins
+    // only. Editors, commenters and viewers act on cards but cannot fix
+    // configuration problems, so prompts (including the native ones) are
+    // noise for them. When no board is open there is no role to check, so
+    // the message passes through unchanged.
+    const state = store.getState()
+    const boardId = getCurrentBoardId(state)
+    if (boardId) {
+        const member = getMyBoardMembership(boardId)(state)
+        if (!member?.schemeAdmin) {
+            return
+        }
+    }
     emitter.emit('message', message)
 }
 

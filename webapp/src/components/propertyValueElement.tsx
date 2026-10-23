@@ -10,6 +10,7 @@ import {Card} from '../blocks/card'
 import propsRegistry from '../properties'
 import {isAutoManagedProperty, isAmountLocked, SETTLE_PROP_NAMES} from '../settleAutomation'
 
+import {ACTUAL_HOURS_PROP, HOURS_DETAIL_PROP} from '../actualHours'
 import {useAppSelector} from '../store/hooks'
 import {getMe} from '../store/users'
 import {RootState} from '../store'
@@ -17,6 +18,7 @@ import {IUser} from '../user'
 import {Utils} from '../utils'
 
 import CompletionDetailEditor from './cardDetail/completionDetailEditor'
+import HoursDetailEditor, {HoursDetailSummary} from './cardDetail/hoursDetailEditor'
 import AmountLockBadge from './cardDetail/amountLockBadge'
 
 import './propertyValueElement.scss'
@@ -121,6 +123,32 @@ const PropertyValueElement = (props: Props): JSX.Element => {
     const lockedReadOnly = amountLocked &&
         (propertyTemplate.name === SETTLE_PROP_NAMES.personDays || propertyTemplate.name === SETTLE_PROP_NAMES.unitPriceSelect)
     const effectiveReadOnly = readOnly || isAutoManagedProperty(propertyTemplate.name) || lockedReadOnly
+    // "实际耗时" in the card detail is edited per producer through the
+    // hours editor (avatar + input under it, total written back to the
+    // number property). Only when the board also has "实际耗时明细";
+    // everywhere else the plain number editor shows the total.
+    // The detail property itself is machine storage: wherever it is
+    // shown, render a human summary ("唐盈盈 1 · 刘艳玲 1"), never the
+    // raw JSON. Editing happens only through the 实际耗时 editor.
+    if (propertyTemplate.name === HOURS_DETAIL_PROP) {
+        return (
+            <HoursDetailSummary
+                board={board}
+                card={card}
+            />
+        )
+    }
+    const hoursDetailTemplate = propertyTemplate.name === ACTUAL_HOURS_PROP ? board.cardProperties.find((t) => t.name === HOURS_DETAIL_PROP) : undefined
+    if (hoursDetailTemplate && props.detailed) {
+        return (
+            <HoursDetailEditor
+                board={board}
+                card={card}
+                propertyTemplate={propertyTemplate}
+                readOnly={effectiveReadOnly}
+            />
+        )
+    }
     if (SETTLE_CUSTOM_EDITORS[propertyTemplate.name || '']) {
         return (
             <CompletionDetailEditor
@@ -158,6 +186,14 @@ const PropertyValueElement = (props: Props): JSX.Element => {
                     board={board}
                     card={card}
                 />
+            </span>
+        )
+    }
+    if (props.detailed && propertyTemplate.name === ACTUAL_HOURS_PROP && !hoursDetailTemplate) {
+        return (
+            <span>
+                {editor}
+                <div className='property-value-element__hours-hint'>添加「实际耗时明细」文本属性后，可按人填写耗时</div>
             </span>
         )
     }

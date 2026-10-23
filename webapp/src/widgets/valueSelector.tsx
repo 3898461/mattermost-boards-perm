@@ -3,7 +3,7 @@
 
 import React from 'react'
 import {useIntl} from 'react-intl'
-import {ActionMeta, OnChangeValue} from 'react-select'
+import {ActionMeta, components, MenuListProps, OnChangeValue} from 'react-select'
 import {FormatOptionLabelMeta} from 'react-select/base'
 import CreatableSelect from 'react-select/creatable'
 
@@ -106,13 +106,26 @@ const ValueSelectorLabel = (props: LabelProps): JSX.Element => {
     )
 }
 
+// Wide multi-column option panel: long option lists (e.g. 实际单价 with
+// a dozen client labels) used to be a single narrow column that scrolled
+// far beyond the card. Options now flow into a grid inside a wide menu,
+// and the input on top filters them (typing is react-select's built-in
+// search; the hint line makes that discoverable).
+const GridMenuList = (props: MenuListProps<IPropertyOption, boolean>): JSX.Element => (
+    <components.MenuList {...props}>
+        <div className='value-selector-hint'>{'顶部输入可搜索；输入新名称按回车新建'}</div>
+        <div className='value-selector-grid'>{props.children}</div>
+    </components.MenuList>
+)
+
 const valueSelectorStyle = {
     ...getSelectBaseStyle(),
     option: (provided: CSSObject, state: {isFocused: boolean}): CSSObject => ({
         ...provided,
         background: state.isFocused ? 'rgba(var(--center-channel-color-rgb), 0.1)' : 'rgb(var(--center-channel-bg-rgb))',
         color: state.isFocused ? 'rgb(var(--center-channel-color-rgb))' : 'rgb(var(--center-channel-color-rgb))',
-        padding: '8px',
+        padding: '4px 6px',
+        borderRadius: '6px',
     }),
     control: (): CSSObject => ({
         border: 0,
@@ -151,7 +164,7 @@ const valueSelectorStyle = {
     }),
     menu: (provided: CSSObject): CSSObject => ({
         ...provided,
-        width: 'unset',
+        width: '520px',
         background: 'rgb(var(--center-channel-bg-rgb))',
         minWidth: '260px',
     }),
@@ -164,7 +177,7 @@ function ValueSelector(props: Props): JSX.Element {
             noOptionsMessage={() => intl.formatMessage({id: 'ValueSelector.noOptions', defaultMessage: 'No options. Start typing to add the first one!'})}
             aria-label={intl.formatMessage({id: 'ValueSelector.valueSelector', defaultMessage: 'Value selector'})}
             captureMenuScroll={true}
-            maxMenuHeight={1200}
+            maxMenuHeight={460}
             isMulti={props.isMulti}
             isClearable={true}
             styles={valueSelectorStyle}
@@ -178,6 +191,7 @@ function ValueSelector(props: Props): JSX.Element {
                     onDeleteValue={props.onDeleteValue}
                 />
             )}
+            components={{MenuList: GridMenuList}}
             className='ValueSelector'
             classNamePrefix='ValueSelector'
             options={props.options}

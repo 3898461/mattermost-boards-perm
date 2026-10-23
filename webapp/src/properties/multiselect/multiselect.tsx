@@ -14,6 +14,7 @@ import Label from '../../widgets/label'
 import ValueSelector from '../../widgets/valueSelector'
 
 import {PropertyProps} from '../types'
+import {pickOptionColor, sortOptionsByFamily} from '../optionColor'
 
 const MultiSelectProperty = (props: PropertyProps): JSX.Element => {
     const {propertyTemplate, propertyValue, board, card} = props
@@ -38,7 +39,7 @@ const MultiSelectProperty = (props: PropertyProps): JSX.Element => {
         const option: IPropertyOption = {
             id: Utils.createGuid(IDType.BlockID),
             value: newValue,
-            color: 'propColorDefault',
+            color: pickOptionColor(board, propertyTemplate, newValue),
         }
         currentValues.push(option)
         mutator.insertPropertyOption(board.id, board.cardProperties, propertyTemplate, option, 'add property option').then(() => {
@@ -77,7 +78,7 @@ const MultiSelectProperty = (props: PropertyProps): JSX.Element => {
         <ValueSelector
             isMulti={true}
             emptyValue={emptyDisplayValue}
-            options={propertyTemplate.options}
+            options={sortOptionsByFamily(board, propertyTemplate.options)}
             value={values}
             onChange={onChange}
             onChangeColor={onChangeColor}

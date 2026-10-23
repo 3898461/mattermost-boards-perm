@@ -14,9 +14,10 @@ const PROP_STATUS = '项目状态'
 const PROP_COMPLETE_DATE = '完成日期'
 const PROP_DETAIL = '完成度明细'
 const PROP_UNIT_PRICE = '实际单价'
+const PROP_HOURS_DETAIL = '实际耗时明细'
 
 // Status categories
-const STATUS_SCHEDULED = ['预排期', '已下单', '草图', '细化', '暂停']
+const STATUS_SCHEDULED = ['预排期', '待办', '已下单', '草图', '细化', '暂停']
 const STATUS_COMPLETED_UNSETTLED = ['完成', '申请结算', '提交发票', '待验收', '待付款']
 const STATUS_SETTLED = ['已付款', '关闭']
 
@@ -34,6 +35,16 @@ export type PersonStatRow = {
     settledAmount: number
     // Project count (distinct cards)
     projectCount: number
+    // Actual-efficiency pairing (2026-10-23): only cards in the
+    // completed/settled buckets where this person's hours were
+    // actually recorded in 实际耗时明细 count, on BOTH sides, so the
+    // ratio is never diluted by cards with no hours data.
+    // actualHours: summed recorded hours (days, 8h/day convention).
+    // quotedPairedDays: summed 人天 x completion share on those cards.
+    // effCardCount: how many cards the pairing covers.
+    actualHours: number
+    quotedPairedDays: number
+    effCardCount: number
 }
 
 export type DateRange = {
@@ -117,7 +128,12 @@ export type StatCategory = 'scheduled' | 'completed' | 'settled'
 export function resolveStatusLabel(card: Card, board: Board): string {
     const statusProp = board.cardProperties.find((p) => p.name === PROP_STATUS)
     const rawStatus = getStringProp(card, statusProp?.id)
-    return statusProp?.options?.find((o) => o.id === rawStatus)?.value || rawStatus
+    const label = statusProp?.options?.find((o) => o.id === rawStatus)?.value || rawStatus
+
+    // Trim defense: option labels are typed by hand and can carry
+    // leading/trailing whitespace ('完成 '), which must still match the
+    // canonical status names below instead of dropping the card.
+    return label.trim()
 }
 
 // Resolves the card's 实际单价 option label (e.g. "网易图标1000").
@@ -196,6 +212,7 @@ function splitEntries(board: Board, entries: SplitEntry[]): PersonAggregation {
     const manDaysPropId = getPropertyId(board, PROP_MAN_DAYS)
     const amountPropId = getPropertyId(board, PROP_AMOUNT)
     const detailPropId = getPropertyId(board, PROP_DETAIL)
+    const hoursDetailPropId = getPropertyId(board, PROP_HOURS_DETAIL)
 
     const byUser = new Map<string, PersonStatRow>()
     const projectCountByUser = new Map<string, Set<string>>()
@@ -215,6 +232,9 @@ function splitEntries(board: Board, entries: SplitEntry[]): PersonAggregation {
                 completedAmount: 0,
                 settledAmount: 0,
                 projectCount: 0,
+                actualHours: 0,
+                quotedPairedDays: 0,
+                effCardCount: 0,
             }
             byUser.set(userId, row)
             projectCountByUser.set(userId, new Set())
@@ -270,6 +290,32 @@ function splitEntries(board: Board, entries: SplitEntry[]): PersonAggregation {
                 amount: amt,
             })
         }
+
+        // Actual-hours pairing: finished work only (completed or
+        // settled bucket). A person counts on this card when their
+        // hours were recorded; their quoted side is the same card's
+        // 人天 x their completion share.
+        if (hoursDetailPropId && category !== 'scheduled') {
+            const hoursJson = String(card.fields.properties[hoursDetailPropId] || '')
+            const hoursDetail = parseDetail(hoursJson)
+            for (const userId of Object.keys(hoursDetail)) {
+                let hrs = hoursDetail[userId]
+                if (typeof hrs === 'string') {
+                    hrs = parseFloat(hrs)
+                }
+                if (typeof hrs !== 'number' || isNaN(hrs) || hrs < 0) {
+                    continue
+                }
+                let pct = detail[userId]
+                if (typeof pct === 'string') {
+                    pct = parseFloat(pct)
+                }
+                const row = getRow(userId)
+                row.actualHours += hrs
+                row.quotedPairedDays += (typeof pct === 'number' && !isNaN(pct) && pct > 0) ? (manDays * pct) / 100 : 0
+                row.effCardCount += 1
+            }
+        }
     }
 
     for (const [userId, set] of projectCountByUser) {
@@ -290,6 +336,24 @@ function summaryEntries(board: Board, cards: Card[], range: DateRange): SplitEnt
         }
     }
     return out
+}
+
+export type UnclassifiedInfo = {
+    count: number
+    statuses: string[] // distinct unrecognized labels; '' means status unset
+}
+
+export function collectUnclassified(board: Board, cards: Card[]): UnclassifiedInfo {
+    const labels = new Set<string>()
+    let count = 0
+    for (const card of cards) {
+        const status = resolveStatusLabel(card, board)
+        if (!status || (!STATUS_SCHEDULED.includes(status) && !STATUS_COMPLETED_UNSETTLED.includes(status) && !STATUS_SETTLED.includes(status))) {
+            count++
+            labels.add(status)
+        }
+    }
+    return {count, statuses: Array.from(labels)}
 }
 
 export function aggregatePerson(board: Board, cards: Card[], range: DateRange): PersonAggregation {
@@ -342,13 +406,14 @@ export function aggregatePivot(
     if (!pivot.datePropertyId) {
         return {rows: [], flow: []}
     }
+    const wantedStatuses = pivot.statusValues.map((v) => v.trim())
     const entries: SplitEntry[] = []
     for (const card of cards) {
         const ts = getDateTimestamp(card, pivot.datePropertyId)
         if (!ts || ts < range.start || ts > range.end) {
             continue
         }
-        if (pivot.statusValues.length > 0 && !pivot.statusValues.includes(resolveStatusLabel(card, board))) {
+        if (wantedStatuses.length > 0 && !wantedStatuses.includes(resolveStatusLabel(card, board))) {
             continue
         }
         entries.push({card, category: statusBucketOf(card, board)})

@@ -148,6 +148,15 @@
             min-width: 0;
         }
 
+        /* The two settle editors stretch to the full property-value
+           width, so their footers (合计 + green save button) always
+           align on the same right edge regardless of content. */
+        .octo-propertyrow__content > .completion-detail-editor,
+        .octo-propertyrow__content > .hours-detail-editor {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
         .Switch {
             margin: 4px 0 0 8px;
             width: 40px;

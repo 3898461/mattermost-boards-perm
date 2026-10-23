@@ -105,3 +105,26 @@
     text-overflow: ellipsis;
     display: inline-block;
 }
+
+.value-selector-hint {
+    padding: 6px 10px 2px;
+    font-size: 12px;
+    color: rgba(var(--center-channel-color-rgb), 0.56);
+}
+
+.value-selector-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 2px 6px;
+    padding: 4px;
+}
+
+// Panel width, enforced at the CSS-class level. Root cause of the
+// darkui16 failure: cardDetail.scss caps .ValueSelector__menu at
+// max-width: 100% (of the ~260px control container), which silently
+// clamped any width set on the menu. Pin both width and max-width
+// here with !important so the panel can actually open wide.
+.ValueSelector__menu {
+    width: min(520px, 92vw) !important;
+    max-width: none !important;
+}

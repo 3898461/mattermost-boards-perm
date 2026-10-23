@@ -274,6 +274,55 @@
         font-size: 11.5px;
     }
 
+    &__eye-toggle {
+        padding: 8px 14px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.04);
+        color: #e2e8f0;
+        cursor: pointer;
+        font-size: 13px;
+        white-space: nowrap;
+
+        &:hover,
+        &.active {
+            background: rgba(255, 255, 255, 0.09);
+        }
+    }
+
+    &__cards-sort {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 10px;
+
+        button {
+            padding: 5px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.03);
+            color: rgba(255, 255, 255, 0.75);
+            cursor: pointer;
+            font-size: 12.5px;
+            white-space: nowrap;
+
+            &:hover {
+                color: #fff;
+            }
+
+            &.active {
+                border-color: rgba(47, 155, 255, 0.6);
+                background: rgba(47, 155, 255, 0.14);
+                color: #fff;
+            }
+        }
+    }
+
+    &__cards-sort-label {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 12.5px;
+    }
+
     &__custom {
         display: flex;
         align-items: center;
@@ -427,9 +476,27 @@
     // Shared numeric + people bits
     &__num {
         font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+        font-size: 15px;
+        font-weight: 600;
         font-variant-numeric: tabular-nums;
         text-align: right;
         white-space: nowrap;
+    }
+
+    &__amt-total {
+        color: #2a8ce6;
+    }
+
+    &__amt-scheduled {
+        color: #1ebed7;
+    }
+
+    &__amt-completed {
+        color: #e1b813;
+    }
+
+    &__amt-settled {
+        color: #1ba755;
     }
 
     &__num--scheduled {
@@ -452,6 +519,45 @@
         display: inline-flex;
         align-items: center;
         gap: 9px;
+        white-space: nowrap;
+    }
+
+    &__sortable {
+        position: relative;
+    }
+
+    &__col-resizer {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 10px;
+        height: 100%;
+        cursor: col-resize;
+        touch-action: none;
+
+        &:hover {
+            background: rgba(56, 165, 255, 0.3);
+            box-shadow: inset -2px 0 0 #38a5ff;
+        }
+    }
+
+    &__table--fixed {
+        table-layout: fixed;
+
+        td {
+            overflow: hidden;
+        }
+    }
+
+    &__table--resizing {
+        user-select: none;
+    }
+
+    &__table--measuring {
+        th,
+        td {
+            white-space: nowrap;
+        }
     }
 
     &__avatar {
@@ -551,8 +657,35 @@
     }
 
     // Table (shared by table + flow layouts)
+    &__table-scroll {
+        overflow-x: auto;
+    }
+
+    &__table-tools {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+        margin-bottom: 8px;
+
+        button {
+            padding: 5px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.03);
+            color: rgba(255, 255, 255, 0.75);
+            cursor: pointer;
+            font-size: 12.5px;
+            white-space: nowrap;
+
+            &:hover {
+                color: #fff;
+            }
+        }
+    }
+
     &__table {
         width: 100%;
+        min-width: 1080px;
         border-collapse: collapse;
         font-size: 13px;
         background: #141b27;
@@ -567,6 +700,10 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.06);
             border-right: 1px solid rgba(255, 255, 255, 0.055);
             vertical-align: middle;
+        }
+
+        th {
+            white-space: nowrap;
         }
 
         th:last-child,
@@ -607,6 +744,23 @@
 
     &__group--finance {
         background: rgba(16, 185, 129, 0.13);
+    }
+
+    &__group--efficiency {
+        background: rgba(250, 204, 21, 0.13);
+    }
+
+    &__eff-note {
+        color: rgba(255, 255, 255, 0.45);
+        font-size: 11px;
+    }
+
+    &__eff-good {
+        color: #3ddc74;
+    }
+
+    &__eff-bad {
+        color: #f87171;
     }
 
     &__group--convert {
@@ -908,5 +1062,22 @@
         margin-top: 14px;
         font-size: 12px;
         color: rgba(255, 255, 255, 0.45);
+    }
+}
+
+.PersonStats {
+    &__sortable {
+        cursor: pointer;
+        user-select: none;
+
+        &:hover {
+            color: #dbe7f5;
+        }
+    }
+
+    &__sort-arrow {
+        margin-left: 4px;
+        font-size: 10px;
+        color: #2f9bff;
     }
 }

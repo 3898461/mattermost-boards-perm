@@ -26,8 +26,10 @@ import {Category} from './store/sidebar'
 import {UserConfigPatch, UserPreference} from './user'
 import store from './store'
 import {afterPropertyChange} from './settleAutomation'
-import {evaluateCompletionGate} from './completionGate'
+import {evaluateCompletionGate, evaluateHoursGate} from './completionGate'
 import {requestCompletionConfirmation} from './completionConfirm'
+import {requestOpenCard} from './cardOpener'
+import {sendFlashMessage} from './components/flashMessages'
 import {updateBoards} from './store/boards'
 import {updateViews} from './store/views'
 import {updateCards} from './store/cards'
@@ -667,6 +669,24 @@ class Mutator {
         // dont save anything if property value was not changed.
         if (oldValue === value) {
             return
+        }
+
+        // Actual-hours gate (2026-10-22): moving ANY card into "完成"
+        // requires 实际耗时 to be filled. The change is aborted and
+        // the card is opened so the user can fill the per-producer
+        // hours right away. Runs before the completion-share gate.
+        try {
+            const hoursReq = evaluateHoursGate(boardId, card, propertyId, value)
+            if (hoursReq) {
+                sendFlashMessage({
+                    content: `「${hoursReq.cardTitle}」还未填写实际耗时，已打开卡片，请先补填实际耗时再移入「完成」`,
+                    severity: 'high',
+                })
+                requestOpenCard(boardId, hoursReq.cardId)
+                return
+            }
+        } catch (e) {
+            Utils.logError(`hours gate failed: ${e}`)
         }
 
         // Completion gate: moving a multi-producer card into the "完成"

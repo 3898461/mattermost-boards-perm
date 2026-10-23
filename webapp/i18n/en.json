@@ -103,6 +103,7 @@
   "CardDetailProperty.property-change-action-button": "Change property",
   "CardDetailProperty.property-changed": "Changed property successfully!",
   "CardDetailProperty.property-deleted": "Deleted {propertyName} successfully!",
+  "CardDetailProperty.property-delete-failed": "Failed to delete property: {error}",
   "CardDetailProperty.property-name-change-subtext": "type from \"{oldPropType}\" to \"{newPropType}\"",
   "CardDetial.limited-link": "Learn more about our plans.",
   "CardDialog.delete-confirmation-dialog-attachment": "Confirm attachment delete",

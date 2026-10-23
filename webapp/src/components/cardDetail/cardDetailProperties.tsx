@@ -128,6 +128,7 @@ const CardDetailProperties = (props: Props) => {
                     sendFlashMessage({content: intl.formatMessage({id: 'CardDetailProperty.property-deleted', defaultMessage: 'Deleted {propertyName} successfully!'}, {propertyName: deletingPropName}), severity: 'high'})
                 } catch (err: any) {
                     Utils.logError(`Error Deleting Property!: Could Not delete Property -" + ${deletingPropName} ${err?.toString()}`)
+                    sendFlashMessage({content: intl.formatMessage({id: 'CardDetailProperty.property-delete-failed', defaultMessage: 'Failed to delete property: {error}'}, {error: err?.message || String(err)}), severity: 'high'})
                 }
             },
 
